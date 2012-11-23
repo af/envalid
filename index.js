@@ -1,4 +1,4 @@
-var env = process.env;
+var env = {};
 var specs = {};
 
 
@@ -17,6 +17,7 @@ exports.set = function(name, value) {
     process.env[name] = env[name] = value;
 };
 
+// Simple boolean properties to make checking NODE_ENV a bit more readable:
 Object.defineProperty(exports, 'isProduction', { get: function() { return process.env.NODE_ENV === 'production'; }});
 Object.defineProperty(exports, 'isDev', { get: function() { return process.env.NODE_ENV === 'development'; }});
 Object.defineProperty(exports, 'isTesting', { get: function() { return process.env.NODE_ENV === 'test'; }});

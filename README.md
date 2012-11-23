@@ -29,7 +29,9 @@ Node.js programs.
     // and/or filtering that you specified with env.validate().
     // The second (optional) argument is a default value that will be returned
     // if the environment variable is not set.
-    env.get('ADMIN_EMAIL', 'defaultaddress@example.com')
+    // NOTE: get() will only give access to env vars that were parsed by validate()
+    env.get('ADMIN_EMAIL')
+    env.get('NOT_A_REAL_VAR', 'this string will be returned')
 
     // Set an environment variable to a given value.
     // This will throw an exception if the value given is invalid.
