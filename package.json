@@ -1,0 +1,22 @@
+{
+  "name": "envalid",
+  "version": "0.0.0",
+  "description": "Validation for environment variables",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://www.github.com/af/envalid"
+  },
+  "keywords": [
+    "env",
+    "validation"
+  ],
+  "devDependencies": {
+    "mocha": "1.3.0"
+  },
+  "author": "Aaron Franks",
+  "license": "BSD"
+}
