@@ -41,6 +41,10 @@ describe('validate()', function() {
     it('works with the env.toNumber() parser', function() {
         var myEnv = env.validate({ REQD: 'asdf', MYNUM: '123'}, basicSpec);
         assert.strictEqual(myEnv.MYNUM, 123);
+
+        // If a non-number was entered, toNumber should throw:
+        assert.throws(
+            function() { env.validate({ REQD: 'asdf', MYNUM: 'asdf12'}, basicSpec); }, env.EnvError);
     });
 
     it('works with the env.toBoolean() parser', function() {

@@ -50,7 +50,9 @@ exports.validate = function validate(envInput, specInput) {
 };
 
 exports.toNumber = function toNumber(input) {
-    return parseInt(input, 10);
+    var value = parseFloat(input);
+    if (isNaN(value)) throw new EnvError(input + ' is not a number');
+    else return value;
 }
 
 // Expects an env var to be either 'true' or 'false', and returns a corresponding boolean.
