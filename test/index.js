@@ -7,6 +7,7 @@ describe('validate()', function() {
                       PARSED: { parse: function(x) { return x + 'foo'; } },
                       CHOICEVAR: { choices: ['one', 'two', 'three'] },
                       REGEXVAR: { regex: /number\d/ },
+                      JSONVAR: { parse: JSON.parse },
                       MYBOOL: { parse: env.toBoolean },
                       MYNUM: { parse: env.toNumber }
                     };
@@ -37,6 +38,13 @@ describe('validate()', function() {
         var myEnv = env.validate({ REQD: 'asdf', PARSED: 'bar'}, basicSpec);
         assert.strictEqual(myEnv.PARSED, 'barfoo');
     });
+
+    it('works with JSON.parse', function() {
+        var myEnv = env.validate({ REQD: 'asdf', JSONVAR: '{"foo": 123, "bar": "baz"}'}, basicSpec);
+        assert.strictEqual(myEnv.JSONVAR.foo, 123);
+        assert.strictEqual(myEnv.JSONVAR.bar, 'baz');
+    });
+
 
     it('works with the env.toNumber() parser', function() {
         var myEnv = env.validate({ REQD: 'asdf', MYNUM: '123'}, basicSpec);
