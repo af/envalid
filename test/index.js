@@ -6,6 +6,7 @@ describe('validate()', function() {
     var basicSpec = { REQD: { required: true },
                       PARSED: { parse: function(x) { return x + 'foo'; } },
                       CHOICEVAR: { choices: ['one', 'two', 'three'] },
+                      REGEXVAR: { regex: /number\d/ },
                       MYBOOL: { parse: env.toBoolean },
                       MYNUM: { parse: env.toNumber }
                     };
@@ -21,6 +22,15 @@ describe('validate()', function() {
         var myEnv = env.validate({ REQD: 'asdf', CHOICEVAR: 'two'}, basicSpec);
         assert.strictEqual(myEnv.CHOICEVAR, 'two');
         assert.strictEqual(env.get('CHOICEVAR'), 'two');
+    });
+
+    it('validates against a regex if one is provided', function() {
+        assert.throws(
+            function() { env.validate({ REQD: 'asdf', REGEXVAR: 'fail'}, basicSpec); }, env.EnvError);
+
+        var myEnv = env.validate({ REQD: 'asdf', REGEXVAR: 'number4'}, basicSpec);
+        assert.strictEqual(myEnv.REGEXVAR, 'number4');
+        assert.strictEqual(env.get('REGEXVAR'), 'number4');
     });
 
     it('works with a custom parse function', function() {

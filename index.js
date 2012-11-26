@@ -2,7 +2,6 @@ var env = {};
 var specs = {};
 
 
-// TODO: regex support
 // TODO: recommended/required support
 
 var EnvError = exports.EnvError = function EnvError() {};
@@ -13,8 +12,15 @@ function checkField(name, value, spec) {
     var outputValue;
 
     if (spec.required && value === undefined) throw new EnvError(name + ' is a required field');
+
+    // Run further validation on this field only if a value was provided:
     if (value !== undefined) {
-        // Run the input value through a parse function:
+        // Regex validation happens before the string is parsed:
+        if (spec.regex && !spec.regex.test(value)) {
+            throw new EnvError(name + ' does not match regex ' + spec.regex);
+        }
+
+        // Run the input value through a parse function to get its final value:
         outputValue = parser(value);
 
         // Validate from a list of choices if that option was provided:
@@ -61,9 +67,7 @@ exports.get = function get(name, defaultVal) {
 
 exports.set = function(name, value) {
     var spec = specs[name];
-    if (spec && spec.parse) {
-        value = spec.parse(value);
-    }
+    if (spec) value = checkField(name, value, spec);
     process.env[name] = env[name] = value;
 };
 
