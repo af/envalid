@@ -1,6 +1,11 @@
 Envalid is a small library for validating and accessing environment variables in
 Node.js programs.
 
+Validating your env vars:
+
+* gives you executable documentation about the environment your program is expected to run in
+* helps you treat your env vars like a well-tested module, rather than a random grab bag of global strings
+
 
 ## API
 

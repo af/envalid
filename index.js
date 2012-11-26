@@ -2,18 +2,43 @@ var env = {};
 var specs = {};
 
 
+// TODO: choices support
+// TODO: regex support
+// TODO: recommended/required support
+
 exports.validate = function validate(envInput, specInput) {
+    var validatedEnv = {};
+    var errors = {};
     env = envInput || {};
     specs = specInput || {};
-    // TODO: validate here
+
+    Object.keys(specInput).forEach(function(k) {
+        var itemSpec = specInput[k];
+        var identityFn = function(x) { return x; };
+        var parser = itemSpec.parse || identityFn;
+        var inputValue = envInput[k];
+
+        if (inputValue === undefined) errors[k] = k + ' is a required field';
+        validatedEnv[k] = parser(envInput[k]);
+    });
+    if (Object.keys(errors).length) throw new Error('Validation errors');   // FIXME: better error message
+    env = validatedEnv;
+    return validatedEnv;
 };
+
+exports.toNumber = function toNumber(input) {
+    return parseInt(input, 10);
+}
 
 exports.get = function get(name, defaultVal) {
     return env[name] || defaultVal;
 };
 
 exports.set = function(name, value) {
-    // TODO: validate value
+    var spec = specs[name];
+    if (spec && spec.parse) {
+        value = spec.parse(value);
+    }
     process.env[name] = env[name] = value;
 };
 
