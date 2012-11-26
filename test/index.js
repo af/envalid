@@ -5,12 +5,22 @@ var env = require('../index');
 describe('validate()', function() {
     var basicSpec = { REQD: { required: true },
                       PARSED: { parse: function(x) { return x + 'foo'; } },
+                      CHOICEVAR: { choices: ['one', 'two', 'three'] },
                       MYBOOL: { parse: env.toBoolean },
                       MYNUM: { parse: env.toNumber }
                     };
     it('throws an error if a required field is not present', function() {
         assert.throws(
-            function() { env.validate({}, basicSpec); }, Error);    //FIXME: more precise error checking
+            function() { env.validate({}, basicSpec); }, env.EnvError);
+    });
+
+    it('validates from a set of choices if given', function() {
+        assert.throws(
+            function() { env.validate({ REQD: 'asdf', CHOICEVAR: 'asdf'}, basicSpec); }, env.EnvError);
+
+        var myEnv = env.validate({ REQD: 'asdf', CHOICEVAR: 'two'}, basicSpec);
+        assert.strictEqual(myEnv.CHOICEVAR, 'two');
+        assert.strictEqual(env.get('CHOICEVAR'), 'two');
     });
 
     it('works with a custom parse function', function() {

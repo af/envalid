@@ -2,10 +2,29 @@ var env = {};
 var specs = {};
 
 
-// TODO: choices support
 // TODO: regex support
 // TODO: recommended/required support
-//
+
+var EnvError = exports.EnvError = function EnvError() {};
+
+function checkField(name, value, spec) {
+    var identityFn = function(x) { return x; };
+    var parser = spec.parse || identityFn;
+    var outputValue;
+
+    if (spec.required && value === undefined) throw new EnvError(name + ' is a required field');
+    if (value !== undefined) {
+        // Run the input value through a parse function:
+        outputValue = parser(value);
+
+        // Validate from a list of choices if that option was provided:
+        if (spec.choices) {
+            var isAChoice = spec.choices.some(function(val) { return val === outputValue; });
+            if (!isAChoice) throw new EnvError(value + ' is not a valid choice for ' + name);
+        }
+    }
+    return outputValue;
+}
 
 exports.validate = function validate(envInput, specInput) {
     var validatedEnv = {};
@@ -14,14 +33,12 @@ exports.validate = function validate(envInput, specInput) {
 
     Object.keys(specInput).forEach(function(k) {
         var itemSpec = specInput[k];
-        var identityFn = function(x) { return x; };
-        var parser = itemSpec.parse || identityFn;
         var inputValue = envInput[k];
-
-        if (itemSpec.required && inputValue === undefined) errors[k] = k + ' is a required field';
-        if (inputValue !== undefined) validatedEnv[k] = parser(envInput[k]);
+        try {
+            validatedEnv[k] = checkField(k, inputValue, itemSpec);
+        } catch (err) { errors[k] = err.message; }
     });
-    if (Object.keys(errors).length) throw new Error('Validation errors');   // FIXME: better error message
+    if (Object.keys(errors).length) throw new EnvError('Validation errors');   // FIXME: better error message
     env = validatedEnv;
     return validatedEnv;
 };
@@ -35,7 +52,7 @@ exports.toNumber = function toNumber(input) {
 exports.toBoolean = function toBoolean(input) {
     if (input === 'true') return true;
     else if (input === 'false') return false;
-    else throw new Error(input + ' does not look like a boolean');
+    else throw new EnvError(input + ' does not look like a boolean');
 }
 
 exports.get = function get(name, defaultVal) {
