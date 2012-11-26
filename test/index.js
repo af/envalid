@@ -2,6 +2,34 @@ var assert = require('assert');
 var env = require('../index');
 
 
+describe('validate()', function() {
+    var basicSpec = { REQD: { required: true },
+                      PARSED: { parse: function(x) { return x + 'foo'; } },
+                      MYBOOL: { parse: env.toBoolean },
+                      MYNUM: { parse: env.toNumber }
+                    };
+    it('throws an error if a required field is not present', function() {
+        assert.throws(
+            function() { env.validate({}, basicSpec); }, Error);    //FIXME: more precise error checking
+    });
+
+    it('works with a custom parse function', function() {
+        var myEnv = env.validate({ REQD: 'asdf', PARSED: 'bar'}, basicSpec);
+        assert.strictEqual(myEnv.PARSED, 'barfoo');
+    });
+
+    it('works with the env.toNumber() parser', function() {
+        var myEnv = env.validate({ REQD: 'asdf', MYNUM: '123'}, basicSpec);
+        assert.strictEqual(myEnv.MYNUM, 123);
+    });
+
+    it('works with the env.toBoolean() parser', function() {
+        var myEnv = env.validate({ REQD: 'asdf', MYBOOL: 'true'}, basicSpec);
+        assert.strictEqual(myEnv.MYBOOL, true);
+    });
+});
+
+
 describe('get()', function() {
     var basicSpec = { MYVAR: { required: true } };
     var randomKey = 'RANDOMKEY123456';
@@ -23,6 +51,7 @@ describe('get()', function() {
         assert.strictEqual(env.get(randomKey, 'defaultStr'), 'defaultStr');
     });
 });
+
 
 describe('set()', function() {
     var basicSpec = { SETVAR2: { required: true, parse: env.toNumber } };
