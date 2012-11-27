@@ -16,7 +16,7 @@ Validating your env vars:
     // This will throw an exception if any required conditions are not met.
     env.validate(process.env, {
         NODE_ENV: { required: true, choices: [ 'production', 'test', 'development' ] },
-        ADMIN_EMAIL: { required: true, regex: /.+@.+\..+/ },
+        ADMIN_EMAIL: { required: true, regex: /.+@mydomain\.com/ },
         EMAIL_CONFIG_JSON: { recommended: true, parse: JSON.parse,
                              help: 'Additional email configuration parameters' }
     });
@@ -34,7 +34,7 @@ Validating your env vars:
     // and/or filtering that you specified with env.validate().
     // The second (optional) argument is a default value that will be returned
     // if the environment variable is not set.
-    // NOTE: get() will only give access to env vars that were parsed by validate()
+    // NOTE: get() will only give access to env vars that were parsed by validate() or set()
     env.get('ADMIN_EMAIL')
     env.get('NOT_A_REAL_VAR', 'this string will be returned')
 
@@ -46,6 +46,28 @@ Validating your env vars:
     env.isProduction    // true if NODE_ENV === 'production'
     env.isTesting       // true if NODE_ENV === 'test'
     env.isDev           // true if NODE_ENV === 'development'
+
+
+## Parse Functions
+
+Node's process.env only stores strings, but sometimes you will want to retrieve other data
+(eg. a boolean or a number). To achieve this, specify a parse function for your env var, and
+the string in process.env will be passed through it when accessed by get().
+
+For convenience, `env.toNumber` and `env.toBoolean` are available, which will return the
+given type (and throw an error during validation if the env var isn't of the matching type).
+If you want to store an array or hash, you can use JSON.parse as your parse function.
+
+    // Assume for this example that process.env has MYBOOL='false', MYNUM='23', MYVAR='Hello'
+    env.validate(process.env, {
+        MYBOOL: { parse: env.toBoolean },
+        MYNUM: { parse: env.toNumber },
+        MYVAR: { parse: function(x) { return x.toLowerCase() } }
+    });
+
+    env.get('MYBOOL');      // Returns false (a boolean, not a string)
+    env.get('MYNUM');       // Returns 23
+    env.get('MYVAR');       // Returns 'hello'
 
 
 ## Motivation

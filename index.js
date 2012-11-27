@@ -3,9 +3,13 @@ var specs = {};
 
 
 // TODO: recommended/required support
+// TODO: support help argument
 
 var EnvError = exports.EnvError = function EnvError() {};
 
+// Validate a single field. Expects a field name, string value,
+// and an object literal "spec" that indicates which kinds of checks
+// should be run on the input value.
 function checkField(name, value, spec) {
     var identityFn = function(x) { return x; };
     var parser = spec.parse || identityFn;
@@ -63,10 +67,13 @@ exports.toBoolean = function toBoolean(input) {
     else throw new EnvError(input + ' does not look like a boolean');
 }
 
+// Get an env var that has passed validation.
 exports.get = function get(name, defaultVal) {
     return env[name] || defaultVal;
 };
 
+// Set an env var, after validating it.
+// This method will throw an error if the given value doesn't pass validation
 exports.set = function(name, value) {
     var spec = specs[name];
     if (spec) value = checkField(name, value, spec);
