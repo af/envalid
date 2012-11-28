@@ -2,9 +2,6 @@ var env = {};
 var specs = {};
 
 
-// TODO: recommended/required support
-// TODO: support help argument
-
 var EnvError = exports.EnvError = function EnvError() {};
 
 // Validate a single field. Expects a field name, string value,
@@ -39,6 +36,7 @@ function checkField(name, value, spec) {
 exports.validate = function validate(envInput, specInput) {
     var validatedEnv = {};
     var errors = {};
+    var recommendedFields = {};
     specs = specInput || {};
 
     Object.keys(specInput).forEach(function(k) {
@@ -46,9 +44,23 @@ exports.validate = function validate(envInput, specInput) {
         var inputValue = envInput[k];
         try {
             validatedEnv[k] = checkField(k, inputValue, itemSpec);
-        } catch (err) { errors[k] = err.message; }
+        } catch (err) { errors[k] = itemSpec.help || ''; }
+
+        if (itemSpec.recommended && inputValue === undefined) {
+            recommendedFields[k] = itemSpec.help || '';
+        }
     });
-    if (Object.keys(errors).length) throw new EnvError('Validation errors');   // FIXME: better error message
+
+    if (Object.keys(recommendedFields).length) {
+        var warning = '* Missing Recommended env vars:\n';
+        for (var k in recommendedFields) warning += (k + ': ' + recommendedFields[k] + '\n');
+        console.warn(warning);
+    }
+    if (Object.keys(errors).length) {
+        var errMessage = '* Missing Required env vars:\n';
+        for (var key in errors) errMessage += (key + ': ' + errors[key] + '\n');
+        throw new EnvError(errMessage);
+    }
     env = validatedEnv;
     return validatedEnv;
 };
