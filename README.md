@@ -1,3 +1,5 @@
+[![Build Status](https://secure.travis-ci.org/af/envalid.png)](http://travis-ci.org/af/envalid)
+
 Envalid is a small library for validating and accessing environment variables in
 Node.js programs.
 
