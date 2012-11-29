@@ -8,10 +8,12 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://www.github.com/af/envalid"
+    "url": "https://github.com/af/envalid"
   },
   "keywords": [
     "env",
+    "environment",
+    "environment variable",
     "validation"
   ],
   "devDependencies": {
@@ -21,5 +23,5 @@
     "test": "./node_modules/mocha/bin/mocha test/index.js"
   },
   "author": "Aaron Franks",
-  "license": "BSD"
+  "license": "MIT"
 }
