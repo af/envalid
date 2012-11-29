@@ -48,6 +48,24 @@ Validating your env vars:
     env.isDev           // true if NODE_ENV === 'development'
 
 
+## Error Handling
+
+There are two functions that handle errors: `env.onError` (used when there are any missing
+required env vars or validation errors) and `env.onRecommend`. The default behaviour for these
+functions is as follows:
+
+onError: log all of the env vars that failed validation, and shut down the process with `process.exit(1)`
+onRecommend: log all of the env vars that are recommended, but were not provided.
+
+You can override either function by overwriting the functions from the module, for example:
+
+    var env = require('envalid');
+    env.onRecommend = function(recs) {
+        console.warn('Missing env vars:', Object.keys(recs).join(','));
+    };
+    env.validate( ... );
+
+
 ## Parse Functions
 
 Node's process.env only stores strings, but sometimes you will want to retrieve other data

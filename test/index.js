@@ -3,7 +3,7 @@ var env = require('../index');
 
 
 describe('validate()', function() {
-    var basicSpec = { REQD: { required: true },
+    var basicSpec = { REQD: { required: true, help: 'Required variable' },
                       PARSED: { parse: function(x) { return x + 'foo'; } },
                       CHOICEVAR: { choices: ['one', 'two', 'three'] },
                       REGEXVAR: { regex: /number\d/ },
@@ -11,14 +11,18 @@ describe('validate()', function() {
                       MYBOOL: { parse: env.toBoolean },
                       MYNUM: { parse: env.toNumber }
                     };
+    var validationErrors = {};
+    env.onError = function(e) { validationErrors = e; };
     it('throws an error if a required field is not present', function() {
-        assert.throws(
-            function() { env.validate({}, basicSpec); }, env.EnvError);
+        env.validate({}, basicSpec);
+        assert.strictEqual(Object.keys(validationErrors).length, 1);
+        assert.strictEqual(validationErrors.REQD, 'Required variable');
     });
 
     it('validates from a set of choices if given', function() {
-        assert.throws(
-            function() { env.validate({ REQD: 'asdf', CHOICEVAR: 'asdf'}, basicSpec); }, env.EnvError);
+        env.validate({ REQD: 'asdf', CHOICEVAR: 'asdf'}, basicSpec);
+        assert.strictEqual(Object.keys(validationErrors).length, 1);
+        assert.strictEqual(validationErrors.CHOICEVAR, '');
 
         var myEnv = env.validate({ REQD: 'asdf', CHOICEVAR: 'two'}, basicSpec);
         assert.strictEqual(myEnv.CHOICEVAR, 'two');
@@ -26,8 +30,9 @@ describe('validate()', function() {
     });
 
     it('validates against a regex if one is provided', function() {
-        assert.throws(
-            function() { env.validate({ REQD: 'asdf', REGEXVAR: 'fail'}, basicSpec); }, env.EnvError);
+        env.validate({ REQD: 'asdf', REGEXVAR: 'fail'}, basicSpec);
+        assert.strictEqual(Object.keys(validationErrors).length, 1);
+        assert.strictEqual(validationErrors.REGEXVAR, '');
 
         var myEnv = env.validate({ REQD: 'asdf', REGEXVAR: 'number4'}, basicSpec);
         assert.strictEqual(myEnv.REGEXVAR, 'number4');
@@ -51,8 +56,9 @@ describe('validate()', function() {
         assert.strictEqual(myEnv.MYNUM, 123);
 
         // If a non-number was entered, toNumber should throw:
-        assert.throws(
-            function() { env.validate({ REQD: 'asdf', MYNUM: 'asdf12'}, basicSpec); }, env.EnvError);
+        env.validate({ REQD: 'asdf', MYNUM: 'asdf12'}, basicSpec);
+        assert.strictEqual(Object.keys(validationErrors).length, 1);
+        assert.strictEqual(validationErrors.MYNUM, '');
     });
 
     it('works with the env.toBoolean() parser', function() {

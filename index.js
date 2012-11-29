@@ -39,31 +39,41 @@ exports.validate = function validate(envInput, specInput) {
     var recommendedFields = {};
     specs = specInput || {};
 
+    // Validate each field in the spec, catching any validation errors that might have arisen:
     Object.keys(specInput).forEach(function(k) {
         var itemSpec = specInput[k];
         var inputValue = envInput[k];
         try {
             validatedEnv[k] = checkField(k, inputValue, itemSpec);
-        } catch (err) { errors[k] = itemSpec.help || ''; }
+        } catch (err) { errors[k] = itemSpec.help || ''; }  // FIXME separate msg for reqd/invalid values
 
         if (itemSpec.recommended && inputValue === undefined) {
             recommendedFields[k] = itemSpec.help || '';
         }
     });
 
-    if (Object.keys(recommendedFields).length) {
-        var warning = '* Missing Recommended env vars:\n';
-        for (var k in recommendedFields) warning += (k + ': ' + recommendedFields[k] + '\n');
-        console.warn(warning);
-    }
-    if (Object.keys(errors).length) {
-        var errMessage = '* Missing Required env vars:\n';
-        for (var key in errors) errMessage += (key + ': ' + errors[key] + '\n');
-        throw new EnvError(errMessage);
-    }
+    // If we are missing required or recommended fields, invoke the corresponding handler:
+    if (Object.keys(recommendedFields).length) exports.onRecommend && exports.onRecommend(recommendedFields);
+    if (Object.keys(errors).length) exports.onError && exports.onError(errors);
+
+    // Return the validated env and save its current state in the module:
     env = validatedEnv;
     return validatedEnv;
 };
+
+exports.onError = function onError(errors) {
+    var errMessage = '* ERROR! These required env vars are missing or invalid:\n';
+    for (var key in errors) errMessage += (key + ': ' + errors[key] + '\n');
+    console.error(errMessage);
+    process.exit(1);
+};
+
+exports.onRecommend = function onRecommend(recs) {
+    var warning = '* Missing Recommended env vars:\n';
+    for (var k in recs) warning += (k + ': ' + recs[k] + '\n');
+    console.warn(warning);
+};
+
 
 exports.toNumber = function toNumber(input) {
     var value = parseFloat(input);
@@ -79,6 +89,7 @@ exports.toBoolean = function toBoolean(input) {
     else throw new EnvError(input + ' does not look like a boolean');
 }
 
+
 // Get an env var that has passed validation.
 exports.get = function get(name, defaultVal) {
     return env[name] || defaultVal;
@@ -91,6 +102,7 @@ exports.set = function(name, value) {
     if (spec) value = checkField(name, value, spec);
     process.env[name] = env[name] = value;
 };
+
 
 // Simple boolean properties to make checking NODE_ENV a bit more readable:
 Object.defineProperty(exports, 'isProduction', { get: function() { return process.env.NODE_ENV === 'production'; }});
