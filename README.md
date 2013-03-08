@@ -14,7 +14,9 @@ Validating your env vars:
     var env = require('envalid');
 
     // Validate your environment variables.
-    // myValidators is an object literal that specifies the format of required vars.
+    // Takes two positional arguments:
+    //      * an object containing your env vars (eg. process.env)
+    //      * an object literal that specifies the format of required vars.
     // This will throw an exception if any required conditions are not met.
     env.validate(process.env, {
         NODE_ENV: { required: true, choices: [ 'production', 'test', 'development' ] },
