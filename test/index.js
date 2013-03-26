@@ -88,6 +88,11 @@ describe('get()', function() {
         assert.strictEqual(env.get(randomKey), undefined);
         assert.strictEqual(env.get(randomKey, 'defaultStr'), 'defaultStr');
     });
+
+    it('works with explicitly set false values', function() {
+        env.validate({ MYVAR: 'false' }, { MYVAR: {parse: env.toBoolean }});
+        assert.strictEqual(env.get('MYVAR', true), false);
+    });
 });
 
 
