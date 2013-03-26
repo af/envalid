@@ -92,7 +92,9 @@ exports.toBoolean = function toBoolean(input) {
 
 // Get an env var that has passed validation.
 exports.get = function get(name, defaultVal) {
-    return env[name] || defaultVal;
+    var val = env[name];
+    var found = val !== null && val !== undefined;
+    return found ? val : defaultVal;
 };
 
 // Set an env var, after validating it.
