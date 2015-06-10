@@ -11,6 +11,7 @@ Validating your env vars:
 
 ## API
 
+    ```js
     var env = require('envalid');
 
     // Validate your environment variables.
@@ -50,6 +51,7 @@ Validating your env vars:
     env.isProduction    // true if NODE_ENV === 'production'
     env.isTesting       // true if NODE_ENV === 'test'
     env.isDev           // true if NODE_ENV === 'development'
+    ```
 
 
 ## Error Handling
@@ -63,11 +65,13 @@ onRecommend: log all of the env vars that are recommended, but were not provided
 
 You can override either function by overwriting the functions from the module, for example:
 
+    ```js
     var env = require('envalid');
     env.onRecommend = function(recs) {
         console.warn('Missing env vars:', Object.keys(recs).join(','));
     };
     env.validate( ... );
+    ```
 
 
 ## Parse Functions
@@ -80,6 +84,7 @@ For convenience, `env.toNumber` and `env.toBoolean` are available, which will re
 given type (and throw an error during validation if the env var isn't of the matching type).
 If you want to store an array or hash, you can use JSON.parse as your parse function.
 
+    ```js
     // Assume for this example that process.env has MYBOOL='false', MYNUM='23', MYVAR='Hello'
     env.validate(process.env, {
         MYBOOL: { parse: env.toBoolean },
@@ -90,6 +95,7 @@ If you want to store an array or hash, you can use JSON.parse as your parse func
     env.get('MYBOOL');      // Returns false (a boolean, not a string)
     env.get('MYNUM');       // Returns 23
     env.get('MYVAR');       // Returns 'hello'
+    ```
 
 
 ## Motivation
