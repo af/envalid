@@ -1,5 +1,7 @@
 [![Build Status](https://secure.travis-ci.org/af/envalid.png)](http://travis-ci.org/af/envalid)
 
+# Envalid
+
 Envalid is a small library for validating and accessing environment variables in
 Node.js programs.
 
@@ -28,7 +30,7 @@ env.validate(process.env, {
 
 // Supported keys for env var specifications:
 // required - This env var must be provided, or validate() will throw an exception
-// recommended - This env var is not required, but if it is not provided, a warning will be logged
+// recommended - This env var is optional, but if missing, a warning will be logged
 // help - A string that describes the env var.
 // choices - An Array that gives the supported string values for the env var.
 // regex - A RegExp that the env var must match (or an exception will be thrown)
