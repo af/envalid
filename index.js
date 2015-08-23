@@ -43,17 +43,19 @@ exports.validate = function validate(envInput, specInput) {
     Object.keys(specInput).forEach(function(k) {
         var itemSpec = specInput[k];
         var inputValue = envInput[k];
-        try {
-            validatedEnv[k] = checkField(k, inputValue, itemSpec);
-        } catch (err) { errors[k] = itemSpec.help || ''; }  // FIXME separate msg for reqd/invalid values
-
+        if (itemSpec.preset && itemSpec.required) {
+            errors[k] = 'Preset conflicts with required';
+            return;
+        }
         if (itemSpec.recommended && inputValue === undefined) {
             recommendedFields[k] = itemSpec.help || '';
         }
-
-        if (itemSpec.default && inputValue === undefined) {
-            validatedEnv[k] = itemSpec.default;
+        if (itemSpec.preset && typeof inputValue === 'undefined') {
+            inputValue = itemSpec.preset;
         }
+        try {
+            validatedEnv[k] = checkField(k, inputValue, itemSpec);
+        } catch (err) { errors[k] = itemSpec.help || ''; }  // FIXME separate msg for reqd/invalid values
     });
 
     // If we are missing required or recommended fields, invoke the corresponding handler:
