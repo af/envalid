@@ -29,10 +29,11 @@ env.validate(process.env, {
 // Supported keys for env var specifications:
 // required - This env var must be provided, or validate() will throw an exception
 // recommended - This env var is not required, but if it is not provided, a warning will be logged
-// help - Points to a string that describes the env var.
-// choices - Points to an array that gives the supported string values for the env var.
-// regex - Points to a regular expression that the env var must match (or an exception will be thrown)
-// parse - Points to a function that the env var will be passed through before being accessed with get()
+// help - A string that describes the env var.
+// choices - An Array that gives the supported string values for the env var.
+// regex - A RegExp that the env var must match (or an exception will be thrown)
+// parse - A function the env var will be passed through before being accessed with get()
+// default - A fallback value that get() will return if the env var wasn't specified
 
 
 // Get an environment variable, which will be passed through any validation

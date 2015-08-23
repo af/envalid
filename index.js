@@ -50,6 +50,10 @@ exports.validate = function validate(envInput, specInput) {
         if (itemSpec.recommended && inputValue === undefined) {
             recommendedFields[k] = itemSpec.help || '';
         }
+
+        if (itemSpec.default && inputValue === undefined) {
+            validatedEnv[k] = itemSpec.default;
+        }
     });
 
     // If we are missing required or recommended fields, invoke the corresponding handler:

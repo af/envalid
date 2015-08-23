@@ -6,7 +6,8 @@ describe('validate()', function() {
     var basicSpec = { REQD: { required: true, help: 'Required variable' },
                       PARSED: { parse: function(x) { return x + 'foo'; } },
                       CHOICEVAR: { choices: ['one', 'two', 'three'] },
-                      REGEXVAR: { regex: /number\d/ },
+                      WITHDEFAULT: { default: 'defaultvalue' },
+                      REGEXVAR: { regex: /number\d/, default: 'number0' },
                       JSONVAR: { parse: JSON.parse },
                       MYBOOL: { parse: env.toBoolean },
                       MYNUM: { parse: env.toNumber }
@@ -64,6 +65,20 @@ describe('validate()', function() {
     it('works with the env.toBoolean() parser', function() {
         var myEnv = env.validate({ REQD: 'asdf', MYBOOL: 'true'}, basicSpec);
         assert.strictEqual(myEnv.MYBOOL, true);
+    });
+
+    it('sets default values', function() {
+        var env1 = env.validate({ REQD: 'asdf' }, basicSpec);
+        assert.strictEqual(env1.WITHDEFAULT, 'defaultvalue');
+
+        // The default value isn't returned if we specify one:
+        var env2 = env.validate({ REQD: 'asdf', REGEXVAR: 'number7' }, basicSpec);
+        assert.strictEqual(env2.REGEXVAR, 'number7');
+
+        // Passing an invalid value still triggers validation:
+        assert.strictEqual(validationErrors.REGEXVAR, undefined);
+        env.validate({ REQD: 'asdf', REGEXVAR: 'failme' }, basicSpec);
+        assert.strictEqual(validationErrors.REGEXVAR, '');
     });
 });
 
