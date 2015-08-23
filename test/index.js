@@ -1,6 +1,8 @@
 var assert = require('assert');
 var env = require('../index');
 
+var validationErrors = {};
+env.onError = function(e) { validationErrors = e; };
 
 describe('validate()', function() {
     var basicSpec = { REQD: { required: true, help: 'Required variable' },
@@ -12,8 +14,6 @@ describe('validate()', function() {
                       MYBOOL: { parse: env.toBoolean },
                       MYNUM: { parse: env.toNumber }
                     };
-    var validationErrors = {};
-    env.onError = function(e) { validationErrors = e; };
     it('throws an error if a required field is not present', function() {
         env.validate({}, basicSpec);
         assert.strictEqual(Object.keys(validationErrors).length, 1);
