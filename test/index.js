@@ -97,15 +97,18 @@ describe('validate()', function() {
         assert.strictEqual(myEnv.MYBOOL, true);
     });
 
-    it('sets default values', function() {
+    it('uses default value if variable is not present', function() {
         var env1 = env.validate({ REQD: 'asdf' }, basicSpec);
         assert.strictEqual(env1.WITHDEFAULT, 'defaultvalue');
+    });
 
+    it('uses environment variable instead of default', function() {
         // The default value isn't returned if we specify one:
         var env2 = env.validate({ REQD: 'asdf', REGEXVAR: 'number7' }, basicSpec);
         assert.strictEqual(env2.REGEXVAR, 'number7');
+    });
 
-        // Passing an invalid value still triggers validation:
+    it('fails validation even if the default value passes', function() {
         assert.strictEqual(validationErrors.REGEXVAR, undefined);
         env.validate({ REQD: 'asdf', REGEXVAR: 'failme' }, basicSpec);
         assert.strictEqual(validationErrors.REGEXVAR, '');
