@@ -43,6 +43,10 @@ exports.validate = function validate(envInput, specInput) {
     Object.keys(specInput).forEach(function(k) {
         var itemSpec = specInput[k];
         var inputValue = envInput[k];
+        if (itemSpec.default && itemSpec.required) {
+            errors[k] = 'Preset conflicts with required';
+            return;
+        }
         try {
             validatedEnv[k] = checkField(k, inputValue, itemSpec);
         } catch (err) { errors[k] = itemSpec.help || ''; }  // FIXME separate msg for reqd/invalid values

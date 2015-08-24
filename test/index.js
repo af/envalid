@@ -123,6 +123,17 @@ describe('validate()', function() {
     });
 });
 
+describe('conflicting validation rules', function() {
+    var basicSpec = {
+        REQD_PRESET: { default: 'default', required: true, help: 'Required'},
+    };
+
+    it('sends an error if a required field also has a preset', function() {
+        env.validate({}, basicSpec);
+        assert.strictEqual(Object.keys(validationErrors).length, 1);
+        assert.strictEqual(validationErrors.REQD_PRESET, 'Preset conflicts with required');
+    });
+})
 
 describe('get()', function() {
     var basicSpec = { MYVAR: { required: true } };
