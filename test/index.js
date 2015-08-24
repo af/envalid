@@ -12,6 +12,17 @@ env.onError = function(e) {
     validationErrors = e;
 };
 
+var didSendRecommendations = false;
+var validationRecommendations = {};
+beforeEach(function() {
+    didSendRecommendations = false;
+    validationRecommendations = {};
+});
+env.onRecommend = function(r) {
+    didSendRecommendations = true;
+    validationRecommendations = r;
+};
+
 describe('validate()', function() {
     var basicSpec = { REQD: { required: true, help: 'Required variable' },
                       PARSED: { parse: function(x) { return x + 'foo'; } },
@@ -19,6 +30,7 @@ describe('validate()', function() {
                       WITHDEFAULT: { default: 'defaultvalue' },
                       REGEXVAR: { regex: /number\d/, default: 'number0' },
                       JSONVAR: { parse: JSON.parse },
+                      OPT: { recommended: true, help: 'Recommended' },
                       MYBOOL: { parse: env.toBoolean },
                       MYNUM: { parse: env.toNumber }
                     };
@@ -97,6 +109,13 @@ describe('validate()', function() {
         assert.strictEqual(validationErrors.REGEXVAR, undefined);
         env.validate({ REQD: 'asdf', REGEXVAR: 'failme' }, basicSpec);
         assert.strictEqual(validationErrors.REGEXVAR, '');
+    });
+
+    it('sends recommendations for missing variables', function() {
+        env.validate({ REQD: 1 }, basicSpec);
+        assert(Object.keys(validationRecommendations).length >= 1);
+        assert.strictEqual(validationRecommendations.OPT, 'Recommended');
+        assert.strictEqual(didSendErrors, false);
     });
 });
 
