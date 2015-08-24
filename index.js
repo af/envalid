@@ -44,7 +44,7 @@ exports.validate = function validate(envInput, specInput) {
         var itemSpec = specInput[k];
         var inputValue = envInput[k];
         if (itemSpec.default && itemSpec.required) {
-            errors[k] = 'Preset conflicts with required';
+            errors[k] = 'Required fields should not have defaults';
             return;
         }
         try {
