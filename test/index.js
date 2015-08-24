@@ -27,7 +27,7 @@ describe('validate()', function() {
     var basicSpec = { REQD: { required: true, help: 'Required variable' },
                       PARSED: { parse: function(x) { return x + 'foo'; } },
                       CHOICEVAR: { choices: ['one', 'two', 'three'] },
-                      WITHDEFAULT: { default: 'defaultvalue' },
+                      WITHDEFAULT: { default: 'defaultvalue', recommended: true, help: 'Recommended' },
                       REGEXVAR: { regex: /number\d/, default: 'number0' },
                       JSONVAR: { parse: JSON.parse },
                       OPT: { recommended: true, help: 'Recommended' },
@@ -118,6 +118,7 @@ describe('validate()', function() {
         env.validate({ REQD: 1 }, basicSpec);
         assert(Object.keys(validationRecommendations).length >= 1);
         assert.strictEqual(validationRecommendations.OPT, 'Recommended');
+        assert.strictEqual(validationRecommendations.WITHDEFAULT, 'Recommended');
         assert.strictEqual(didSendErrors, false);
     });
 });
