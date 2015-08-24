@@ -27,7 +27,7 @@ describe('validate()', function() {
     var basicSpec = { REQD: { required: true, help: 'Required variable' },
                       PARSED: { parse: function(x) { return x + 'foo'; } },
                       CHOICEVAR: { choices: ['one', 'two', 'three'] },
-                      WITHDEFAULT: { default: 'defaultvalue' },
+                      WITHDEFAULT: { default: 'defaultvalue', recommended: true, help: 'Recommended' },
                       REGEXVAR: { regex: /number\d/, default: 'number0' },
                       JSONVAR: { parse: JSON.parse },
                       OPT: { recommended: true, help: 'Recommended' },
@@ -97,15 +97,18 @@ describe('validate()', function() {
         assert.strictEqual(myEnv.MYBOOL, true);
     });
 
-    it('sets default values', function() {
+    it('uses default value if variable is not present', function() {
         var env1 = env.validate({ REQD: 'asdf' }, basicSpec);
         assert.strictEqual(env1.WITHDEFAULT, 'defaultvalue');
+    });
 
+    it('uses environment variable instead of default', function() {
         // The default value isn't returned if we specify one:
         var env2 = env.validate({ REQD: 'asdf', REGEXVAR: 'number7' }, basicSpec);
         assert.strictEqual(env2.REGEXVAR, 'number7');
+    });
 
-        // Passing an invalid value still triggers validation:
+    it('fails validation even if the default value passes', function() {
         assert.strictEqual(validationErrors.REGEXVAR, undefined);
         env.validate({ REQD: 'asdf', REGEXVAR: 'failme' }, basicSpec);
         assert.strictEqual(validationErrors.REGEXVAR, '');
@@ -115,10 +118,22 @@ describe('validate()', function() {
         env.validate({ REQD: 1 }, basicSpec);
         assert(Object.keys(validationRecommendations).length >= 1);
         assert.strictEqual(validationRecommendations.OPT, 'Recommended');
+        assert.strictEqual(validationRecommendations.WITHDEFAULT, 'Recommended');
         assert.strictEqual(didSendErrors, false);
     });
 });
 
+describe('conflicting validation rules', function() {
+    var basicSpec = {
+        REQD_PRESET: { default: 'default', required: true, help: 'Required'},
+    };
+
+    it('sends an error if a required field also has a preset', function() {
+        env.validate({}, basicSpec);
+        assert.strictEqual(Object.keys(validationErrors).length, 1);
+        assert.strictEqual(validationErrors.REQD_PRESET, 'Preset conflicts with required');
+    });
+})
 
 describe('get()', function() {
     var basicSpec = { MYVAR: { required: true } };
