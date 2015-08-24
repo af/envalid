@@ -1,6 +1,27 @@
 var assert = require('assert');
 var env = require('../index');
 
+var validationErrors = {};
+var didSendErrors = false;
+beforeEach(function() {
+    didSendErrors = false;
+    validationErrors = {};
+});
+env.onError = function(e) {
+    didSendErrors = true;
+    validationErrors = e;
+};
+
+var didSendRecommendations = false;
+var validationRecommendations = {};
+beforeEach(function() {
+    didSendRecommendations = false;
+    validationRecommendations = {};
+});
+env.onRecommend = function(r) {
+    didSendRecommendations = true;
+    validationRecommendations = r;
+};
 
 describe('validate()', function() {
     var basicSpec = { REQD: { required: true, help: 'Required variable' },
@@ -9,54 +30,62 @@ describe('validate()', function() {
                       WITHDEFAULT: { default: 'defaultvalue' },
                       REGEXVAR: { regex: /number\d/, default: 'number0' },
                       JSONVAR: { parse: JSON.parse },
+                      OPT: { recommended: true, help: 'Recommended' },
                       MYBOOL: { parse: env.toBoolean },
                       MYNUM: { parse: env.toNumber }
                     };
-    var validationErrors = {};
-    env.onError = function(e) { validationErrors = e; };
     it('throws an error if a required field is not present', function() {
         env.validate({}, basicSpec);
         assert.strictEqual(Object.keys(validationErrors).length, 1);
         assert.strictEqual(validationErrors.REQD, 'Required variable');
     });
 
-    it('validates from a set of choices if given', function() {
+    it('sends an error if a choice is invalid', function() {
         env.validate({ REQD: 'asdf', CHOICEVAR: 'asdf'}, basicSpec);
         assert.strictEqual(Object.keys(validationErrors).length, 1);
         assert.strictEqual(validationErrors.CHOICEVAR, '');
+    });
 
+    it('passes if a choice is valid', function() {
         var myEnv = env.validate({ REQD: 'asdf', CHOICEVAR: 'two'}, basicSpec);
+        assert.strictEqual(didSendErrors, false);
         assert.strictEqual(myEnv.CHOICEVAR, 'two');
         assert.strictEqual(env.get('CHOICEVAR'), 'two');
     });
 
-    it('validates against a regex if one is provided', function() {
+    it('sends an error if regex matching fails', function() {
         env.validate({ REQD: 'asdf', REGEXVAR: 'fail'}, basicSpec);
         assert.strictEqual(Object.keys(validationErrors).length, 1);
         assert.strictEqual(validationErrors.REGEXVAR, '');
+    });
 
+    it('passes if regex validation succeeds', function() {
         var myEnv = env.validate({ REQD: 'asdf', REGEXVAR: 'number4'}, basicSpec);
+        assert.strictEqual(didSendErrors, false);
         assert.strictEqual(myEnv.REGEXVAR, 'number4');
         assert.strictEqual(env.get('REGEXVAR'), 'number4');
     });
 
     it('works with a custom parse function', function() {
         var myEnv = env.validate({ REQD: 'asdf', PARSED: 'bar'}, basicSpec);
+        assert.strictEqual(didSendErrors, false);
         assert.strictEqual(myEnv.PARSED, 'barfoo');
     });
 
     it('works with JSON.parse', function() {
         var myEnv = env.validate({ REQD: 'asdf', JSONVAR: '{"foo": 123, "bar": "baz"}'}, basicSpec);
+        assert.strictEqual(didSendErrors, false);
         assert.strictEqual(myEnv.JSONVAR.foo, 123);
         assert.strictEqual(myEnv.JSONVAR.bar, 'baz');
     });
 
-
-    it('works with the env.toNumber() parser', function() {
+    it('returns a numeric type with the toNumber parser', function() {
         var myEnv = env.validate({ REQD: 'asdf', MYNUM: '123'}, basicSpec);
+        assert.strictEqual(didSendErrors, false);
         assert.strictEqual(myEnv.MYNUM, 123);
+    });
 
-        // If a non-number was entered, toNumber should throw:
+    it('send an error if a non-number was entered', function() {
         env.validate({ REQD: 'asdf', MYNUM: 'asdf12'}, basicSpec);
         assert.strictEqual(Object.keys(validationErrors).length, 1);
         assert.strictEqual(validationErrors.MYNUM, '');
@@ -64,6 +93,7 @@ describe('validate()', function() {
 
     it('works with the env.toBoolean() parser', function() {
         var myEnv = env.validate({ REQD: 'asdf', MYBOOL: 'true'}, basicSpec);
+        assert.strictEqual(didSendErrors, false);
         assert.strictEqual(myEnv.MYBOOL, true);
     });
 
@@ -79,6 +109,13 @@ describe('validate()', function() {
         assert.strictEqual(validationErrors.REGEXVAR, undefined);
         env.validate({ REQD: 'asdf', REGEXVAR: 'failme' }, basicSpec);
         assert.strictEqual(validationErrors.REGEXVAR, '');
+    });
+
+    it('sends recommendations for missing variables', function() {
+        env.validate({ REQD: 1 }, basicSpec);
+        assert(Object.keys(validationRecommendations).length >= 1);
+        assert.strictEqual(validationRecommendations.OPT, 'Recommended');
+        assert.strictEqual(didSendErrors, false);
     });
 });
 
