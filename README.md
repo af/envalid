@@ -24,6 +24,7 @@ const { lockEnv } = require('envalid')
 // lockEnv() accepts three positional arguments:
 //      * an object containing your env vars (eg. process.env)
 //      * an object literal that specifies the format of required vars.
+//      * an object with options
 // This will throw an exception if any required conditions are not met.
 lockEnv(process.env, {
     NODE_ENV: { choices: ['production', 'test', 'development'] },
