@@ -71,5 +71,9 @@ test('parse functions', () => {
         FOO: { parse: toBool }
     })
     assert.deepEqual(withBool, { FOO: true })
-})
 
+    const withNumber = lockEnv({ FOO: '1' }, {
+        FOO: { parse: toNumber }
+    })
+    assert.deepEqual(withNumber, { FOO: 1 })
+})
