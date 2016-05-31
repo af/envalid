@@ -1,5 +1,5 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, bool, str, num, email } = require('..')
+const { cleanEnv, EnvError, bool, str, num, email, json } = require('..')
 const test = createGroup()
 
 
@@ -80,4 +80,11 @@ test('email()', () => {
 
     assert.throws(() => cleanEnv({ FOO: 'asdf@asdf' }, { FOO: email() }), EnvError)
     assert.throws(() => cleanEnv({ FOO: '1' }, { FOO: email() }), EnvError)
+})
+
+test('json()', () => {
+    const env = cleanEnv({ FOO: '{"x": 123}' }, { FOO: json() })
+    assert.deepEqual(env, { FOO: {x: 123} })
+
+    assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: json() }), EnvError)
 })
