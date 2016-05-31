@@ -7,7 +7,31 @@ EnvError.prototype.name = 'EnvError'
 exports.EnvError = EnvError
 
 
-exports.toBool = function toBool(input) {
+function validateVar({ spec = {}, name, rawValue }) {
+    if (typeof spec._parse !== 'function') {
+        throw new EnvError(`Invalid spec for "${name}"`)
+    }
+    const value = spec._parse(rawValue)
+
+    if (spec.choices) {
+        if (!Array.isArray(spec.choices)) {
+            throw new Error(`"choices" must be an array (in spec for "${name}")`)
+        } else if (!spec.choices.includes(value)) {
+            throw new EnvError(`Env var "${name}" not in choices [${spec.choices}]`)
+        }
+    }
+    if (value == null) throw new EnvError(`Invalid value for env var "${name}"`)
+    return value
+}
+
+function makeValidator(parseFn) {
+    return function(spec = {}) {
+        spec._parse = parseFn
+        return spec
+    }
+}
+
+exports.bool = makeValidator(input => {
     switch (input) {
         case 'true':
         case 't':
@@ -20,28 +44,10 @@ exports.toBool = function toBool(input) {
         default:
             return null
     }
-}
+})
 
-exports.toNumber = function toNumber(input) {
-    return +input
-}
-
-function validateVar({ spec, name, rawValue }) {
-    const value = spec.parse ? spec.parse(rawValue) : rawValue
-
-    if (spec.choices) {
-        if (!Array.isArray(spec.choices)) {
-            throw new Error(`"choices" must be an array (in spec for "${name}")`)
-        } else if (!spec.choices.includes(value)) {
-            throw new EnvError(`Env var "${name}" not in choices [${spec.choices}]`)
-        }
-    }
-    if (value == null) {
-        if (spec.parse) throw new EnvError(`Invalid value for env var "${name}"`)
-        else throw new EnvError(`Missing env var "${name}"`)
-    }
-    return value
-}
+exports.num = makeValidator(input => +input)
+exports.str = makeValidator(input => input)
 
 
 exports.cleanEnv = function cleanEnv(env, specs = {}, options = {}) {

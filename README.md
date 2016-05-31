@@ -19,24 +19,23 @@ completely rewritten from version 0.x - 1.x **
 ## API
 
 ```js
-const { cleanEnv } = require('envalid')
+const ev = require('envalid')
 
 // cleanEnv() accepts three positional arguments:
 //      * an object containing your env vars (eg. process.env)
 //      * an object literal that specifies the format of required vars.
 //      * an object with options
 // This will throw an exception if any required conditions are not met.
-cleanEnv(process.env, {
-    NODE_ENV: { choices: ['production', 'test', 'development'] },
-    ADMIN_EMAIL: { test: /.+@mydomain\.com/ },
-    EMAIL_CONFIG_JSON: { parse: JSON.parse, desc: 'Additional email parameters' }
+ev.cleanEnv(process.env, {
+    NODE_ENV: ev.str({ choices: ['production', 'test', 'development'] }),
+    ADMIN_EMAIL: ev.email(),
+    EMAIL_CONFIG_JSON: ev.json({ desc: 'Additional email parameters' })
 }, { strict: true });
 
 // Supported keys for env var specifications:
 // desc - A string that describes the env var.
 // choices - An Array that gives the admissable parsed values for the env var.
 // test - A RegExp that the env var must match (or an exception will be thrown)
-// parse - A function the env var will be passed through before being accessed
 // default - A fallback value if the env var wasn't specified. This effectively
 //           makes the env var optional.
 
@@ -51,6 +50,10 @@ env.isTesting       // true if NODE_ENV === 'test'
 env.isDev           // true if NODE_ENV === 'development'
 ```
 
+## Supported types
+
+TODO: fill this out (str/bool/num/email/json/url)
+TODO: explain custom types
 
 ## Error Handling
 
@@ -70,11 +73,11 @@ JSON.parse as your parse function.
 
 ```js
 // Assume for this example that process.env has MYBOOL='false', MYNUM='23', MYSTR='Hello'
-const { cleanEnv, toBool, toNumber } = require('envalid')
-const env = cleanEnv(process.env, {
-    MYBOOL: { parse: env.toBool },
-    MYNUM: { parse: env.toNumber },
-    MYSTR: { parse: x => x.toLowerCase() }
+const ev = require('envalid')
+const env = ev.cleanEnv(process.env, {
+    MYBOOL: ev.bool(),
+    MYNUM: ev.num(),
+    MYSTR: ev.str()
 });
 
 env.MYBOOL      // -> false (a boolean, not a string)

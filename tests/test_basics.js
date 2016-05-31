@@ -1,11 +1,11 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, toBool, toNumber } = require('..')
+const { cleanEnv, EnvError, bool, str, num } = require('..')
 const test = createGroup()
 
 
 test('string passthrough', () => {
     const env = cleanEnv({ FOO: 'bar' }, {
-        FOO: {}
+        FOO: str()
     })
     assert.deepEqual(env, { FOO: 'bar' })
 })
@@ -13,18 +13,18 @@ test('string passthrough', () => {
 test('strict option: only specified fields are passed through', () => {
     const opts = { strict: true }
     const env = cleanEnv({ FOO: 'bar', BAZ: 'baz' }, {
-        FOO: {}
+        FOO: str()
     }, opts)
     assert.deepEqual(env, { FOO: 'bar' })
 })
 
 test('missing required string field', () => {
-    assert.throws(() => cleanEnv({}, { FOO: {} }), EnvError)
+    assert.throws(() => cleanEnv({}, { FOO: str() }), EnvError)
 })
 
 test('using provided default value', () => {
     const env = cleanEnv({}, {
-        FOO: { default: 'asdf' }
+        FOO: str({ default: 'asdf' })
     })
     assert.deepEqual(env, { FOO: 'asdf' })
 })
@@ -32,7 +32,7 @@ test('using provided default value', () => {
 test('choices field', () => {
     // Throws when the env var isn't in the given choices:
     const spec = {
-        FOO: { choices: ['foo', 'bar', 'baz'] }
+        FOO: str({ choices: ['foo', 'bar', 'baz'] })
     }
     assert.throws(() => cleanEnv({}, spec), EnvError, 'not in choices')
 
@@ -41,39 +41,35 @@ test('choices field', () => {
     assert.deepEqual(env, { FOO: 'bar' })
 
     // Throws an error when `choices` is not an array
-    assert.throws(() => cleanEnv({}, { FOO: { choices: 123 } }), Error, 'must be an array')
+    assert.throws(() => cleanEnv({}, { FOO: str({ choices: 123 }) }), Error, 'must be an array')
 })
 
-test('parse functions', () => {
-    // Parse function output is used for the env var
-    const replaced = cleanEnv({ FOO: 'bar' }, {
-        FOO: { parse: () => 'parsed' }
-    })
-    assert.deepEqual(replaced, { FOO: 'parsed' })
+test('misconfigured spec', () => {
+    // Validation throws with different error if spec is invalid
+    assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: {} }), EnvError, 'Invalid spec')
+})
 
-    // Parse fn can modify a passed in env var
-    const modified = cleanEnv({ FOO: 'bar.baz' }, {
-        FOO: { parse: x => x.split('.')[0] }
-    })
-    assert.deepEqual(modified, { FOO: 'bar' })
+test('bool() works with various boolean string formats', () => {
+    assert.throws(() => cleanEnv({ FOO: 'asfd' }, { FOO: bool() }),
+                  EnvError, 'Invalid value')
 
-    // Validation throws with different error if parse fn returns null
-    assert.throws(() => cleanEnv({ FOO: 'asdf' }, {
-        FOO: { parse: () => null }
-    }), EnvError, 'Invalid value')
+    const truthyNum = cleanEnv({ FOO: '1' }, { FOO: bool() })
+    assert.deepEqual(truthyNum, { FOO: true })
+    const falsyNum = cleanEnv({ FOO: '0' }, { FOO: bool() })
+    assert.deepEqual(falsyNum, { FOO: false })
 
-    // toBoolean works as a parse fn
-    assert.throws(() => cleanEnv({ FOO: 'asfd' }, {
-        FOO: { parse: toBool }
-    }), EnvError, 'Invalid value')
+    const trueStr = cleanEnv({ FOO: 'true' }, { FOO: bool() })
+    assert.deepEqual(trueStr, { FOO: true })
+    const falseStr = cleanEnv({ FOO: 'false' }, { FOO: bool() })
+    assert.deepEqual(falseStr, { FOO: false })
 
-    const withBool = cleanEnv({ FOO: '1' }, {
-        FOO: { parse: toBool }
-    })
-    assert.deepEqual(withBool, { FOO: true })
+    const t = cleanEnv({ FOO: 't' }, { FOO: bool() })
+    assert.deepEqual(t, { FOO: true })
+    const f = cleanEnv({ FOO: 'f' }, { FOO: bool() })
+    assert.deepEqual(f, { FOO: false })
+})
 
-    const withNumber = cleanEnv({ FOO: '1' }, {
-        FOO: { parse: toNumber }
-    })
+test('num()', () => {
+    const withNumber = cleanEnv({ FOO: '1' }, { FOO: num() })
     assert.deepEqual(withNumber, { FOO: 1 })
 })
