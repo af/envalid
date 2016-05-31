@@ -1,5 +1,5 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, bool, str, num } = require('..')
+const { cleanEnv, EnvError, bool, str, num, email } = require('..')
 const test = createGroup()
 
 
@@ -72,4 +72,12 @@ test('bool() works with various boolean string formats', () => {
 test('num()', () => {
     const withNumber = cleanEnv({ FOO: '1' }, { FOO: num() })
     assert.deepEqual(withNumber, { FOO: 1 })
+})
+
+test('email()', () => {
+    const env = cleanEnv({ FOO: 'foo@example.com' }, { FOO: email() })
+    assert.deepEqual(env, { FOO: 'foo@example.com' })
+
+    assert.throws(() => cleanEnv({ FOO: 'asdf@asdf' }, { FOO: email() }), EnvError)
+    assert.throws(() => cleanEnv({ FOO: '1' }, { FOO: email() }), EnvError)
 })

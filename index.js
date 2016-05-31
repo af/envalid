@@ -1,3 +1,6 @@
+// Intentionally simple regex for testing emails
+const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+
 function EnvError(input) {
     this.message = input
     this.stack = new Error().stack
@@ -48,6 +51,10 @@ exports.bool = makeValidator(input => {
 
 exports.num = makeValidator(input => +input)
 exports.str = makeValidator(input => input)
+exports.email = makeValidator(x => {
+    if (EMAIL_REGEX.test(x)) return x
+    throw new EnvError(`Invalid email address: "${x}"`)
+})
 
 
 exports.cleanEnv = function cleanEnv(env, specs = {}, options = {}) {
