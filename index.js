@@ -44,7 +44,7 @@ function validateVar({ spec, name, rawValue }) {
 }
 
 
-exports.lockEnv = function lockEnv(env, specs = {}, options = {}) {
+exports.cleanEnv = function cleanEnv(env, specs = {}, options = {}) {
     const output = {}
     const varKeys = Object.keys(specs)
 

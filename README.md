@@ -19,14 +19,14 @@ completely rewritten from version 0.x - 1.x **
 ## API
 
 ```js
-const { lockEnv } = require('envalid')
+const { cleanEnv } = require('envalid')
 
-// lockEnv() accepts three positional arguments:
+// cleanEnv() accepts three positional arguments:
 //      * an object containing your env vars (eg. process.env)
 //      * an object literal that specifies the format of required vars.
 //      * an object with options
 // This will throw an exception if any required conditions are not met.
-lockEnv(process.env, {
+cleanEnv(process.env, {
     NODE_ENV: { choices: ['production', 'test', 'development'] },
     ADMIN_EMAIL: { test: /.+@mydomain\.com/ },
     EMAIL_CONFIG_JSON: { parse: JSON.parse, desc: 'Additional email parameters' }
@@ -42,7 +42,7 @@ lockEnv(process.env, {
 
 
 // Get an environment variable, which will be passed through any validation
-// and/or filtering that you specified with lockEnv().
+// and/or filtering that you specified with cleanEnv().
 console.log(env.ADMIN_EMAIL)
 
 // Shortcut (boolean) properties for checking the value of process.env.NODE_ENV
@@ -70,8 +70,8 @@ JSON.parse as your parse function.
 
 ```js
 // Assume for this example that process.env has MYBOOL='false', MYNUM='23', MYSTR='Hello'
-const { lockEnv, toBool, toNumber } = require('envalid')
-const env = lockEnv(process.env, {
+const { cleanEnv, toBool, toNumber } = require('envalid')
+const env = cleanEnv(process.env, {
     MYBOOL: { parse: env.toBool },
     MYNUM: { parse: env.toNumber },
     MYSTR: { parse: x => x.toLowerCase() }
