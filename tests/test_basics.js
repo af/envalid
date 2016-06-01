@@ -53,6 +53,33 @@ test('misconfigured spec', () => {
     assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: {} }), EnvError, 'Invalid spec')
 })
 
+test('NODE_ENV built-in support', () => {
+    // By default, envalid will parse and accept 3 standard NODE_ENV values:
+    assertPassthrough({ NODE_ENV: 'production' }, {})
+    assertPassthrough({ NODE_ENV: 'development' }, {})
+    assertPassthrough({ NODE_ENV: 'test' }, {})
+
+    // Some convenience helpers are available on the cleaned env object:
+    assert.strictEqual(cleanEnv({ NODE_ENV: 'production' }, {}).isProduction, true)
+    assert.strictEqual(cleanEnv({ NODE_ENV: 'test' }, {}).isTest, true)
+    assert.strictEqual(cleanEnv({ NODE_ENV: 'development' }, {}).isDev, true)
+
+    // assume production if NODE_ENV is not specified:
+    assert.strictEqual(cleanEnv({}, {}).isProduction, true)
+    assert.strictEqual(cleanEnv({}, {}).isDev, false)
+    assert.strictEqual(cleanEnv({}, {}).isTest, false)
+
+    // Non-standard values throw an error:
+    assert.throws(() => cleanEnv({ NODE_ENV: 'asdf' }, {}), EnvError, 'not in choices')
+
+    // You can override the built-in NODE_ENV validation if you want
+    // The built-in convenience helpers can't be overridden though.
+    const customSpec = { NODE_ENV: str({ default: 'FOO' }) }
+    assert.deepEqual(cleanEnv({}, customSpec), { NODE_ENV: 'FOO' })
+    assert.strictEqual(cleanEnv({}, customSpec).isProduction, false)
+    assert.strictEqual(cleanEnv({}, customSpec).isDev, false)
+})
+
 test('bool() works with various boolean string formats', () => {
     assert.throws(() => cleanEnv({ FOO: 'asfd' }, { FOO: bool() }),
                   EnvError, 'Invalid value')

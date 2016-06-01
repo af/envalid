@@ -29,8 +29,18 @@ function validateVar({ spec = {}, name, rawValue }) {
 
 
 exports.cleanEnv = function cleanEnv(env, specs = {}, options = {}) {
-    const output = {}
+    let output = {}
+    let defaultNodeEnv = ''
     const varKeys = Object.keys(specs)
+
+    // If validation for NODE_ENV isn't specified, use the default validation:
+    if (!varKeys.includes('NODE_ENV')) {
+        defaultNodeEnv = validateVar({
+            name: 'NODE_ENV',
+            spec: exports.str({ choices: ['development', 'test', 'production'] }),
+            rawValue: env.NODE_ENV || 'production'
+        })
+    }
 
     for (const k of varKeys) {
         const spec = specs[k]
@@ -38,9 +48,19 @@ exports.cleanEnv = function cleanEnv(env, specs = {}, options = {}) {
         output[k] = validateVar({ name: k, spec, rawValue })
     }
 
-    return options.strict
+    // If we need to run Object.assign() on output, we must do it before the
+    // defineProperties() call, otherwise the properties would be lost
+    output = options.strict
         ? output
         : Object.assign({}, env, output)
+
+    Object.defineProperties(output, {
+        isDev:        { value: (defaultNodeEnv || output.NODE_ENV) === 'development' },
+        isProduction: { value: (defaultNodeEnv || output.NODE_ENV) === 'production' },
+        isTest:       { value: (defaultNodeEnv || output.NODE_ENV) === 'test' }
+    })
+
+    return output
 }
 
 
