@@ -75,6 +75,12 @@ exports.email = makeValidator(x => {
     throw new EnvError(`Invalid email address: "${x}"`)
 })
 
+exports.url = makeValidator(x => {
+    const parsed = require('url').parse(x)
+    const isValid = !!(parsed.protocol && parsed.host && parsed.slashes)
+    return isValid ? x : null
+})
+
 exports.json = makeValidator(x => {
     try {
         return JSON.parse(x)
