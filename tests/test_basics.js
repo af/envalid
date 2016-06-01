@@ -2,12 +2,14 @@ const { createGroup, assert } = require('painless')
 const { cleanEnv, EnvError, bool, str, num, email, url, json } = require('..')
 const test = createGroup()
 
+// Ensure that a given environment spec passes through all values from the given
+// env object
+const assertPassthrough = (env, spec) => {
+    assert.deepEqual(cleanEnv(env, spec), env)
+}
 
 test('string passthrough', () => {
-    const env = cleanEnv({ FOO: 'bar' }, {
-        FOO: str()
-    })
-    assert.deepEqual(env, { FOO: 'bar' })
+    assertPassthrough({ FOO: 'bar' }, { FOO: str() })
 })
 
 test('strict option: only specified fields are passed through', () => {
@@ -35,10 +37,12 @@ test('choices field', () => {
         FOO: str({ choices: ['foo', 'bar', 'baz'] })
     }
     assert.throws(() => cleanEnv({}, spec), EnvError, 'not in choices')
+    assert.throws(() => cleanEnv({ FOO: 'bad' }, spec), EnvError, 'not in choices')
 
     // Works fine when a valid choice is given
-    const env = cleanEnv({ FOO: 'bar' }, spec)
-    assert.deepEqual(env, { FOO: 'bar' })
+    assertPassthrough({ FOO: 'bar' }, spec)
+    assertPassthrough({ FOO: 'foo' }, spec)
+    assertPassthrough({ FOO: 'baz' }, spec)
 
     // Throws an error when `choices` is not an array
     assert.throws(() => cleanEnv({}, { FOO: str({ choices: 123 }) }), Error, 'must be an array')
@@ -75,11 +79,12 @@ test('num()', () => {
 })
 
 test('email()', () => {
-    const env = cleanEnv({ FOO: 'foo@example.com' }, { FOO: email() })
-    assert.deepEqual(env, { FOO: 'foo@example.com' })
+    const spec = { FOO: email() }
+    assertPassthrough({ FOO: 'foo@example.com' }, spec)
+    assertPassthrough({ FOO: 'foo.bar@my.example.com' }, spec)
 
-    assert.throws(() => cleanEnv({ FOO: 'asdf@asdf' }, { FOO: email() }), EnvError)
-    assert.throws(() => cleanEnv({ FOO: '1' }, { FOO: email() }), EnvError)
+    assert.throws(() => cleanEnv({ FOO: 'asdf@asdf' }, spec), EnvError)
+    assert.throws(() => cleanEnv({ FOO: '1' }, spec), EnvError)
 })
 
 test('json()', () => {
@@ -90,8 +95,9 @@ test('json()', () => {
 })
 
 test('url()', () => {
-    const env = cleanEnv({ FOO: 'http://foo.com' }, { FOO: url() })
-    assert.deepEqual(env, { FOO: 'http://foo.com' })
+    assertPassthrough({ FOO: 'http://foo.com' }, { FOO: url() })
+    assertPassthrough({ FOO: 'http://foo.com/bar/baz' }, { FOO: url() })
+    assertPassthrough({ FOO: 'custom://foo.com/bar/baz?hi=1' }, { FOO: url() })
 
     assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: url() }), EnvError)
 })
