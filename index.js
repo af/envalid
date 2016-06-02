@@ -1,5 +1,7 @@
-// Intentionally simple regex for testing emails
-const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/
+const dotenv = require('dotenv')
+
+const extend = (x = {}, y = {}) => Object.assign({}, x, y)
+const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/    // intentionally non-exhaustive
 
 function EnvError(input) {
     this.message = input
@@ -28,9 +30,10 @@ function validateVar({ spec = {}, name, rawValue }) {
 }
 
 
-exports.cleanEnv = function cleanEnv(env, specs = {}, options = {}) {
+exports.cleanEnv = function cleanEnv(inputEnv, specs = {}, options = {}) {
     let output = {}
     let defaultNodeEnv = ''
+    const env = extend(dotenv.config({ silent: true }), inputEnv)
     const varKeys = Object.keys(specs)
 
     // If validation for NODE_ENV isn't specified, use the default validation:
@@ -52,7 +55,7 @@ exports.cleanEnv = function cleanEnv(env, specs = {}, options = {}) {
     // defineProperties() call, otherwise the properties would be lost
     output = options.strict
         ? output
-        : Object.assign({}, env, output)
+        : extend(env, output)
 
     Object.defineProperties(output, {
         isDev:        { value: (defaultNodeEnv || output.NODE_ENV) === 'development' },

@@ -25,5 +25,8 @@
     "painless": "0.9.4"
   },
   "author": "Aaron Franks",
-  "license": "MIT"
+  "license": "MIT",
+  "dependencies": {
+    "dotenv": "2.0.0"
+  }
 }
