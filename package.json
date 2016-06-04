@@ -21,6 +21,7 @@
   ],
   "devDependencies": {
     "eslint": "2.10.2",
+    "ghooks": "1.2.1",
     "istanbul": "0.4.3",
     "painless": "0.9.4"
   },
@@ -28,5 +29,10 @@
   "license": "MIT",
   "dependencies": {
     "dotenv": "2.0.0"
+  },
+  "config": {
+    "ghooks": {
+      "pre-push": "npm run lint && npm test"
+    }
   }
 }
