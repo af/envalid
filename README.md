@@ -27,22 +27,15 @@ const ev = require('envalid')
 //      * an object with options
 // This will throw an exception if any required conditions are not met.
 ev.cleanEnv(process.env, {
-    NODE_ENV: ev.str({ choices: ['production', 'test', 'development'] }),
-    ADMIN_EMAIL: ev.email(),
-    EMAIL_CONFIG_JSON: ev.json({ desc: 'Additional email parameters' })
+    NODE_ENV:           ev.str({ choices: ['production', 'test', 'development'] }),
+    ADMIN_EMAIL:        ev.email({ default: 'admin@example.com' }),
+    EMAIL_CONFIG_JSON:  ev.json({ desc: 'Additional email parameters' })
 }, { strict: true });
-
-// Supported keys for env var specifications:
-// desc - A string that describes the env var.
-// choices - An Array that gives the admissable parsed values for the env var.
-// test - A RegExp that the env var must match (or an exception will be thrown)
-// default - A fallback value if the env var wasn't specified. This effectively
-//           makes the env var optional.
 
 
 // Get an environment variable, which will be passed through any validation
 // and/or filtering that you specified with cleanEnv().
-console.log(env.ADMIN_EMAIL)
+env.ADMIN_EMAIL     // -> 'admin@example.com'
 
 // Shortcut (boolean) properties for checking the value of process.env.NODE_ENV
 env.isProduction    // true if NODE_ENV === 'production'
@@ -50,26 +43,31 @@ env.isTesting       // true if NODE_ENV === 'test'
 env.isDev           // true if NODE_ENV === 'development'
 ```
 
-## Supported types
-
-TODO: fill this out (str/bool/num/email/json/url)
-TODO: explain custom types
-
 ## Error Handling
 
 TODO: update this section for v2
 
 
-## Parse Functions
+## Env var types
 
 Node's process.env only stores strings, but sometimes you will want to retrieve other data
-(eg. a boolean or a number). To achieve this, specify a parse function for your env var, and
-the string in process.env will be passed through it when accessed by get().
+(eg. a boolean or a number), or validate that an env var is in a specific format (JSON,
+url, email address). To these ends, the following validation functions are available:
 
-For convenience, `env.toBool` and `env.toNumber` are available, which will return the
-given type (and throw an error during validation if the env var can't be coerced
-to the matching type). If you want to read in an array or object, you can use
-JSON.parse as your parse function.
+* `str()` - Passes string values through, will ensure an value is present unless a
+          `default` value is given.
+* `bool()` - Parses env var strings `"0", "1", "true", "false", "t", "f"` into booleans
+* `num()` - Parses an env var (eg. `"42", "0.23", "1e5"`) into a Number
+* `email()` - Ensures an env var is an email address
+* `url()` - Ensures an env var is a url with a protocol and hostname
+* `json()` - Parses an env var with `JSON.parse`
+
+Each validation function accepts an (optional) object with the following attributes:
+
+* `desc` - A string that describes the env var.
+* `choices` - An Array that gives the admissable parsed values for the env var.
+* `default` - A fallback value, which will be used if the env var wasn't specified.
+              This effectively makes the env var optional.
 
 ```js
 // Assume for this example that process.env has MYBOOL='false', MYNUM='23', MYSTR='Hello'
@@ -85,6 +83,11 @@ env.MYNUM'      // -> 23
 env.MYVAR'      // -> 'hello'
 ```
 
+## `.env` File Support
+
+Envalid wraps the very handy [dotenv](https://www.npmjs.com/package/dotenv) package,
+so if you have a `.env` file in your project, envalid will read and validate the
+env vars there as well.
 
 ## Motivation
 
