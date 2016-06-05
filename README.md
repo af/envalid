@@ -13,7 +13,7 @@ Envalid aims to:
   from under you while the program is running
 
 ** Note: version 2.x of envalid only supports Node 6 and above, and the API is
-completely rewritten from version 0.x - 1.x **
+completely rewritten from version 0.x - 1.x. The [older API docs](https://github.com/af/envalid/blob/0142d408ca1c83d47647c1781eeda37b4decd31d/README.md) are still available **
 
 
 ## API
