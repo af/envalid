@@ -67,6 +67,12 @@ test('NODE_ENV built-in support', () => {
     // Non-standard values throw an error:
     assert.throws(() => cleanEnv({ NODE_ENV: 'asdf' }, {}), EnvError, 'not in choices')
 
+    // NODE_ENV should always be set. If it is un-set, isProduction & isDev
+    // still use the default value:
+    const unsetEnv = cleanEnv({ NODE_ENV: '' }, {})
+    assert.strictEqual(unsetEnv.isProduction, true)
+    assert.strictEqual(unsetEnv.isDev, false)
+
     // You can override the built-in NODE_ENV validation if you want
     // The built-in convenience helpers can't be overridden though.
     const customSpec = { NODE_ENV: str({ default: 'FOO' }) }
