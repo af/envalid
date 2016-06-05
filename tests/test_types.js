@@ -25,8 +25,16 @@ test('bool() works with various boolean string formats', () => {
 })
 
 test('num()', () => {
-    const withNumber = cleanEnv({ FOO: '1' }, { FOO: num() })
-    assert.deepEqual(withNumber, { FOO: 1 })
+    const withInt = cleanEnv({ FOO: '1' }, { FOO: num() })
+    assert.deepEqual(withInt, { FOO: 1 })
+
+    const withFloat = cleanEnv({ FOO: '0.34' }, { FOO: num() })
+    assert.deepEqual(withFloat, { FOO: 0.34 })
+
+    const withExponent = cleanEnv({ FOO: '1e3' }, { FOO: num() })
+    assert.deepEqual(withExponent, { FOO: 1000 })
+
+    assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: num() }), EnvError)
 })
 
 test('email()', () => {

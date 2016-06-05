@@ -89,7 +89,11 @@ exports.bool = makeValidator(input => {
     }
 })
 
-exports.num = makeValidator(input => +input)
+exports.num = makeValidator(input => {
+    const coerced = +input
+    if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
+    return coerced
+})
 
 exports.str = makeValidator(input => input)
 
