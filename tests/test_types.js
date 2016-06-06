@@ -2,10 +2,11 @@ const { createGroup, assert } = require('painless')
 const { cleanEnv, EnvError, bool, num, email, url, json } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
+const makeSilent = { reporter: null }
 
 
 test('bool() works with various boolean string formats', () => {
-    assert.throws(() => cleanEnv({ FOO: 'asfd' }, { FOO: bool() }),
+    assert.throws(() => cleanEnv({ FOO: 'asfd' }, { FOO: bool() }, makeSilent),
                   EnvError, 'Invalid value')
 
     const truthyNum = cleanEnv({ FOO: '1' }, { FOO: bool() })
@@ -34,7 +35,7 @@ test('num()', () => {
     const withExponent = cleanEnv({ FOO: '1e3' }, { FOO: num() })
     assert.deepEqual(withExponent, { FOO: 1000 })
 
-    assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: num() }), EnvError)
+    assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: num() }, makeSilent), EnvError)
 })
 
 test('email()', () => {
@@ -42,15 +43,15 @@ test('email()', () => {
     assertPassthrough({ FOO: 'foo@example.com' }, spec)
     assertPassthrough({ FOO: 'foo.bar@my.example.com' }, spec)
 
-    assert.throws(() => cleanEnv({ FOO: 'asdf@asdf' }, spec), EnvError)
-    assert.throws(() => cleanEnv({ FOO: '1' }, spec), EnvError)
+    assert.throws(() => cleanEnv({ FOO: 'asdf@asdf' }, spec, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({ FOO: '1' }, spec, makeSilent), EnvError)
 })
 
 test('json()', () => {
     const env = cleanEnv({ FOO: '{"x": 123}' }, { FOO: json() })
     assert.deepEqual(env, { FOO: {x: 123} })
 
-    assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: json() }), EnvError)
+    assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: json() }, makeSilent), EnvError)
 })
 
 test('url()', () => {
@@ -58,5 +59,5 @@ test('url()', () => {
     assertPassthrough({ FOO: 'http://foo.com/bar/baz' }, { FOO: url() })
     assertPassthrough({ FOO: 'custom://foo.com/bar/baz?hi=1' }, { FOO: url() })
 
-    assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: url() }), EnvError)
+    assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: url() }, makeSilent), EnvError)
 })

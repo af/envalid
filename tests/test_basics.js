@@ -2,6 +2,7 @@ const { createGroup, assert } = require('painless')
 const { cleanEnv, EnvError, str } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
+const makeSilent = { reporter: null }
 
 test('string passthrough', () => {
     assertPassthrough({ FOO: 'bar' }, { FOO: str() })
@@ -16,7 +17,7 @@ test('strict option: only specified fields are passed through', () => {
 })
 
 test('missing required string field', () => {
-    assert.throws(() => cleanEnv({}, { FOO: str() }), EnvError)
+    assert.throws(() => cleanEnv({}, { FOO: str() }, makeSilent), EnvError)
 })
 
 test('using provided default value', () => {
@@ -31,8 +32,8 @@ test('choices field', () => {
     const spec = {
         FOO: str({ choices: ['foo', 'bar', 'baz'] })
     }
-    assert.throws(() => cleanEnv({}, spec), EnvError, 'not in choices')
-    assert.throws(() => cleanEnv({ FOO: 'bad' }, spec), EnvError, 'not in choices')
+    assert.throws(() => cleanEnv({}, spec, makeSilent), EnvError, 'not in choices')
+    assert.throws(() => cleanEnv({ FOO: 'bad' }, spec, makeSilent), EnvError, 'not in choices')
 
     // Works fine when a valid choice is given
     assertPassthrough({ FOO: 'bar' }, spec)
@@ -40,12 +41,12 @@ test('choices field', () => {
     assertPassthrough({ FOO: 'baz' }, spec)
 
     // Throws an error when `choices` is not an array
-    assert.throws(() => cleanEnv({}, { FOO: str({ choices: 123 }) }), Error, 'must be an array')
+    assert.throws(() => cleanEnv({}, { FOO: str({ choices: 123 }) }, makeSilent), Error, 'must be an array')
 })
 
 test('misconfigured spec', () => {
     // Validation throws with different error if spec is invalid
-    assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: {} }), EnvError, 'Invalid spec')
+    assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: {} }, makeSilent), EnvError, 'Invalid spec')
 })
 
 test('NODE_ENV built-in support', () => {
@@ -65,7 +66,7 @@ test('NODE_ENV built-in support', () => {
     assert.strictEqual(cleanEnv({}, {}).isTest, false)
 
     // Non-standard values throw an error:
-    assert.throws(() => cleanEnv({ NODE_ENV: 'asdf' }, {}), EnvError, 'not in choices')
+    assert.throws(() => cleanEnv({ NODE_ENV: 'asdf' }, {}, makeSilent), EnvError, 'not in choices')
 
     // NODE_ENV should always be set. If it is un-set, isProduction & isDev
     // still use the default value:

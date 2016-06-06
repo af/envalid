@@ -12,6 +12,12 @@ EnvError.prototype.name = 'EnvError'
 exports.EnvError = EnvError
 
 
+/**
+* Validate a single env var, given a spec object
+*
+* @throws EnvError - If validation is unsuccessful
+* @return - The cleaned value
+*/
 function validateVar({ spec = {}, name, rawValue }) {
     if (typeof spec._parse !== 'function') {
         throw new EnvError(`Invalid spec for "${name}"`)
@@ -22,7 +28,7 @@ function validateVar({ spec = {}, name, rawValue }) {
         if (!Array.isArray(spec.choices)) {
             throw new Error(`"choices" must be an array (in spec for "${name}")`)
         } else if (!spec.choices.includes(value)) {
-            throw new EnvError(`Env var "${name}" not in choices [${spec.choices}]`)
+            throw new EnvError(`Value "${value}" not in choices [${spec.choices}]`)
         }
     }
     if (value == null) throw new EnvError(`Invalid value for env var "${name}"`)
@@ -30,9 +36,27 @@ function validateVar({ spec = {}, name, rawValue }) {
 }
 
 
+function reportOnValidation({ errors = {}, env = {} }) {
+    let errOutput = ''
+    for (const k in errors) {
+        errOutput += `    ${k}: ${errors[k].message}`
+    }
+
+    if (errOutput) {
+        const makePlural = Object.keys(errors).length > 1
+        const msg = `Invalid environment variable${makePlural ? 's' : ''}:
+${errOutput}
+Exiting with error code 1`
+        console.log(msg)
+        process.exit(1)
+    }
+}
+
+
 exports.cleanEnv = function cleanEnv(inputEnv, specs = {}, options = {}) {
     let output = {}
     let defaultNodeEnv = ''
+    const errors = {}
     const env = extend(dotenv.config({ silent: true }), inputEnv)
     const varKeys = Object.keys(specs)
 
@@ -48,7 +72,12 @@ exports.cleanEnv = function cleanEnv(inputEnv, specs = {}, options = {}) {
     for (const k of varKeys) {
         const spec = specs[k]
         const rawValue = env[k] || spec.default
-        output[k] = validateVar({ name: k, spec, rawValue })
+        try {
+            output[k] = validateVar({ name: k, spec, rawValue })
+        } catch (err) {
+            if (options.reporter === null) throw err
+            errors[k] = err
+        }
     }
 
     // If we need to run Object.assign() on output, we must do it before the
@@ -62,6 +91,9 @@ exports.cleanEnv = function cleanEnv(inputEnv, specs = {}, options = {}) {
         isProduction: { value: (defaultNodeEnv || output.NODE_ENV) === 'production' },
         isTest:       { value: (defaultNodeEnv || output.NODE_ENV) === 'test' }
     })
+
+    const reporter = options.reporter || reportOnValidation
+    reporter({ errors, env: output })
 
     return output
 }
