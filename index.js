@@ -1,15 +1,8 @@
 const dotenv = require('dotenv')
+const { EnvError, makeValidator, bool, num, str, json, url, email } = require('./lib/validators')
+const defaultReporter = require('./lib/reporter')
 
 const extend = (x = {}, y = {}) => Object.assign({}, x, y)
-const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/    // intentionally non-exhaustive
-
-function EnvError(input) {
-    this.message = input
-    this.stack = new Error().stack
-}
-EnvError.prototype = Object.create(Error.prototype)
-EnvError.prototype.name = 'EnvError'
-exports.EnvError = EnvError
 
 
 /**
@@ -36,25 +29,7 @@ function validateVar({ spec = {}, name, rawValue }) {
 }
 
 
-function reportOnValidation({ errors = {}, env = {} }) {
-    /* eslint-disable no-console */
-    let errOutput = ''
-    for (const k in errors) {
-        errOutput += `    ${k}: ${errors[k].message}`
-    }
-
-    if (errOutput) {
-        const makePlural = Object.keys(errors).length > 1
-        const msg = `Invalid environment variable${makePlural ? 's' : ''}:
-${errOutput}
-Exiting with error code 1`
-        console.log(msg)
-        process.exit(1)
-    }
-}
-
-
-exports.cleanEnv = function cleanEnv(inputEnv, specs = {}, options = {}) {
+function cleanEnv(inputEnv, specs = {}, options = {}) {
     let output = {}
     let defaultNodeEnv = ''
     const errors = {}
@@ -65,7 +40,7 @@ exports.cleanEnv = function cleanEnv(inputEnv, specs = {}, options = {}) {
     if (!varKeys.includes('NODE_ENV')) {
         defaultNodeEnv = validateVar({
             name: 'NODE_ENV',
-            spec: exports.str({ choices: ['development', 'test', 'production'] }),
+            spec: str({ choices: ['development', 'test', 'production'] }),
             rawValue: env.NODE_ENV || 'production'
         })
     }
@@ -93,58 +68,10 @@ exports.cleanEnv = function cleanEnv(inputEnv, specs = {}, options = {}) {
         isTest:       { value: (defaultNodeEnv || output.NODE_ENV) === 'test' }
     })
 
-    const reporter = options.reporter || reportOnValidation
+    const reporter = options.reporter || defaultReporter
     reporter({ errors, env: output })
 
     return Object.freeze(output)
 }
 
-
-function makeValidator(parseFn) {
-    return function(spec = {}) {
-        spec._parse = parseFn
-        return spec
-    }
-}
-
-exports.bool = makeValidator(input => {
-    switch (input) {
-        case 'true':
-        case 't':
-        case '1':
-            return true
-        case 'false':
-        case 'f':
-        case '0':
-            return false
-        default:
-            return null
-    }
-})
-
-exports.num = makeValidator(input => {
-    const coerced = +input
-    if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
-    return coerced
-})
-
-exports.str = makeValidator(input => input)
-
-exports.email = makeValidator(x => {
-    if (EMAIL_REGEX.test(x)) return x
-    throw new EnvError(`Invalid email address: "${x}"`)
-})
-
-exports.url = makeValidator(x => {
-    const parsed = require('url').parse(x)
-    const isValid = !!(parsed.protocol && parsed.host && parsed.slashes)
-    return isValid ? x : null
-})
-
-exports.json = makeValidator(x => {
-    try {
-        return JSON.parse(x)
-    } catch (e) {
-        throw new EnvError(`Invalid json: "${x}"`)
-    }
-})
+module.exports = { cleanEnv, makeValidator, bool, num, str, json, url, email }
