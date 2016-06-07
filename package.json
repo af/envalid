@@ -1,7 +1,7 @@
 {
   "name": "envalid",
-  "version": "1.0.0",
-  "description": "Validation for environment variables",
+  "version": "2.0.0",
+  "description": "Validation for your environment variables",
   "main": "index.js",
   "scripts": {
     "lint": "eslint index.js tests",
@@ -13,6 +13,8 @@
     "url": "https://github.com/af/envalid"
   },
   "keywords": [
+    ".env",
+    "dotenv",
     "env",
     "env var",
     "environment",
