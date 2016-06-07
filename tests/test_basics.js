@@ -20,6 +20,12 @@ test('missing required string field', () => {
     assert.throws(() => cleanEnv({}, { FOO: str() }, makeSilent), EnvError)
 })
 
+test('output is immutable', () => {
+    const env = cleanEnv({ FOO: 'bar' }, { FOO: str() })
+    env.FOO = 'baz'
+    assert.strictEqual(env.FOO, 'bar')
+})
+
 test('using provided default value', () => {
     const env = cleanEnv({}, {
         FOO: str({ default: 'asdf' })

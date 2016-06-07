@@ -37,6 +37,7 @@ function validateVar({ spec = {}, name, rawValue }) {
 
 
 function reportOnValidation({ errors = {}, env = {} }) {
+    /* eslint-disable no-console */
     let errOutput = ''
     for (const k in errors) {
         errOutput += `    ${k}: ${errors[k].message}`
@@ -95,7 +96,7 @@ exports.cleanEnv = function cleanEnv(inputEnv, specs = {}, options = {}) {
     const reporter = options.reporter || reportOnValidation
     reporter({ errors, env: output })
 
-    return output
+    return Object.freeze(output)
 }
 
 
