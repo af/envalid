@@ -18,37 +18,39 @@ completely rewritten from version 0.x - 1.x. The [older API docs](https://github
 
 ## API
 
+### `envalid.cleanEnv(environment, validators, options)`
+
+`cleanEnv()` returns a cleaned, immutable environment object, and accepts three
+positional arguments:
+     * an object containing your env vars (eg. process.env)
+     * an object literal that specifies the format of required vars.
+     * an object with options
+By default, `cleanEnv()` will log an error message and exit if any required
+env vars are missing or invalid.
+
 ```js
-const ev = require('envalid')
+const envalid = require('envalid')
+const { str, email, json } = envalid
 
-// cleanEnv() accepts three positional arguments:
-//      * an object containing your env vars (eg. process.env)
-//      * an object literal that specifies the format of required vars.
-//      * an object with options
-// This will throw an exception if any required conditions are not met.
-ev.cleanEnv(process.env, {
-    NODE_ENV:           ev.str({ choices: ['production', 'test', 'development'] }),
-    ADMIN_EMAIL:        ev.email({ default: 'admin@example.com' }),
-    EMAIL_CONFIG_JSON:  ev.json({ desc: 'Additional email parameters' })
-}, { strict: true });
+const env = envalid.cleanEnv(process.env, {
+    API_KEY:            str(),
+    ADMIN_EMAIL:        email({ default: 'admin@example.com' }),
+    EMAIL_CONFIG_JSON:  json({ desc: 'Additional email parameters' })
+})
 
 
-// Get an environment variable, which will be passed through any validation
+// Read an environment variable, which is validated and cleaned during 
 // and/or filtering that you specified with cleanEnv().
 env.ADMIN_EMAIL     // -> 'admin@example.com'
 
-// Shortcut (boolean) properties for checking the value of process.env.NODE_ENV
+// Envalid parses NODE_ENV automatically, and provides the follwong
+// shortcut (boolean) properties for checking its value:
 env.isProduction    // true if NODE_ENV === 'production'
 env.isTesting       // true if NODE_ENV === 'test'
 env.isDev           // true if NODE_ENV === 'development'
 ```
 
-## Error Handling
-
-TODO: update this section for v2
-
-
-## Env var types
+## Validator types
 
 Node's process.env only stores strings, but sometimes you will want to retrieve other data
 (eg. a boolean or a number), or validate that an env var is in a specific format (JSON,
@@ -82,6 +84,22 @@ env.MYBOOL      // -> false (a boolean, not a string)
 env.MYNUM'      // -> 23
 env.MYVAR'      // -> 'hello'
 ```
+
+
+## Error Reporting
+
+By default, if any required environment variables are missing or have invalid
+values, envalid will log a message and call `process.exit(1)`. You can override
+this behavior by passing in your own function as `options.reporter`. For example:
+
+```js
+const env = cleanEnv(process.env, myValidators, {
+    reporter: (errors, cleanedEnv) => {
+        emailSiteAdmins('Invalid env vars: ' + Object.keys(errors))
+    }
+})
+```
+
 
 ## `.env` File Support
 
