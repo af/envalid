@@ -3,12 +3,10 @@
 # Envalid
 
 Envalid is a small library for validating and accessing environment variables in
-Node.js programs.
+Node.js programs, aiming to:
 
-Envalid aims to:
-
-* give you executable documentation about the environment your program is expected to run in
-* help you treat env vars as a well-tested module, rather than a global grab bag of strings
+* ensure that your program only runs when all of its environment dependencies are met
+* give you executable documentation about the environment your program expects to run in
 * give you an immutable API for your environment variables, so they don't change
   from under you while the program is running
 
@@ -20,7 +18,7 @@ completely rewritten from version 0.x - 1.x. The [older API docs](https://github
 
 ### `envalid.cleanEnv(environment, validators, options)`
 
-`cleanEnv()` returns a cleaned, immutable environment object, and accepts three
+`cleanEnv()` returns a sanitized, immutable environment object, and accepts three
 positional arguments:
      * an object containing your env vars (eg. process.env)
      * an object literal that specifies the format of required vars.
@@ -50,10 +48,13 @@ env.isTesting       // true if NODE_ENV === 'test'
 env.isDev           // true if NODE_ENV === 'development'
 ```
 
+For an example you can play with, clone this repo and see the `example/` directory.
+
+
 ## Validator types
 
-Node's process.env only stores strings, but sometimes you will want to retrieve other data
-(eg. a boolean or a number), or validate that an env var is in a specific format (JSON,
+Node's `process.env` only stores strings, but sometimes you want to retrieve other types
+(booleans, numbers), or validate that an env var is in a specific format (JSON,
 url, email address). To these ends, the following validation functions are available:
 
 * `str()` - Passes string values through, will ensure an value is present unless a
@@ -69,20 +70,25 @@ Each validation function accepts an (optional) object with the following attribu
 * `desc` - A string that describes the env var.
 * `choices` - An Array that gives the admissable parsed values for the env var.
 * `default` - A fallback value, which will be used if the env var wasn't specified.
-              This effectively makes the env var optional.
+              Providing a default effectively makes the env var optional.
+
+
+## Custom validators
+
+You can easily create your own validator functions with `envalid.makeValidator()`. It takes
+a function as its only parameter, and should either return a cleaned value, or throw if the
+input is unacceptable:
 
 ```js
-// Assume for this example that process.env has MYBOOL='false', MYNUM='23', MYSTR='Hello'
-const ev = require('envalid')
-const env = ev.cleanEnv(process.env, {
-    MYBOOL: ev.bool(),
-    MYNUM: ev.num(),
-    MYSTR: ev.str()
-});
+const { makeValidator, cleanEnv } = require('envalid')
+const twochars = makeValidator(x => {
+    if (/^[A-Za-z]{2}$/.test(x)) return x.toUpperCase()
+    else throw new Error('Expected two letters')
+})
 
-env.MYBOOL      // -> false (a boolean, not a string)
-env.MYNUM'      // -> 23
-env.MYVAR'      // -> 'hello'
+const env = cleanEnv(process.env, {
+    INITIALS: twochars()
+});
 ```
 
 
