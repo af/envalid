@@ -1,5 +1,5 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, bool, num, email, url, json } = require('..')
+const { cleanEnv, EnvError, bool, num, email, url, json, makeValidator } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }
@@ -60,4 +60,21 @@ test('url()', () => {
     assertPassthrough({ FOO: 'custom://foo.com/bar/baz?hi=1' }, { FOO: url() })
 
     assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: url() }, makeSilent), EnvError)
+})
+
+test('custom types', () => {
+    const alwaysFoo = makeValidator(x => 'foo')
+    const fooEnv = cleanEnv({ FOO: 'asdf' }, { FOO: alwaysFoo() })
+    assert.deepEqual(fooEnv, { FOO: 'foo' })
+
+    const hex10 = makeValidator(x => {
+        if (/^[a-f0-9]{10}$/.test(x)) return x
+        throw new Error('need 10 hex chars')
+    })
+    assertPassthrough({ FOO: 'a0d9aacbde' }, { FOO: hex10() })
+    assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: hex10() }, makeSilent), Error, '10 hex')
+
+    // Default values work with custom validators as well
+    const withDefault = cleanEnv({}, { FOO: hex10({ default: 'abcabcabc0' }) })
+    assert.deepEqual(withDefault, { FOO: 'abcabcabc0' })
 })
