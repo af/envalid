@@ -1,5 +1,5 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, str } = require('..')
+const { cleanEnv, EnvError, EnvMissingError, str } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }
@@ -38,7 +38,7 @@ test('choices field', () => {
     const spec = {
         FOO: str({ choices: ['foo', 'bar', 'baz'] })
     }
-    assert.throws(() => cleanEnv({}, spec, makeSilent), EnvError, 'not in choices')
+    assert.throws(() => cleanEnv({}, spec, makeSilent), EnvMissingError)
     assert.throws(() => cleanEnv({ FOO: 'bad' }, spec, makeSilent), EnvError, 'not in choices')
 
     // Works fine when a valid choice is given
@@ -47,7 +47,8 @@ test('choices field', () => {
     assertPassthrough({ FOO: 'baz' }, spec)
 
     // Throws an error when `choices` is not an array
-    assert.throws(() => cleanEnv({}, { FOO: str({ choices: 123 }) }, makeSilent), Error, 'must be an array')
+    assert.throws(() => cleanEnv({ FOO: 'hi' }, { FOO: str({ choices: 123 }) }, makeSilent),
+                  Error, 'must be an array')
 })
 
 test('misconfigured spec', () => {

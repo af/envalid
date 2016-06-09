@@ -1,5 +1,6 @@
 const dotenv = require('dotenv')
-const { EnvError, makeValidator, bool, num, str, json, url, email } = require('./lib/validators')
+const { EnvError, EnvMissingError, makeValidator,
+        bool, num, str, json, url, email } = require('./lib/validators')
 const defaultReporter = require('./lib/reporter')
 
 const extend = (x = {}, y = {}) => Object.assign({}, x, y)
@@ -48,7 +49,9 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     for (const k of varKeys) {
         const spec = specs[k]
         const rawValue = env[k] || spec.default
+
         try {
+            if (!rawValue) throw new EnvMissingError(spec.desc || '')
             output[k] = validateVar({ name: k, spec, rawValue })
         } catch (err) {
             if (options.reporter === null) throw err
