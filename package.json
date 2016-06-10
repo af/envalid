@@ -25,7 +25,7 @@
     "eslint": "2.10.2",
     "ghooks": "1.2.1",
     "istanbul": "0.4.3",
-    "painless": "0.9.4"
+    "painless": "0.9.5"
   },
   "author": "Aaron Franks",
   "license": "MIT",
