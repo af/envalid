@@ -23,6 +23,9 @@ test('bool() works with various boolean string formats', () => {
     assert.deepEqual(t, { FOO: true })
     const f = cleanEnv({ FOO: 'f' }, { FOO: bool() })
     assert.deepEqual(f, { FOO: false })
+
+    const defaultF = cleanEnv({}, { FOO: bool({ default: false }) })
+    assert.deepEqual(defaultF, { FOO: false })
 })
 
 test('num()', () => {

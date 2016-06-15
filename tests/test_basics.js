@@ -33,6 +33,13 @@ test('using provided default value', () => {
     assert.deepEqual(env, { FOO: 'asdf' })
 })
 
+test('default value can be blank', () => {
+    const env = cleanEnv({}, {
+        FOO: str({ default: '' })
+    })
+    assert.deepEqual(env, { FOO: '' })
+})
+
 test('choices field', () => {
     // Throws when the env var isn't in the given choices:
     const spec = {

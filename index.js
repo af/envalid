@@ -50,8 +50,13 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
         const spec = specs[k]
         const rawValue = env[k] || spec.default
 
+        // The default value can be anything falsy (besides undefined), without
+        // triggering validation errors
+        const usingFalsyDefault = (spec.default !== undefined) &&
+                                  (spec.default === rawValue)
+
         try {
-            if (!rawValue) throw new EnvMissingError(spec.desc || '')
+            if (!rawValue && !usingFalsyDefault) throw new EnvMissingError(spec.desc || '')
             output[k] = validateVar({ name: k, spec, rawValue })
         } catch (err) {
             if (options.reporter === null) throw err
