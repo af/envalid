@@ -1,5 +1,5 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, EnvMissingError, str } = require('..')
+const { cleanEnv, EnvError, EnvMissingError, str, num } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }
@@ -63,6 +63,18 @@ test('falsy devDefault', () => {
     assert.deepEqual(env, { NODE_ENV: 'test', FOO: '' })
 
     assert.throws(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent), EnvMissingError)
+})
+
+test('devDefault and default together', () => {
+    const spec = {
+        FOO: num({ devDefault: 3000, default: 80 })
+    }
+
+    const env = cleanEnv({ NODE_ENV: 'test' }, spec)
+    assert.deepEqual(env, { NODE_ENV: 'test', FOO: 3000 })
+
+    const prodEnv = cleanEnv({ NODE_ENV: 'production' }, spec)
+    assert.deepEqual(prodEnv, { NODE_ENV: 'production', FOO: 80 })
 })
 
 test('choices field', () => {
