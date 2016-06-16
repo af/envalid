@@ -30,6 +30,7 @@
   "author": "Aaron Franks",
   "license": "MIT",
   "dependencies": {
+    "chalk": "1.1.3",
     "dotenv": "2.0.0"
   },
   "config": {
