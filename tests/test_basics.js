@@ -40,6 +40,31 @@ test('default value can be blank', () => {
     assert.deepEqual(env, { FOO: '' })
 })
 
+test('devDefault', () => {
+    const spec = {
+        FOO: str({ devDefault: 'hi' })
+    }
+
+    // For testing/development environments, devDefault values can make fields optional:
+    const env = cleanEnv({ NODE_ENV: 'test' }, spec)
+    assert.deepEqual(env, { NODE_ENV: 'test', FOO: 'hi' })
+
+    // For a production environment, the field is required:
+    assert.throws(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent), EnvMissingError)
+})
+
+test('falsy devDefault', () => {
+    // Falsy values for devDefault work the same as falsy regular defaults
+    const spec = {
+        FOO: str({ devDefault: '' })
+    }
+
+    const env = cleanEnv({ NODE_ENV: 'test' }, spec)
+    assert.deepEqual(env, { NODE_ENV: 'test', FOO: '' })
+
+    assert.throws(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent), EnvMissingError)
+})
+
 test('choices field', () => {
     // Throws when the env var isn't in the given choices:
     const spec = {
