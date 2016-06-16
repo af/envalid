@@ -5,7 +5,6 @@ const defaultReporter = require('./lib/reporter')
 
 const extend = (x = {}, y = {}) => Object.assign({}, x, y)
 
-
 /**
 * Validate a single env var, given a spec object
 *
@@ -48,12 +47,13 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
 
     for (const k of varKeys) {
         const spec = specs[k]
-        const rawValue = env[k] || spec.default
+        const devDefault = (env.NODE_ENV === 'production' ? undefined : spec.devDefault)
+        const rawValue = env[k] || (devDefault === undefined ? spec.default : devDefault)
 
-        // The default value can be anything falsy (besides undefined), without
-        // triggering validation errors
-        const usingFalsyDefault = (spec.default !== undefined) &&
-                                  (spec.default === rawValue)
+        // Default values can be anything falsy (besides undefined), without
+        // triggering validation errors:
+        const usingFalsyDefault = ((spec.default !== undefined) && (spec.default === rawValue)) ||
+                                  ((devDefault !== undefined) && (devDefault === rawValue))
 
         try {
             if (!rawValue && !usingFalsyDefault) throw new EnvMissingError(spec.desc || '')
