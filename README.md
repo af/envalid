@@ -105,7 +105,7 @@ this behavior by passing in your own function as `options.reporter`. For example
 
 ```js
 const env = cleanEnv(process.env, myValidators, {
-    reporter: (errors, cleanedEnv) => {
+    reporter: ({ errors, env }) => {
         emailSiteAdmins('Invalid env vars: ' + Object.keys(errors))
     }
 })
