@@ -1,4 +1,4 @@
-[![Build Status](https://secure.travis-ci.org/af/envalid.png)](http://travis-ci.org/af/envalid)
+[![Build Status](https://travis-ci.org/af/envalid.svg?branch=master)](https://travis-ci.org/af/envalid)
 
 # Envalid
 
