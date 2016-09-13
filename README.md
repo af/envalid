@@ -73,7 +73,7 @@ Each validation function accepts an (optional) object with the following attribu
 * `choices` - An Array that lists the admissable parsed values for the env var.
 * `default` - A fallback value, which will be used if the env var wasn't specified.
               Providing a default effectively makes the env var optional.
-* `devDefault` - A fallback value to use *only* when `NODE_ENV` is `'production'`. This is handy
+* `devDefault` - A fallback value to use *only* when `NODE_ENV` is _not_ `'production'`. This is handy
                  for env vars that are required for production environments, but optional
                  for development and testing.
 
