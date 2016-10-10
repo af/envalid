@@ -6,6 +6,7 @@ const makeSilent = { reporter: null }
 
 
 test('bool() works with various boolean string formats', () => {
+    assert.equal(bool().type, 'bool')
     assert.throws(() => cleanEnv({ FOO: 'asfd' }, { FOO: bool() }, makeSilent),
                   EnvError, 'Invalid value')
 
@@ -29,6 +30,7 @@ test('bool() works with various boolean string formats', () => {
 })
 
 test('num()', () => {
+    assert.equal(num().type, 'num')
     const withInt = cleanEnv({ FOO: '1' }, { FOO: num() })
     assert.deepEqual(withInt, { FOO: 1 })
 
@@ -42,6 +44,7 @@ test('num()', () => {
 })
 
 test('email()', () => {
+    assert.equal(email().type, 'email')
     const spec = { FOO: email() }
     assertPassthrough({ FOO: 'foo@example.com' }, spec)
     assertPassthrough({ FOO: 'foo.bar@my.example.com' }, spec)
@@ -51,6 +54,7 @@ test('email()', () => {
 })
 
 test('json()', () => {
+    assert.equal(json().type, 'json')
     const env = cleanEnv({ FOO: '{"x": 123}' }, { FOO: json() })
     assert.deepEqual(env, { FOO: {x: 123} })
 
@@ -58,6 +62,7 @@ test('json()', () => {
 })
 
 test('url()', () => {
+    assert.equal(url().type, 'url')
     assertPassthrough({ FOO: 'http://foo.com' }, { FOO: url() })
     assertPassthrough({ FOO: 'http://foo.com/bar/baz' }, { FOO: url() })
     assertPassthrough({ FOO: 'custom://foo.com/bar/baz?hi=1' }, { FOO: url() })
@@ -67,6 +72,9 @@ test('url()', () => {
 
 test('custom types', () => {
     const alwaysFoo = makeValidator(x => 'foo')
+    assert.equal(alwaysFoo().type, 'unknown')
+    assert.equal(makeValidator(x => 'foo', 'some type')().type, 'some type')
+
     const fooEnv = cleanEnv({ FOO: 'asdf' }, { FOO: alwaysFoo() })
     assert.deepEqual(fooEnv, { FOO: 'foo' })
 
