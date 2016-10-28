@@ -76,6 +76,10 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
         isTest:       { value: (defaultNodeEnv || output.NODE_ENV) === 'test' }
     })
 
+    if (options.transformer) {
+        output = options.transformer(output)
+    }
+
     const reporter = options.reporter || defaultReporter
     reporter({ errors, env: output })
 

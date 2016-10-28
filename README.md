@@ -43,7 +43,7 @@ const env = envalid.cleanEnv(process.env, {
 // and/or filtering that you specified with cleanEnv().
 env.ADMIN_EMAIL     // -> 'admin@example.com'
 
-// Envalid parses NODE_ENV automatically, and provides the follwong
+// Envalid parses NODE_ENV automatically, and provides the following
 // shortcut (boolean) properties for checking its value:
 env.isProduction    // true if NODE_ENV === 'production'
 env.isTest          // true if NODE_ENV === 'test'
@@ -52,6 +52,27 @@ env.isDev           // true if NODE_ENV === 'development'
 
 For an example you can play with, clone this repo and see the `example/` directory.
 
+#### Options
+##### `strict`
+Only pass through keys specified in the object with required args, and strip extraneous ones
+
+##### `transformer`
+A function used to transform the keys of the objects before they are returned to the user.
+You can use this to e.g. make all keys camel case.
+
+```js
+const camelcaseKeys = require('camelcase-keys')
+
+const env = envalid.cleanEnv(process.env, {
+    API_KEY:            str(),
+    ADMIN_EMAIL:        email({ default: 'admin@example.com' }),
+    EMAIL_CONFIG_JSON:  json({ desc: 'Additional email parameters' })
+}, { transformer: camelcaseKeys })
+
+assert.deepEqual(env, {
+    apiKey: 'value', adminEmail: 'value', emailConfigJson: 'value',
+})
+```
 
 ## Validator types
 

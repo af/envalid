@@ -16,6 +16,19 @@ test('strict option: only specified fields are passed through', () => {
     assert.deepEqual(env, { FOO: 'bar' })
 })
 
+test('transformer option: allow transformation of keys', () => {
+    const opts = {
+        transformer: i => Object
+            .keys(i)
+            .map(e => [e, i[e]])
+            .reduce((memo, [key, value]) => Object.assign({}, memo, { [key.toLowerCase()]: value }), {})
+    }
+    const env = cleanEnv({ FOO: 'bar', FOO_BAR: 'baz' }, {
+        FOO: str()
+    }, opts)
+    assert.deepEqual(env, { foo: 'bar', foo_bar: 'baz' })
+})
+
 test('missing required string field', () => {
     assert.throws(() => cleanEnv({}, { FOO: str() }, makeSilent), EnvError)
 })
