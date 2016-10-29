@@ -10,9 +10,6 @@ Node.js programs, aiming to:
 * give you an immutable API for your environment variables, so they don't change
   from under you while the program is running
 
-** Note: version 2.x of envalid only supports Node 6 and above, and the API is
-completely rewritten from version 0.x - 1.x. The [older API docs](https://github.com/af/envalid/blob/0142d408ca1c83d47647c1781eeda37b4decd31d/README.md) are still available **
-
 
 ## API
 
@@ -21,9 +18,15 @@ completely rewritten from version 0.x - 1.x. The [older API docs](https://github
 `cleanEnv()` returns a sanitized, immutable environment object, and accepts three
 positional arguments:
 
-* an object containing your env vars (eg. process.env)
-* an object literal that specifies the format of required vars.
-* an object with options
+* `environment` - An object containing your env vars (eg. `process.env`)
+* `validators` - An object that specifies the format of required vars.
+* `options` - An (optional) object, which supports the following keys:
+    * `strict` - If true, the output of `cleanEnv` will *only* contain the env 
+                 vars that were specified in the `validators` argument.
+    * `reporter` - Pass in a function to override the default error handling and
+                   console output. See `lib/reporter.js` for the default implementation.
+    * `transformer` - A function used to transform the cleaned environment object
+                      before it is returned from `cleanEnv`
 
 By default, `cleanEnv()` will log an error message and exit if any required
 env vars are missing or invalid.
@@ -52,27 +55,6 @@ env.isDev           // true if NODE_ENV === 'development'
 
 For an example you can play with, clone this repo and see the `example/` directory.
 
-#### Options
-##### `strict`
-Only pass through keys specified in the object with required args, and strip extraneous ones
-
-##### `transformer`
-A function used to transform the keys of the objects before they are returned to the user.
-You can use this to e.g. make all keys camel case.
-
-```js
-const camelcaseKeys = require('camelcase-keys')
-
-const env = envalid.cleanEnv(process.env, {
-    API_KEY:            str(),
-    ADMIN_EMAIL:        email({ default: 'admin@example.com' }),
-    EMAIL_CONFIG_JSON:  json({ desc: 'Additional email parameters' })
-}, { transformer: camelcaseKeys })
-
-assert.deepEqual(env, {
-    apiKey: 'value', adminEmail: 'value', emailConfigJson: 'value',
-})
-```
 
 ## Validator types
 
@@ -150,7 +132,8 @@ const env = cleanEnv(process.env, myValidators, {
 
 Envalid wraps the very handy [dotenv](https://www.npmjs.com/package/dotenv) package,
 so if you have a `.env` file in your project, envalid will read and validate the
-env vars there as well.
+env vars from that file as well.
+
 
 ## Motivation
 
