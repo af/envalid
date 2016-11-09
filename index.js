@@ -86,4 +86,4 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     return Object.freeze(output)
 }
 
-module.exports = { cleanEnv, makeValidator, bool, num, str, json, url, email }
+module.exports = { cleanEnv, makeValidator, bool, num, str, json, url, email, EnvError, EnvMissingError }
