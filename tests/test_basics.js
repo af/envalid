@@ -30,7 +30,7 @@ test('transformer option: allow transformation of keys', () => {
 })
 
 test('missing required string field', () => {
-    assert.throws(() => cleanEnv({}, { FOO: str() }, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({}, { FOO: str() }, makeSilent), EnvMissingError)
 })
 
 test('output is immutable', () => {
