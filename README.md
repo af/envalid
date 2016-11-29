@@ -3,7 +3,7 @@
 # Envalid
 
 Envalid is a small library for validating and accessing environment variables in
-Node.js programs, aiming to:
+Node.js (v6.0 or later) programs, aiming to:
 
 * ensure that your program only runs when all of its environment dependencies are met
 * give you executable documentation about the environment your program expects to run in
