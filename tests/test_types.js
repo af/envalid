@@ -5,10 +5,15 @@ const test = createGroup()
 const makeSilent = { reporter: null }
 
 
-test('bool() works with various boolean string formats', () => {
+test('bool() works with various formats', () => {
     assert.equal(bool().type, 'bool')
     assert.throws(() => cleanEnv({ FOO: 'asfd' }, { FOO: bool() }, makeSilent),
                   EnvError, 'Invalid value')
+
+    const trueBool = cleanEnv({ FOO: true }, { FOO: bool() })
+    assert.deepEqual(trueBool, { FOO: true })
+    const falseBool = cleanEnv({ FOO: false }, { FOO: bool() })
+    assert.deepEqual(falseBool, { FOO: false })
 
     const truthyNum = cleanEnv({ FOO: '1' }, { FOO: bool() })
     assert.deepEqual(truthyNum, { FOO: true })
