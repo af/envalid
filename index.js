@@ -48,7 +48,11 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     for (const k of varKeys) {
         const spec = specs[k]
         const devDefault = (env.NODE_ENV === 'production' ? undefined : spec.devDefault)
-        const rawValue = env[k] || (devDefault === undefined ? spec.default : devDefault)
+        let rawValue = env[k]
+
+        if (rawValue === undefined) {
+            rawValue = (devDefault === undefined ? spec.default : devDefault)
+        }
 
         // Default values can be anything falsy (besides undefined), without
         // triggering validation errors:
@@ -56,7 +60,7 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
                                   ((devDefault !== undefined) && (devDefault === rawValue))
 
         try {
-            if (!rawValue && !usingFalsyDefault) throw new EnvMissingError(spec.desc || '')
+            if (rawValue === undefined && !usingFalsyDefault) throw new EnvMissingError(spec.desc || '')
             output[k] = validateVar({ name: k, spec, rawValue })
         } catch (err) {
             if (options.reporter === null) throw err
