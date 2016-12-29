@@ -82,6 +82,8 @@ test('str()', () => {
     assert.equal(str().type, 'str')
     const withEmpty = cleanEnv({ FOO: '' }, { FOO: str() })
     assert.deepEqual(withEmpty, { FOO: '' })
+
+    assert.throws(() => cleanEnv({ FOO: 42 }, { FOO: str() }, makeSilent), EnvError)
 })
 
 test('custom types', () => {
