@@ -1,5 +1,5 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, bool, num, email, url, json, makeValidator } = require('..')
+const { cleanEnv, EnvError, str, bool, num, email, url, json, makeValidator } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }
@@ -45,6 +45,9 @@ test('num()', () => {
     const withExponent = cleanEnv({ FOO: '1e3' }, { FOO: num() })
     assert.deepEqual(withExponent, { FOO: 1000 })
 
+    const withZero = cleanEnv({ FOO: 0 }, { FOO: num() })
+    assert.deepEqual(withZero, { FOO: 0 })
+
     assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: num() }, makeSilent), EnvError)
 })
 
@@ -73,6 +76,14 @@ test('url()', () => {
     assertPassthrough({ FOO: 'custom://foo.com/bar/baz?hi=1' }, { FOO: url() })
 
     assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: url() }, makeSilent), EnvError)
+})
+
+test('str()', () => {
+    assert.equal(str().type, 'str')
+    const withEmpty = cleanEnv({ FOO: '' }, { FOO: str() })
+    assert.deepEqual(withEmpty, { FOO: '' })
+
+    assert.throws(() => cleanEnv({ FOO: 42 }, { FOO: str() }, makeSilent), EnvError)
 })
 
 test('custom types', () => {
