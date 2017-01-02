@@ -17,11 +17,12 @@ test('strict option: only specified fields are passed through', () => {
 })
 
 test('transformer option: allow transformation of keys', () => {
+    const lowerCaseKey = (acc, [key, value]) => Object.assign(acc, { [key.toLowerCase()]: value })
     const opts = {
         transformer: i => Object
             .keys(i)
             .map(e => [e, i[e]])
-            .reduce((memo, [key, value]) => Object.assign({}, memo, { [key.toLowerCase()]: value }), {})
+            .reduce(lowerCaseKey, {})
     }
     const env = cleanEnv({ FOO: 'bar', FOO_BAR: 'baz' }, {
         FOO: str()

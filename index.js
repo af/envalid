@@ -60,7 +60,9 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
                                   ((devDefault !== undefined) && (devDefault === rawValue))
 
         try {
-            if (rawValue === undefined && !usingFalsyDefault) throw new EnvMissingError(spec.desc || '')
+            if (rawValue === undefined && !usingFalsyDefault) {
+                throw new EnvMissingError(spec.desc || '')
+            }
             output[k] = validateVar({ name: k, spec, rawValue })
         } catch (err) {
             if (options.reporter === null) throw err
@@ -90,4 +92,6 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     return Object.freeze(output)
 }
 
-module.exports = { cleanEnv, makeValidator, bool, num, str, json, url, email, EnvError, EnvMissingError }
+module.exports = {
+    cleanEnv, makeValidator, bool, num, str, json, url, email, EnvError, EnvMissingError
+}
