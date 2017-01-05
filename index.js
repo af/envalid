@@ -29,6 +29,13 @@ function validateVar({ spec = {}, name, rawValue }) {
 }
 
 
+// Format a string error message for when a required env var is missing
+function formatSpecDescription(spec) {
+    const egText = spec.example ? ` (eg. "${spec.example}")` : ''
+    const docsText = spec.docs ? `. See ${spec.docs}` : ''
+    return `${spec.desc}${egText}${docsText}` || ''
+}
+
 function cleanEnv(inputEnv, specs = {}, options = {}) {
     let output = {}
     let defaultNodeEnv = ''
@@ -61,7 +68,7 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
 
         try {
             if (rawValue === undefined && !usingFalsyDefault) {
-                throw new EnvMissingError(spec.desc || '')
+                throw new EnvMissingError(formatSpecDescription(spec))
             }
             output[k] = validateVar({ name: k, spec, rawValue })
         } catch (err) {
