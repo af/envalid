@@ -37,7 +37,8 @@ function formatSpecDescription(spec) {
 }
 
 function extendWithDotEnv(inputEnv) {
-    return extend(dotenv.config({ silent: true }), inputEnv)
+    const { parsed } = dotenv.config()
+    return extend(parsed, inputEnv)
 }
 
 function cleanEnv(inputEnv, specs = {}, options = {}) {
