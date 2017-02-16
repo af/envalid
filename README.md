@@ -21,12 +21,16 @@ positional arguments:
 * `environment` - An object containing your env vars (eg. `process.env`)
 * `validators` - An object that specifies the format of required vars.
 * `options` - An (optional) object, which supports the following keys:
-    * `strict` - If true, the output of `cleanEnv` will *only* contain the env 
-                 vars that were specified in the `validators` argument.
+    * `strict` - (default: `false`) If true, the output of `cleanEnv` will *only*
+                 contain the env vars that were specified in the `validators` argument.
     * `reporter` - Pass in a function to override the default error handling and
                    console output. See `lib/reporter.js` for the default implementation.
     * `transformer` - A function used to transform the cleaned environment object
                       before it is returned from `cleanEnv`
+    * `dotEnvPath` - (default: `'.env'`) Path to the file that is parsed by
+                     [dotenv](https://github.com/motdotla/dotenv) to
+                     optionally load more env vars at runtime. Pass `null` if you want
+                     to skip `dotenv` processing entirely and only load from `process.env`.
 
 By default, `cleanEnv()` will log an error message and exit if any required
 env vars are missing or invalid.

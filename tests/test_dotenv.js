@@ -26,7 +26,16 @@ test('.env test in strict mode', () => {
     assert.deepEqual(env, { MYNUM: 4 })
 })
 
-test('can opt out of dotenv with loadDotEnv=false', () => {
-    const env = cleanEnv({ FOO: 'bar' }, {}, { loadDotEnv: false })
+test('can opt out of dotenv with dotEnvPath=null', () => {
+    const env = cleanEnv({ FOO: 'bar' }, {}, { dotEnvPath: null })
     assert.deepEqual(env, { FOO: 'bar' })
+})
+
+test('can use a custom .env file name', () => {
+    const path = '.custom-env'
+    fs.writeFileSync(path, 'CUSTOM=hi')
+
+    const env = cleanEnv({ FOO: 'bar' }, {}, { dotEnvPath: path })
+    assert.deepEqual(env, { FOO: 'bar', CUSTOM: 'hi' })
+    fs.unlinkSync(path)
 })

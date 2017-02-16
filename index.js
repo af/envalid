@@ -1,3 +1,4 @@
+const fs = require('fs')
 const dotenv = require('dotenv')
 const { EnvError, EnvMissingError, makeValidator,
         bool, num, str, json, url, email } = require('./lib/validators')
@@ -36,8 +37,17 @@ function formatSpecDescription(spec) {
     return `${spec.desc}${egText}${docsText}` || ''
 }
 
-function extendWithDotEnv(inputEnv) {
-    const { parsed } = dotenv.config()
+// Extend an env var object with the values parsed from a ".env"
+// file, whose path is given by the second argument.
+function extendWithDotEnv(inputEnv, dotEnvPath = '.env') {
+    let dotEnvBuffer = null
+    try {
+        dotEnvBuffer = fs.readFileSync(dotEnvPath)
+    } catch (err) {
+        if (err.code === 'ENOENT') return inputEnv
+        throw err
+    }
+    const parsed = dotenv.parse(dotEnvBuffer)
     return extend(parsed, inputEnv)
 }
 
@@ -46,7 +56,9 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     let defaultNodeEnv = ''
     const errors = {}
     const shouldLoadDotEnv = (options.loadDotEnv !== false)
-    const env = shouldLoadDotEnv ? extendWithDotEnv(inputEnv) : inputEnv
+    const env = (options.dotEnvPath !== null)
+        ? extendWithDotEnv(inputEnv, options.dotEnvPath)
+        : inputEnv
     const varKeys = Object.keys(specs)
 
     // If validation for NODE_ENV isn't specified, use the default validation:
