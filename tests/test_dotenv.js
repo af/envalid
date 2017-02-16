@@ -25,3 +25,8 @@ test('.env test in strict mode', () => {
     }, opts)
     assert.deepEqual(env, { MYNUM: 4 })
 })
+
+test('can opt out of dotenv with loadDotEnv=false', () => {
+    const env = cleanEnv({ FOO: 'bar' }, {}, { loadDotEnv: false })
+    assert.deepEqual(env, { FOO: 'bar' })
+})

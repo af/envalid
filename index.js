@@ -36,11 +36,16 @@ function formatSpecDescription(spec) {
     return `${spec.desc}${egText}${docsText}` || ''
 }
 
+function extendWithDotEnv(inputEnv) {
+    return extend(dotenv.config({ silent: true }), inputEnv)
+}
+
 function cleanEnv(inputEnv, specs = {}, options = {}) {
     let output = {}
     let defaultNodeEnv = ''
     const errors = {}
-    const env = extend(dotenv.config({ silent: true }), inputEnv)
+    const shouldLoadDotEnv = (options.loadDotEnv !== false)
+    const env = shouldLoadDotEnv ? extendWithDotEnv(inputEnv) : inputEnv
     const varKeys = Object.keys(specs)
 
     // If validation for NODE_ENV isn't specified, use the default validation:
