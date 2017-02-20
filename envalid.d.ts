@@ -3,18 +3,18 @@ interface Spec<T> {
     default?: T;
     devDefault?: T;
     desc?: string;
-  }
+}
 
-  interface ValidatorSpec<T> extends Spec<T> {
+interface ValidatorSpec<T> extends Spec<T> {
     type: string;
     _parse: (input: string) => T;
-  }
+}
 
-  interface Specs {
+interface Specs {
     [key: string]: ValidatorSpec<any>;
-  }
+}
 
-  interface CleanEnv {
+interface CleanEnv {
     /** true if NODE_ENV === 'development' */
     isDev: boolean;
 
@@ -23,9 +23,9 @@ interface Spec<T> {
 
     /** true if NODE_ENV === 'production' */
     isProduction: boolean;
-  }
+}
 
-  interface CleanOptions {
+interface CleanOptions {
     /**
      * If true, the output of cleanEnv will only contain the env vars that were specified in the validators argument.
      * @default false
@@ -49,19 +49,47 @@ interface Spec<T> {
      * @default ".env"
      */
     dotEnvPath: string;
-  }
+}
 
-  /**
-   * Returns a sanitized, immutable environment object.
-   * @param environment An object containing your env vars (eg. process.env).
-   * @param validators An object that specifies the format of required vars.
-   */
-  export function cleanEnv(environment: any, validators?: Specs, options?: CleanOptions);
-  export function cleanEnv<T>(environment: any, validators?: Specs, options?: CleanOptions): T & CleanEnv;
-  export function makeValidator<T>(parser: (input: string) => any, type?: string): (spec?: Spec<T>) => ValidatorSpec<T>;
-  export function bool(spec?: Spec<boolean>): ValidatorSpec<boolean>;
-  export function num(spec?: Spec<number>): ValidatorSpec<number>;
-  export function str(spec?: Spec<string>): ValidatorSpec<string>;
-  export function json(spec?: Spec<any>): ValidatorSpec<any>;
-  export function url(spec?: Spec<string>): ValidatorSpec<string>;
-  export function email(spec?: Spec<string>): ValidatorSpec<string>;
+/**
+ * Returns a sanitized, immutable environment object.
+ * @param environment An object containing your env vars (eg. process.env).
+ * @param validators An object that specifies the format of required vars.
+ */
+export function cleanEnv(environment: any, validators?: Specs, options?: CleanOptions);
+/**
+ * Returns a sanitized, immutable environment object.
+ * @param environment An object containing your env vars (eg. process.env).
+ * @param validators An object that specifies the format of required vars.
+ */
+export function cleanEnv<T>(environment: any, validators?: Specs, options?: CleanOptions): T & CleanEnv;
+
+/**
+ * Create your own validator functions.
+ */
+export function makeValidator<T>(parser: (input: string) => any, type?: string): (spec?: Spec<T>) => ValidatorSpec<T>;
+
+/**
+ * Parses env var string "0", "1", "true", "false", "t", "f" into Boolean.
+ */
+export function bool(spec?: Spec<boolean>): ValidatorSpec<boolean>;
+/**
+ * Parses an env var (eg. "42", "0.23", "1e5") into a Number.
+ */
+export function num(spec?: Spec<number>): ValidatorSpec<number>;
+/**
+ * Passes string values through, will ensure an value is present unless a default value is given.
+ */
+export function str(spec?: Spec<string>): ValidatorSpec<string>;
+/**
+ * Parses an env var with JSON.parse.
+ */
+export function json(spec?: Spec<any>): ValidatorSpec<any>;
+/**
+ * Ensures an env var is a url with a protocol and hostname
+ */
+export function url(spec?: Spec<string>): ValidatorSpec<string>;
+/**
+ * Ensures an env var is an email address
+ */
+export function email(spec?: Spec<string>): ValidatorSpec<string>;
