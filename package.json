@@ -41,5 +41,6 @@
     "ghooks": {
       "pre-push": "npm run lint && npm test"
     }
-  }
+  },
+  "typings": "envalid.d.ts"
 }
