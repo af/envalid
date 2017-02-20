@@ -30,25 +30,25 @@ interface CleanOptions {
      * If true, the output of cleanEnv will only contain the env vars that were specified in the validators argument.
      * @default false
      */
-    strict: boolean;
+    strict?: boolean;
 
     /**
      * Pass in a function to override the default error handling and console output.
      * See lib/reporter.js for the default implementation.
      */
-    reporter: (errors: { [key: string]: Error }, env: any) => void;
+    reporter?: (errors: { [key: string]: Error }, env: any) => void;
 
     /**
      * A function used to transform the cleaned environment object before it is returned from cleanEnv.
      */
-    transformer: (env: any) => any;
+    transformer?: (env: any) => any;
 
     /**
      * Path to the file that is parsed by dotenv to optionally load more env vars at runtime.
      * Pass null if you want to skip dotenv processing entirely and only load from process.env.
      * @default ".env"
      */
-    dotEnvPath: string;
+    dotEnvPath?: string;
 }
 
 /**
