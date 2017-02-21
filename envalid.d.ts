@@ -1,8 +1,29 @@
 interface Spec<T> {
-    choices?: string[];
+    /**
+     * An Array that lists the admissable parsed values for the env var.
+     */
+    choices?: T[];
+    /**
+     * A fallback value, which will be used if the env var wasn't specified. Providing a default effectively makes the env var optional.
+     */
     default?: T;
+    /**
+     * A fallback value to use only when NODE_ENV is not 'production'. 
+     * This is handy for env vars that are required for production environments, but optional for development and testing.
+     */
     devDefault?: T;
+    /**
+     * A string that describes the env var.
+     */
     desc?: string;
+    /**
+     * An example value for the env var.
+     */
+    example?: string;
+    /**
+     * A url that leads to more detailed documentation about the env var.
+     */
+    docs?: string;
 }
 
 interface ValidatorSpec<T> extends Spec<T> {
@@ -16,13 +37,13 @@ interface Specs {
 
 interface CleanEnv {
     /** true if NODE_ENV === 'development' */
-    isDev: boolean;
+    readonly isDev: boolean;
 
     /** true if NODE_ENV === 'test' */
-    isTest: boolean;
+    readonly isTest: boolean;
 
     /** true if NODE_ENV === 'production' */
-    isProduction: boolean;
+    readonly isProduction: boolean;
 }
 
 interface CleanOptions {
@@ -56,7 +77,7 @@ interface CleanOptions {
  * @param environment An object containing your env vars (eg. process.env).
  * @param validators An object that specifies the format of required vars.
  */
-export function cleanEnv(environment: any, validators?: Specs, options?: CleanOptions);
+export function cleanEnv(environment: any, validators?: Specs, options?: CleanOptions): any;
 /**
  * Returns a sanitized, immutable environment object.
  * @param environment An object containing your env vars (eg. process.env).
