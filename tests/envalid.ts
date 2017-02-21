@@ -1,11 +1,11 @@
-import { cleanEnv, makeValidator, str, bool, num, json, url, email, Spec, Specs } from '../';
+import { cleanEnv, makeValidator, str, bool, num, json, url, email, Spec, Specs } from '..';
 
 interface Env {
     foo: string;
 }
 
 // Test cleanEnv
-cleanEnv({})
+cleanEnv({});
 const env = cleanEnv<Env>({});
 env.foo = '';
 const isDev: Boolean = env.isDev;
