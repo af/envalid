@@ -1,4 +1,4 @@
-const { createGroup, assert } = require('painless')
+const { createGroup } = require('painless')
 const tt = require('typescript-definition-tester')
 const test = createGroup()
 
@@ -8,4 +8,4 @@ test('Typescript declaration', (done) => {
         (fileName) => fileName.indexOf('.ts') > -1,
         () => done()
     )
-});
+})
