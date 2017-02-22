@@ -1,6 +1,6 @@
 {
   "name": "envalid",
-  "version": "2.4.2",
+  "version": "3.0.0-beta",
   "description": "Validation for your environment variables",
   "main": "index.js",
   "engines": {
