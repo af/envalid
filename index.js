@@ -55,7 +55,6 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     let output = {}
     let defaultNodeEnv = ''
     const errors = {}
-    const shouldLoadDotEnv = (options.loadDotEnv !== false)
     const env = (options.dotEnvPath !== null)
         ? extendWithDotEnv(inputEnv, options.dotEnvPath)
         : inputEnv
