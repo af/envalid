@@ -67,7 +67,8 @@ Node's `process.env` only stores strings, but sometimes you want to retrieve oth
 url, email address). To these ends, the following validation functions are available:
 
 * `str()` - Passes string values through, will ensure an value is present unless a
-          `default` value is given.
+          `default` value is given. Note that an empty string is considered a valid value -
+          if this is undesirable you can easily create your own validator (see below)
 * `bool()` - Parses env var strings `"0", "1", "true", "false", "t", "f"` into booleans
 * `num()` - Parses an env var (eg. `"42", "0.23", "1e5"`) into a Number
 * `email()` - Ensures an env var is an email address
