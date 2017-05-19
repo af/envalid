@@ -1,5 +1,3 @@
-const fs = require('fs')
-const dotenv = require('dotenv')
 const { EnvError, EnvMissingError, makeValidator,
         bool, num, str, json, url, email } = require('./lib/validators')
 const defaultReporter = require('./lib/reporter')
@@ -40,6 +38,8 @@ function formatSpecDescription(spec) {
 // Extend an env var object with the values parsed from a ".env"
 // file, whose path is given by the second argument.
 function extendWithDotEnv(inputEnv, dotEnvPath = '.env') {
+    const fs = require('fs')
+    const dotenv = require('dotenv')
     let dotEnvBuffer = null
     try {
         dotEnvBuffer = fs.readFileSync(dotEnvPath)
