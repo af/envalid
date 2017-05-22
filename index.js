@@ -1,6 +1,5 @@
 const { EnvError, EnvMissingError, makeValidator,
         bool, num, str, json, url, email } = require('./lib/validators')
-const defaultReporter = require('./lib/reporter')
 
 const extend = (x = {}, y = {}) => Object.assign({}, x, y)
 
@@ -38,8 +37,13 @@ function formatSpecDescription(spec) {
 // Extend an env var object with the values parsed from a ".env"
 // file, whose path is given by the second argument.
 function extendWithDotEnv(inputEnv, dotEnvPath = '.env') {
-    const fs = require('fs')
-    const dotenv = require('dotenv')
+    // fs and dotenv cannot be required inside react-native.
+    // The react-native packager detects the require calls even if they
+    // are not on the top level, so we need to hide them by concatinating
+    // the module names.
+    const fs = require('f'+'s')
+    const dotenv = require('doten'+'v')
+
     let dotEnvBuffer = null
     try {
         dotEnvBuffer = fs.readFileSync(dotEnvPath)
@@ -110,7 +114,7 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
         output = options.transformer(output)
     }
 
-    const reporter = options.reporter || defaultReporter
+    const reporter = options.reporter || require('./lib/reporter')
     reporter({ errors, env: output })
 
     return Object.freeze(output)
