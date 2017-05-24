@@ -142,6 +142,34 @@ so if you have a `.env` file in your project, envalid will read and validate the
 env vars from that file as well.
 
 
+
+## Usage within React Native
+
+Envalid can be used within React Native with a custom reporter. Also the usage of `dotenv` must be disabled by setting `options.dotEnvPath` to `null`.
+
+Instead of `dotenv` [react-native-config](https://www.npmjs.com/package/react-native-config) can be used to read the configuration.
+
+Example:
+
+```js
+const reactNativeConfig = require('react-native-config')
+const rawConfig = reactNativeConfig.default
+
+const validatedConfig = envalid.cleanEnv(
+  rawConfig,
+  {
+    // validators
+  },
+  {
+    dotEnvPath: null,
+    reporter: ({ errors = {}, env = {} }) => {
+      // handle errors
+    },
+  },
+)
+```
+
+
 ## Motivation
 
 http://www.12factor.net/config
