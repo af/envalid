@@ -149,19 +149,19 @@ test('NODE_ENV built-in support', () => {
 
 test('testOnly', () => {
     const processEnv = process.env.NODE_ENV
-    process.env.NODE_ENV = 'test'
-    let spec = {
-        FOO: str({ devDefault: testOnly('sup') })
-    }
+    const makeSpec = () => ({
+        FOO: str({devDefault: testOnly('sup')})
+    })
 
+    // Create an env spec that has our testOnly value applied as the devDefault,
+    // and then restore the original NODE_ENV
+    process.env.NODE_ENV = 'test'
+    const testSpec = makeSpec()
     process.env.NODE_ENV = processEnv
-    const env = cleanEnv({ NODE_ENV: 'test' }, spec)
+
+    const env = cleanEnv({ NODE_ENV: 'test' }, testSpec)
     assert.deepEqual(env, { NODE_ENV: 'test', FOO: 'sup' })
 
-    spec = {
-        FOO: str({ devDefault: testOnly('sup') })
-    }
-
-    assert.throws(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent), EnvMissingError)
-    assert.throws(() => cleanEnv({ NODE_ENV: 'development' }, spec, makeSilent), EnvMissingError)
+    assert.throws(() => cleanEnv({ NODE_ENV: 'production' }, makeSpec(), makeSilent), EnvMissingError)
+    assert.throws(() => cleanEnv({ NODE_ENV: 'development' }, makeSpec(), makeSilent), EnvMissingError)
 })

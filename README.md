@@ -173,7 +173,16 @@ const validatedConfig = envalid.cleanEnv(
 
 ### testOnly
 
-A function called `testOnly` is exported. It returns its value if `NODE_ENV === 'test'`, otherwise it returns `undefined`.
+A helper function called `testOnly` is available, in case you need an default env var only when
+`NODE_ENV=test`. It should be used along with `devDefault`, for example:
+
+```js
+const env = cleanEnv(process.env), {
+  SOME_VAR: envalid.str({devDefault: testOnly('myTestValue')}),
+})
+```
+
+For more context see [this issue](https://github.com/af/envalid/issues/32).
 
 ## Motivation
 
