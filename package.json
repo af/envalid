@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "eslint index.js tests",
     "test": "painless -r spec tests/*.js",
-    "coverage": "istanbul cover ./node_modules/painless/bin/painless -- tests/*.js"
+    "coverage": "nyc npm test"
   },
   "repository": {
     "type": "git",
@@ -28,7 +28,7 @@
   "devDependencies": {
     "eslint": "2.10.2",
     "ghooks": "1.2.1",
-    "istanbul": "0.4.3",
+    "nyc": "11.0.2",
     "painless": "0.9.5",
     "typescript": "2.1.6",
     "typescript-definition-tester": "0.0.5"
