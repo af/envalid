@@ -1,6 +1,6 @@
 {
   "name": "envalid",
-  "version": "3.0.0",
+  "version": "3.1.0",
   "description": "Validation for your environment variables",
   "main": "index.js",
   "engines": {
@@ -10,7 +10,6 @@
   "scripts": {
     "lint": "eslint index.js tests",
     "test": "painless -r spec tests/*.js",
-    "coverage": "nyc npm test",
     "coverage": "istanbul cover ./node_modules/painless/bin/painless -- tests/*.js",
     "prepush": "npm run lint && npm test"
   },
