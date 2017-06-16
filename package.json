@@ -10,6 +10,7 @@
   "scripts": {
     "lint": "eslint index.js tests",
     "test": "painless -r spec tests/*.js",
+    "coverage": "nyc npm test",
     "coverage": "istanbul cover ./node_modules/painless/bin/painless -- tests/*.js",
     "prepush": "npm run lint && npm test"
   },
@@ -29,7 +30,7 @@
   "devDependencies": {
     "eslint": "2.10.2",
     "husky": "0.13.4",
-    "istanbul": "0.4.3",
+    "nyc": "11.0.2",
     "painless": "0.9.5",
     "typescript": "2.1.6",
     "typescript-definition-tester": "0.0.5"
