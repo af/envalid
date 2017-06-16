@@ -169,6 +169,11 @@ const validatedConfig = envalid.cleanEnv(
 )
 ```
 
+## Utils
+
+### testOnly
+
+A function called `testOnly` is exported. It returns its value if `NODE_ENV === 'test'`, otherwise it returns `undefined`.
 
 ## Motivation
 

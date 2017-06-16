@@ -1,5 +1,5 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, EnvMissingError, str, num } = require('..')
+const { cleanEnv, EnvError, EnvMissingError, str, num, testOnly } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }
@@ -145,4 +145,23 @@ test('NODE_ENV built-in support', () => {
     assert.deepEqual(cleanEnv({}, customSpec), { NODE_ENV: 'FOO' })
     assert.strictEqual(cleanEnv({}, customSpec).isProduction, false)
     assert.strictEqual(cleanEnv({}, customSpec).isDev, false)
+})
+
+test('testOnly', () => {
+    const processEnv = process.env.NODE_ENV
+    process.env.NODE_ENV = 'test'
+    let spec = {
+        FOO: str({ devDefault: testOnly('sup') })
+    }
+
+    process.env.NODE_ENV = processEnv
+    const env = cleanEnv({ NODE_ENV: 'test' }, spec)
+    assert.deepEqual(env, { NODE_ENV: 'test', FOO: 'sup' })
+
+    spec = {
+        FOO: str({ devDefault: testOnly('sup') })
+    }
+
+    assert.throws(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent), EnvMissingError)
+    assert.throws(() => cleanEnv({ NODE_ENV: 'development' }, spec, makeSilent), EnvMissingError)
 })
