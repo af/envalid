@@ -45,10 +45,10 @@ function formatSpecDescription(spec) {
 function extendWithDotEnv(inputEnv, dotEnvPath = '.env') {
     // fs and dotenv cannot be required inside react-native.
     // The react-native packager detects the require calls even if they
-    // are not on the top level, so we need to hide them by concatinating
-    // the module names.
-    const fs = require('f' + 's')
-    const dotenv = require('doten' + 'v')
+    // are not on the top level, so we need to obfuscate them
+    const _require = require
+    const fs = _require('fs')
+    const dotenv = _require('dotenv')
 
     let dotEnvBuffer = null
     try {
