@@ -3,6 +3,12 @@ const { EnvError, EnvMissingError, makeValidator,
 
 const extend = (x = {}, y = {}) => Object.assign({}, x, y)
 
+function testOnly(testDefault) {
+    return process.env.NODE_ENV === 'test'
+        ? testDefault
+        : undefined
+}
+
 /**
 * Validate a single env var, given a spec object
 *
@@ -41,8 +47,8 @@ function extendWithDotEnv(inputEnv, dotEnvPath = '.env') {
     // The react-native packager detects the require calls even if they
     // are not on the top level, so we need to hide them by concatinating
     // the module names.
-    const fs = require('f'+'s')
-    const dotenv = require('doten'+'v')
+    const fs = require('f' + 's')
+    const dotenv = require('doten' + 'v')
 
     let dotEnvBuffer = null
     try {
@@ -121,5 +127,5 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
 }
 
 module.exports = {
-    cleanEnv, makeValidator, bool, num, str, json, url, email, EnvError, EnvMissingError
+    cleanEnv, makeValidator, bool, num, str, json, url, email, EnvError, EnvMissingError, testOnly
 }
