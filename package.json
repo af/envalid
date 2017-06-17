@@ -10,7 +10,7 @@
   "scripts": {
     "lint": "eslint index.js tests",
     "test": "painless -r spec tests/*.js",
-    "coverage": "istanbul cover ./node_modules/painless/bin/painless -- tests/*.js",
+    "coverage": "nyc npm test",
     "prepush": "npm run lint && npm test"
   },
   "repository": {
