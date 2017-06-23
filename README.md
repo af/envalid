@@ -177,8 +177,8 @@ A helper function called `testOnly` is available, in case you need an default en
 `NODE_ENV=test`. It should be used along with `devDefault`, for example:
 
 ```js
-const env = cleanEnv(process.env), {
-  SOME_VAR: envalid.str({devDefault: testOnly('myTestValue')}),
+const env = cleanEnv(process.env, {
+  SOME_VAR: envalid.str({devDefault: testOnly('myTestValue')})
 })
 ```
 
