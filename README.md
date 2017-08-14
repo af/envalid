@@ -21,8 +21,7 @@ positional arguments:
 * `environment` - An object containing your env vars (eg. `process.env`)
 * `validators` - An object that specifies the format of required vars.
 * `options` - An (optional) object, which supports the following keys:
-    * `strict` - (default: `false`) If true, the output of `cleanEnv` will *only*
-                 contain the env vars that were specified in the `validators` argument.
+    * `strict` - (default: `false`) Enable more rigorous behavior. See "Strict Mode" below
     * `reporter` - Pass in a function to override the default error handling and
                    console output. See `lib/reporter.js` for the default implementation.
     * `transformer` - A function used to transform the cleaned environment object
@@ -133,6 +132,16 @@ const env = cleanEnv(process.env, myValidators, {
     }
 })
 ```
+
+
+## Strict mode
+
+By passing the `{ strict: true }` option, envalid gives you extra tight guarantees
+about the cleaned env object:
+
+* The env object will *only* contain the env vars that were specified by your `validators`.
+* Any attempt to access an invalid/missing property on the env object will cause a thrown error.
+* Any attempt to mutate the cleaned env object will cause a thrown error.
 
 
 ## `.env` File Support
