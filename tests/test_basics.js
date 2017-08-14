@@ -8,14 +8,6 @@ test('string passthrough', () => {
     assertPassthrough({ FOO: 'bar' }, { FOO: str() })
 })
 
-test('strict option: only specified fields are passed through', () => {
-    const opts = { strict: true }
-    const env = cleanEnv({ FOO: 'bar', BAZ: 'baz' }, {
-        FOO: str()
-    }, opts)
-    assert.deepEqual(env, { FOO: 'bar' })
-})
-
 test('transformer option: allow transformation of keys', () => {
     const lowerCaseKey = (acc, [key, value]) => Object.assign(acc, { [key.toLowerCase()]: value })
     const opts = {
