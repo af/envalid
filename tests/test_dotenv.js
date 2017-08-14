@@ -18,14 +18,6 @@ test('.env contents are cleaned', () => {
     assert.deepEqual(env, { FOO: 'bar', BAR: 'asdfasdf', MYNUM: 4 })
 })
 
-test('.env test in strict mode', () => {
-    const opts = { strict: true }
-    const env = cleanEnv({ FOO: 'bar', BAZ: 'baz' }, {
-        MYNUM: num()
-    }, opts)
-    assert.deepEqual(env, { MYNUM: 4 })
-})
-
 test('can opt out of dotenv with dotEnvPath=null', () => {
     const env = cleanEnv({ FOO: 'bar' }, {}, { dotEnvPath: null })
     assert.deepEqual(env, { FOO: 'bar' })
