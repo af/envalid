@@ -2,7 +2,7 @@ const fs = require('fs')
 const { createGroup, assert } = require('painless')
 const { cleanEnv, str, num } = require('..')
 const test = createGroup()
-const strictOption = { strict: true, reporter: null }
+const strictOption = { strict: true }
 
 
 // assert.deepEqual() substitute for assertions on proxied strict-mode env objects
@@ -36,5 +36,20 @@ test('.env test in strict mode', () => {
         MYNUM: num()
     }, strictOption)
     objStrictDeepEqual(env, { MYNUM: 4 })
+})
+
+test('strict mode objects throw when invalid attrs are accessed', () => {
+    const env = cleanEnv({ FOO: 'bar', BAZ: 'baz' }, {
+        FOO: str()
+    }, strictOption)
+    assert.strictEqual(env.FOO, 'bar')
+    assert.throws(() => env.ASDF)
+})
+
+test('strict mode objects throw when attempting to mutate', () => {
+    const env = cleanEnv({ FOO: 'bar', BAZ: 'baz' }, {
+        FOO: str()
+    }, strictOption)
+    assert.throws(() => env.FOO = 'foooooo')
 })
 
