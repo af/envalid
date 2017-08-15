@@ -37,8 +37,8 @@
   "author": "Aaron Franks",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^2.1.0",
-    "dotenv": "^4.0.0"
+    "chalk": "2.1.0",
+    "dotenv": "4.0.0"
   },
   "typings": "envalid.d.ts"
 }
