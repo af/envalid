@@ -8,7 +8,7 @@
   },
   "engineStrict": true,
   "scripts": {
-    "lint": "eslint index.js tests",
+    "lint": "eslint .",
     "test": "painless -r spec tests/*.js",
     "coverage": "nyc npm test",
     "prepush": "npm run lint && npm test"
