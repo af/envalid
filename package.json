@@ -27,17 +27,17 @@
     "validation"
   ],
   "devDependencies": {
-    "eslint": "2.10.2",
-    "husky": "0.13.4",
-    "nyc": "11.0.2",
+    "eslint": "4.4.1",
+    "husky": "0.14.3",
+    "nyc": "11.1.0",
     "painless": "0.9.5",
-    "typescript": "2.1.6",
+    "typescript": "2.4.2",
     "typescript-definition-tester": "0.0.5"
   },
   "author": "Aaron Franks",
   "license": "MIT",
   "dependencies": {
-    "chalk": "1.1.3",
+    "chalk": "2.1.0",
     "dotenv": "4.0.0"
   },
   "typings": "envalid.d.ts"
