@@ -3,6 +3,8 @@ const { EnvError, EnvMissingError, makeValidator,
 
 const extend = (x = {}, y = {}) => Object.assign({}, x, y)
 
+const testOnlySymbol = Symbol('envalid - test only')
+
 /**
 * Validate a single env var, given a spec object
 *
@@ -75,23 +77,33 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
 
     for (const k of varKeys) {
         const spec = specs[k]
-        const devDefault = (env.NODE_ENV === 'production' ? undefined : spec.devDefault)
+        const usingDevDefault = (env.NODE_ENV !== 'production') && (spec.hasOwnProperty('devDefault'))
+        const devDefault = usingDevDefault ? spec.devDefault : undefined
         let rawValue = env[k]
 
         if (rawValue === undefined) {
             rawValue = (devDefault === undefined ? spec.default : devDefault)
         }
 
-        // Default values can be anything falsy (besides undefined), without
+        // Default values can be anything falsy (including an explicitly set undefined), without
         // triggering validation errors:
-        const usingFalsyDefault = ((spec.default !== undefined) && (spec.default === rawValue)) ||
-                                  ((devDefault !== undefined) && (devDefault === rawValue))
+        const usingFalsyDefault = ((spec.hasOwnProperty('default')) && (spec.default === rawValue)) ||
+                                  (usingDevDefault && (devDefault === rawValue))
 
         try {
-            if (rawValue === undefined && !usingFalsyDefault) {
+            if (rawValue === testOnlySymbol) {
                 throw new EnvMissingError(formatSpecDescription(spec))
             }
-            output[k] = validateVar({ name: k, spec, rawValue })
+
+            if (rawValue === undefined) {
+                if (!usingFalsyDefault) {
+                    throw new EnvMissingError(formatSpecDescription(spec))
+                }
+
+                output[k] = undefined
+            } else {
+                output[k] = validateVar({ name: k, spec, rawValue })
+            }
         } catch (err) {
             if (options.reporter === null) throw err
             errors[k] = err
@@ -131,7 +143,7 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
 const testOnly = defaultValueForTests => {
     return process.env.NODE_ENV === 'test'
         ? defaultValueForTests
-        : undefined
+        : testOnlySymbol
 }
 
 
