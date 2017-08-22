@@ -9,10 +9,9 @@ test.beforeEach(() => {
     exitSpy = stub(process, 'exit', () => {})
 })
 test.afterEach(() => {
-    console.error.restore()     // eslint-disable-line no-console
+    console.error.restore() // eslint-disable-line no-console
     process.exit.restore()
 })
-
 
 test('reporter', () => {
     reporter({

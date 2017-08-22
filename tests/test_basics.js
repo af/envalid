@@ -11,14 +11,15 @@ test('string passthrough', () => {
 test('transformer option: allow transformation of keys', () => {
     const lowerCaseKey = (acc, [key, value]) => Object.assign(acc, { [key.toLowerCase()]: value })
     const opts = {
-        transformer: i => Object
-            .keys(i)
-            .map(e => [e, i[e]])
-            .reduce(lowerCaseKey, {})
+        transformer: i => Object.keys(i).map(e => [e, i[e]]).reduce(lowerCaseKey, {})
     }
-    const env = cleanEnv({ FOO: 'bar', FOO_BAR: 'baz' }, {
-        FOO: str()
-    }, opts)
+    const env = cleanEnv(
+        { FOO: 'bar', FOO_BAR: 'baz' },
+        {
+            FOO: str()
+        },
+        opts
+    )
     assert.deepEqual(env, { foo: 'bar', foo_bar: 'baz' })
 })
 
@@ -33,30 +34,42 @@ test('output is immutable', () => {
 })
 
 test('using provided default value', () => {
-    const env = cleanEnv({}, {
-        FOO: str({ default: 'asdf' })
-    })
+    const env = cleanEnv(
+        {},
+        {
+            FOO: str({ default: 'asdf' })
+        }
+    )
     assert.deepEqual(env, { FOO: 'asdf' })
 })
 
 test('default value can be blank', () => {
-    const env = cleanEnv({}, {
-        FOO: str({ default: '' })
-    })
+    const env = cleanEnv(
+        {},
+        {
+            FOO: str({ default: '' })
+        }
+    )
     assert.deepEqual(env, { FOO: '' })
 })
 
 test('default set to undefined', () => {
-    const env = cleanEnv({}, {
-        FOO: str({ default: undefined })
-    })
+    const env = cleanEnv(
+        {},
+        {
+            FOO: str({ default: undefined })
+        }
+    )
     assert.deepEqual(env, { FOO: undefined })
 })
 
 test('devDefault set to undefined', () => {
-    const env = cleanEnv({ NODE_ENV: 'test' }, {
-        FOO: str({ devDefault: undefined })
-    })
+    const env = cleanEnv(
+        { NODE_ENV: 'test' },
+        {
+            FOO: str({ devDefault: undefined })
+        }
+    )
     assert.deepEqual(env, { NODE_ENV: 'test', FOO: undefined })
 })
 
@@ -111,13 +124,20 @@ test('choices field', () => {
     assertPassthrough({ FOO: 'baz' }, spec)
 
     // Throws an error when `choices` is not an array
-    assert.throws(() => cleanEnv({ FOO: 'hi' }, { FOO: str({ choices: 123 }) }, makeSilent),
-                  Error, 'must be an array')
+    assert.throws(
+        () => cleanEnv({ FOO: 'hi' }, { FOO: str({ choices: 123 }) }, makeSilent),
+        Error,
+        'must be an array'
+    )
 })
 
 test('misconfigured spec', () => {
     // Validation throws with different error if spec is invalid
-    assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: {} }, makeSilent), EnvError, 'Invalid spec')
+    assert.throws(
+        () => cleanEnv({ FOO: 'asdf' }, { FOO: {} }, makeSilent),
+        EnvError,
+        'Invalid spec'
+    )
 })
 
 test('NODE_ENV built-in support', () => {
@@ -156,7 +176,7 @@ test('NODE_ENV built-in support', () => {
 test('testOnly', () => {
     const processEnv = process.env.NODE_ENV
     const makeSpec = () => ({
-        FOO: str({devDefault: testOnly('sup')})
+        FOO: str({ devDefault: testOnly('sup') })
     })
 
     // Create an env spec that has our testOnly value applied as the devDefault,
@@ -168,6 +188,12 @@ test('testOnly', () => {
     const env = cleanEnv({ NODE_ENV: 'test' }, testSpec)
     assert.deepEqual(env, { NODE_ENV: 'test', FOO: 'sup' })
 
-    assert.throws(() => cleanEnv({ NODE_ENV: 'production' }, makeSpec(), makeSilent), EnvMissingError)
-    assert.throws(() => cleanEnv({ NODE_ENV: 'development' }, makeSpec(), makeSilent), EnvMissingError)
+    assert.throws(
+        () => cleanEnv({ NODE_ENV: 'production' }, makeSpec(), makeSilent),
+        EnvMissingError
+    )
+    assert.throws(
+        () => cleanEnv({ NODE_ENV: 'development' }, makeSpec(), makeSilent),
+        EnvMissingError
+    )
 })
