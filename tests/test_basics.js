@@ -46,6 +46,20 @@ test('default value can be blank', () => {
     assert.deepEqual(env, { FOO: '' })
 })
 
+test('default set to undefined', () => {
+    const env = cleanEnv({}, {
+        FOO: str({ default: undefined })
+    })
+    assert.deepEqual(env, { FOO: undefined })
+})
+
+test('devDefault set to undefined', () => {
+    const env = cleanEnv({ NODE_ENV: 'test' }, {
+        FOO: str({ devDefault: undefined })
+    })
+    assert.deepEqual(env, { NODE_ENV: 'test', FOO: undefined })
+})
+
 test('devDefault', () => {
     const spec = {
         FOO: str({ devDefault: 'hi' })
