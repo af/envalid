@@ -50,6 +50,6 @@ test('strict mode objects throw when attempting to mutate', () => {
     const env = cleanEnv({ FOO: 'bar', BAZ: 'baz' }, {
         FOO: str()
     }, strictOption)
-    assert.throws(() => env.FOO = 'foooooo')
+    assert.throws(() => env.FOO = 'foooooo', '[envalid] Attempt to mutate environment value: FOO')
 })
 
