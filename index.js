@@ -19,7 +19,7 @@ function validateVar({ spec = {}, name, rawValue }) {
 
     if (spec.choices) {
         if (!Array.isArray(spec.choices)) {
-            throw new Error(`"choices" must be an array (in spec for "${name}")`)
+            throw new TypeError(`"choices" must be an array (in spec for "${name}")`)
         } else if (!spec.choices.includes(value)) {
             throw new EnvError(`Value "${value}" not in choices [${spec.choices}]`)
         }
