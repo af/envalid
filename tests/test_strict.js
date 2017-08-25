@@ -50,6 +50,19 @@ test('strict mode objects throw when attempting to mutate', () => {
     const env = cleanEnv({ FOO: 'bar', BAZ: 'baz' }, {
         FOO: str()
     }, strictOption)
-    assert.throws(() => env.FOO = 'foooooo')
+    assert.throws(() => env.FOO = 'foooooo', '[envalid] Attempt to mutate environment value: FOO')
 })
 
+test('strict mode objects throw and suggest add validator if in orig env', () => {
+    const env = cleanEnv({ FOO: 'foo' }, {
+        BAR: str()
+    }, strictOption)
+    assert.throws(() => env.FOO, '[envalid] Environment accessed not found in envalid, but in the environment. Please add a validator for it: FOO')
+})
+
+test('strict mode objects throw and suggest typo', () => {
+    const env = cleanEnv({}, {
+        BAR: str()
+    }, strictOption)
+    assert.throws(() => env.BAS, '[envalid] Environment var BAS not found, did you mean BAR?')
+})

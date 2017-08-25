@@ -129,7 +129,7 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     const reporter = options.reporter || require('./lib/reporter')
     reporter({ errors, env: output })
 
-    if (options.strict) output = require('./lib/strictProxy')(output)
+    if (options.strict) output = require('./lib/strictProxy')(output, env)
 
     return Object.freeze(output)
 }
