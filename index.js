@@ -1,5 +1,5 @@
 const { EnvError, EnvMissingError, makeValidator,
-        bool, num, str, json, url, email } = require('./lib/validators')
+        bool, num, str, json, url, email, host, port } = require('./lib/validators')
 
 const extend = (x = {}, y = {}) => Object.assign({}, x, y)
 
@@ -149,7 +149,8 @@ const testOnly = defaultValueForTests => {
 
 module.exports = {
     cleanEnv, makeValidator,                // core API
-    bool, num, str, json, url, email,       // built-in validators
     EnvError, EnvMissingError,              // error subclasses
-    testOnly                                // utility function(s)
+    testOnly,                               // utility function(s)
+    bool, num, str, json, host, port,       // built-in validators
+    url, email,
 }

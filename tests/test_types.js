@@ -1,5 +1,6 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, str, bool, num, email, url, json, makeValidator } = require('..')
+const { cleanEnv, EnvError, makeValidator,
+  str, bool, num, email, host, port, url, json } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }
@@ -59,6 +60,42 @@ test('email()', () => {
 
     assert.throws(() => cleanEnv({ FOO: 'asdf@asdf' }, spec, makeSilent), EnvError)
     assert.throws(() => cleanEnv({ FOO: '1' }, spec, makeSilent), EnvError)
+})
+
+test('host()', () => {
+    assert.equal(host().type, 'host')
+    const spec = { FOO: host() }
+    assertPassthrough({ FOO: 'example.com' }, spec)
+    assertPassthrough({ FOO: 'localhost' }, spec)
+    assertPassthrough({ FOO: '192.168.0.1' }, spec)
+    assertPassthrough({ FOO: '2001:0db8:85a3:0000:0000:8a2e:0370:7334' }, spec)
+
+    assert.throws(() => cleanEnv({ FOO: '' }, spec, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({ FOO: 'example.com.' }, spec, makeSilent), EnvError)
+    // https://github.com/chriso/validator.js/issues/704
+    // assert.throws(() => cleanEnv({ FOO: '127.0.0' }, spec, makeSilent), EnvError)
+    // assert.throws(() => cleanEnv({ FOO: '127.0.0.256' }, spec, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({ FOO: '2001:0db8:85a3:0000:0000' }, spec, makeSilent), EnvError)
+})
+
+test('port()', () => {
+    assert.equal(port().type, 'port')
+    const spec = { FOO: port() }
+
+    const with1 = cleanEnv({ FOO: '1' }, { FOO: num() })
+    assert.deepEqual(with1, { FOO: 1 })
+    const with80 = cleanEnv({ FOO: '80' }, { FOO: num() })
+    assert.deepEqual(with80, { FOO: 80 })
+    const with65535 = cleanEnv({ FOO: '65535' }, { FOO: num() })
+    assert.deepEqual(with65535, { FOO: 65535 })
+
+    assert.throws(() => cleanEnv({ FOO: '' }, spec, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({ FOO: '0' }, spec, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({ FOO: '65536' }, spec, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({ FOO: '042' }, spec, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({ FOO: '42.0' }, spec, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({ FOO: '42.42' }, spec, makeSilent), EnvError)
+    assert.throws(() => cleanEnv({ FOO: 'hello' }, spec, makeSilent), EnvError)
 })
 
 test('json()', () => {
