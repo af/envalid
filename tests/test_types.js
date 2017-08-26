@@ -1,15 +1,28 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, makeValidator,
-  str, bool, num, email, host, port, url, json } = require('..')
+const {
+    cleanEnv,
+    EnvError,
+    makeValidator,
+    str,
+    bool,
+    num,
+    email,
+    host,
+    port,
+    url,
+    json
+} = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }
 
-
 test('bool() works with various formats', () => {
     assert.equal(bool().type, 'bool')
-    assert.throws(() => cleanEnv({ FOO: 'asfd' }, { FOO: bool() }, makeSilent),
-                  EnvError, 'Invalid value')
+    assert.throws(
+        () => cleanEnv({ FOO: 'asfd' }, { FOO: bool() }, makeSilent),
+        EnvError,
+        'Invalid value'
+    )
 
     const trueBool = cleanEnv({ FOO: true }, { FOO: bool() })
     assert.deepEqual(trueBool, { FOO: true })
@@ -101,7 +114,7 @@ test('port()', () => {
 test('json()', () => {
     assert.equal(json().type, 'json')
     const env = cleanEnv({ FOO: '{"x": 123}' }, { FOO: json() })
-    assert.deepEqual(env, { FOO: {x: 123} })
+    assert.deepEqual(env, { FOO: { x: 123 } })
 
     assert.throws(() => cleanEnv({ FOO: 'abc' }, { FOO: json() }, makeSilent), EnvError)
 })

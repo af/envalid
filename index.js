@@ -1,5 +1,16 @@
-const { EnvError, EnvMissingError, makeValidator,
-        bool, num, str, json, url, email, host, port } = require('./lib/validators')
+const {
+    EnvError,
+    EnvMissingError,
+    makeValidator,
+    bool,
+    num,
+    str,
+    json,
+    url,
+    email,
+    host,
+    port
+} = require('./lib/validators')
 
 const extend = (x = {}, y = {}) => Object.assign({}, x, y)
 
@@ -27,7 +38,6 @@ function validateVar({ spec = {}, name, rawValue }) {
     if (value == null) throw new EnvError(`Invalid value for env var "${name}"`)
     return value
 }
-
 
 // Format a string error message for when a required env var is missing
 function formatSpecDescription(spec) {
@@ -61,9 +71,8 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     let output = {}
     let defaultNodeEnv = ''
     const errors = {}
-    const env = (options.dotEnvPath !== null)
-        ? extendWithDotEnv(inputEnv, options.dotEnvPath)
-        : inputEnv
+    const env =
+        options.dotEnvPath !== null ? extendWithDotEnv(inputEnv, options.dotEnvPath) : inputEnv
     const varKeys = Object.keys(specs)
 
     // If validation for NODE_ENV isn't specified, use the default validation:
@@ -77,18 +86,19 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
 
     for (const k of varKeys) {
         const spec = specs[k]
-        const usingDevDefault = (env.NODE_ENV !== 'production') && (spec.hasOwnProperty('devDefault'))
+        const usingDevDefault = env.NODE_ENV !== 'production' && spec.hasOwnProperty('devDefault')
         const devDefault = usingDevDefault ? spec.devDefault : undefined
         let rawValue = env[k]
 
         if (rawValue === undefined) {
-            rawValue = (devDefault === undefined ? spec.default : devDefault)
+            rawValue = devDefault === undefined ? spec.default : devDefault
         }
 
         // Default values can be anything falsy (including an explicitly set undefined), without
         // triggering validation errors:
-        const usingFalsyDefault = ((spec.hasOwnProperty('default')) && (spec.default === rawValue)) ||
-                                  (usingDevDefault && (devDefault === rawValue))
+        const usingFalsyDefault =
+            (spec.hasOwnProperty('default') && spec.default === rawValue) ||
+            (usingDevDefault && devDefault === rawValue)
 
         try {
             if (rawValue === testOnlySymbol) {
@@ -112,14 +122,12 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
 
     // If we need to run Object.assign() on output, we must do it before the
     // defineProperties() call, otherwise the properties would be lost
-    output = options.strict
-        ? output
-        : extend(env, output)
+    output = options.strict ? output : extend(env, output)
 
     Object.defineProperties(output, {
-        isDev:        { value: (defaultNodeEnv || output.NODE_ENV) === 'development' },
+        isDev: { value: (defaultNodeEnv || output.NODE_ENV) === 'development' },
         isProduction: { value: (defaultNodeEnv || output.NODE_ENV) === 'production' },
-        isTest:       { value: (defaultNodeEnv || output.NODE_ENV) === 'test' }
+        isTest: { value: (defaultNodeEnv || output.NODE_ENV) === 'test' }
     })
 
     if (options.transformer) {
@@ -134,23 +142,31 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     return Object.freeze(output)
 }
 
-
 /**
 * Utility function for providing default values only when NODE_ENV=test
 *
 * For more context, see https://github.com/af/envalid/issues/32
 */
 const testOnly = defaultValueForTests => {
-    return process.env.NODE_ENV === 'test'
-        ? defaultValueForTests
-        : testOnlySymbol
+    return process.env.NODE_ENV === 'test' ? defaultValueForTests : testOnlySymbol
 }
 
-
 module.exports = {
-    cleanEnv, makeValidator,                // core API
-    EnvError, EnvMissingError,              // error subclasses
-    testOnly,                               // utility function(s)
-    bool, num, str, json, host, port,       // built-in validators
-    url, email,
+    // core API
+    cleanEnv,
+    makeValidator,
+    // error subclasses
+    EnvError,
+    EnvMissingError,
+    // utility function(s)
+    testOnly,
+    // built-in validators
+    bool,
+    num,
+    str,
+    json,
+    host,
+    port,
+    url,
+    email
 }

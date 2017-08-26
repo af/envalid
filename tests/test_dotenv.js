@@ -3,18 +3,25 @@ const { createGroup, assert } = require('painless')
 const { cleanEnv, str, num } = require('..')
 const test = createGroup()
 
-test.beforeEach(() => fs.writeFileSync('.env', `
+test.beforeEach(() =>
+    fs.writeFileSync(
+        '.env',
+        `
 BAR=asdfasdf
 MYNUM=4
-`))
+`
+    )
+)
 test.afterEach(() => fs.unlinkSync('.env'))
 
-
 test('.env contents are cleaned', () => {
-    const env = cleanEnv({ FOO: 'bar' }, {
-        FOO: str(),
-        MYNUM: num()
-    })
+    const env = cleanEnv(
+        { FOO: 'bar' },
+        {
+            FOO: str(),
+            MYNUM: num()
+        }
+    )
     assert.deepEqual(env, { FOO: 'bar', BAR: 'asdfasdf', MYNUM: 4 })
 })
 
