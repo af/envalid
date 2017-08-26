@@ -95,11 +95,11 @@ test('port()', () => {
     assert.equal(port().type, 'port')
     const spec = { FOO: port() }
 
-    const with1 = cleanEnv({ FOO: '1' }, { FOO: num() })
+    const with1 = cleanEnv({ FOO: '1' }, spec)
     assert.deepEqual(with1, { FOO: 1 })
-    const with80 = cleanEnv({ FOO: '80' }, { FOO: num() })
+    const with80 = cleanEnv({ FOO: '80' }, spec)
     assert.deepEqual(with80, { FOO: 80 })
-    const with65535 = cleanEnv({ FOO: '65535' }, { FOO: num() })
+    const with65535 = cleanEnv({ FOO: '65535' }, spec)
     assert.deepEqual(with65535, { FOO: 65535 })
 
     assert.throws(() => cleanEnv({ FOO: '' }, spec, makeSilent), EnvError)
