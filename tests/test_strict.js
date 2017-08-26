@@ -57,12 +57,12 @@ test('strict mode objects throw and suggest add validator if in orig env', () =>
     const env = cleanEnv({ FOO: 'foo' }, {
         BAR: str()
     }, strictOption)
-    assert.throws(() => env.FOO, '[envalid] Environment accessed not found in envalid, but in the environment. Please add a validator for it: FOO')
+    assert.throws(() => env.FOO, '[envalid] Env var FOO was accessed but not validated. This var is set in the environment; please add an envalid validator for it.')
 })
 
 test('strict mode objects throw and suggest typo', () => {
     const env = cleanEnv({}, {
         BAR: str()
     }, strictOption)
-    assert.throws(() => env.BAS, '[envalid] Environment var BAS not found, did you mean BAR?')
+    assert.throws(() => env.BAS, '[envalid] Env var BAS not found, did you mean BAR?')
 })
