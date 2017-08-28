@@ -14,10 +14,12 @@
   "engineStrict": true,
   "scripts": {
     "lint": "eslint . --ignore-pattern '!.eslintrc.js'",
+    "lint-ts": "npm run prettier-ts -- --list-different",
     "test": "painless -r spec tests/*.js",
+    "prettier-ts": "prettier envalid.d.ts --tab-width 4 --print-width 100 --single-quote --no-semi",
     "coverage": "nyc npm test",
     "precommit": "lint-staged",
-    "prepush": "npm run lint && npm test"
+    "prepush": "npm run lint && npm run lint-ts && npm test"
   },
   "repository": {
     "type": "git",
@@ -55,6 +57,10 @@
   "lint-staged": {
     "*.js": [
       "eslint --fix",
+      "git add"
+    ],
+    "*.ts": [
+      "npm run prettier-ts -- --write",
       "git add"
     ]
   }
