@@ -16,6 +16,7 @@
     "lint": "eslint . --ignore-pattern '!.eslintrc.js'",
     "test": "painless -r spec tests/*.js",
     "coverage": "nyc npm test",
+    "precommit": "lint-staged",
     "prepush": "npm run lint && npm test"
   },
   "repository": {
@@ -35,6 +36,7 @@
     "eslint": "4.5.0",
     "eslint-plugin-prettier": "2.2.0",
     "husky": "0.14.3",
+    "lint-staged": "4.0.4",
     "nyc": "11.1.0",
     "painless": "0.9.5",
     "prettier": "1.5.3",
@@ -49,5 +51,11 @@
     "meant": "1.0.0",
     "validator": "8.1.0"
   },
-  "typings": "envalid.d.ts"
+  "typings": "envalid.d.ts",
+  "lint-staged": {
+    "*.js": [
+      "eslint --fix",
+      "git add"
+    ]
+  }
 }
