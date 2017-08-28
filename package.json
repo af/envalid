@@ -1,6 +1,6 @@
 {
   "name": "envalid",
-  "version": "4.0.0",
+  "version": "4.0.1",
   "description": "Validation for your environment variables",
   "main": "index.js",
   "files": [
