@@ -99,6 +99,8 @@ test('port()', () => {
     assert.deepEqual(with1, { FOO: 1 })
     const with80 = cleanEnv({ FOO: '80' }, spec)
     assert.deepEqual(with80, { FOO: 80 })
+    const with80Num = cleanEnv({ FOO: 80 }, spec)
+    assert.deepEqual(with80Num, { FOO: 80 })
     const with65535 = cleanEnv({ FOO: '65535' }, spec)
     assert.deepEqual(with65535, { FOO: 65535 })
 
