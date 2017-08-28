@@ -74,11 +74,12 @@ url, email address). To these ends, the following validation functions are avail
 * `host()` - Ensures an env var is either a domain name or an ip address (v4 or v6)
 * `port()` - Ensures an env var is a TCP port (1-65535)
 * `url()` - Ensures an env var is a url with a protocol and hostname
-* `json()` - Parses an env var with `JSON.parse`
+* `json()` - Parses an env var with [`jsonic`](https://www.npmjs.com/package/jsonic)
+  * This allows for less strict JSON
 
 Each validation function accepts an (optional) object with the following attributes:
 
-* `choices` - An Array that lists the admissable parsed values for the env var.
+* `choices` - An Array that lists the admissible parsed values for the env var.
 * `default` - A fallback value, which will be used if the env var wasn't specified.
               Providing a default effectively makes the env var optional.
 * `devDefault` - A fallback value to use *only* when `NODE_ENV` is _not_ `'production'`. This is handy
@@ -188,8 +189,10 @@ A helper function called `testOnly` is available, in case you need an default en
 `NODE_ENV=test`. It should be used along with `devDefault`, for example:
 
 ```js
+const { cleanEnv, testOnly, str } = require('envalid');
+
 const env = cleanEnv(process.env, {
-  SOME_VAR: envalid.str({devDefault: testOnly('myTestValue')})
+  SOME_VAR: str({devDefault: testOnly('myTestValue')})
 })
 ```
 

@@ -46,6 +46,7 @@
   "dependencies": {
     "chalk": "2.1.0",
     "dotenv": "4.0.0",
+    "jsonic": "0.3.0",
     "meant": "1.0.0",
     "validator": "8.1.0"
   },
