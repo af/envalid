@@ -3,6 +3,11 @@
   "version": "4.0.0",
   "description": "Validation for your environment variables",
   "main": "index.js",
+  "files": [
+    "index.js",
+    "envalid.d.ts",
+    "lib/"
+  ],
   "engines": {
     "node": ">=6"
   },
