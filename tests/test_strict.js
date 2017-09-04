@@ -96,3 +96,16 @@ test('strict mode objects throw and suggest typo', () => {
     )
     assert.throws(() => env.BAS, '[envalid] Env var BAS not found, did you mean BAR?')
 })
+
+test('strict mode allows `hasOwnProperty` on self', () => {
+    const env = cleanEnv(
+        { FOO: 'foo' },
+        {
+            FOO: str()
+        },
+        strictOption
+    )
+
+    assert.strictEqual(env.hasOwnProperty('FOO'), true)
+    assert.strictEqual(env.hasOwnProperty('BAR'), false)
+})
