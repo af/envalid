@@ -121,3 +121,11 @@ export function url(spec?: Spec<string>): ValidatorSpec<string>
  * Ensures an env var is an email address
  */
 export function email(spec?: Spec<string>): ValidatorSpec<string>
+/**
+ * Ensures an env var is either a domain name or an ip address (v4 or v6)
+ */
+export function host(spec?: Spec<string>): ValidatorSpec<string>
+/**
+ * Ensures an env var is a TCP port (1-65535)
+ */
+export function port(spec?: Spec<number>): ValidatorSpec<number>
