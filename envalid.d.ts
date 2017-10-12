@@ -37,6 +37,7 @@ interface Specs {
 
 interface CleanEnv {
     /** true if NODE_ENV === 'development' */
+    readonly isDevelopment: boolean
     readonly isDev: boolean
 
     /** true if NODE_ENV === 'test' */
@@ -44,6 +45,7 @@ interface CleanEnv {
 
     /** true if NODE_ENV === 'production' */
     readonly isProduction: boolean
+    readonly isProd: boolean
 }
 
 interface CleanOptions {

@@ -148,12 +148,16 @@ test('NODE_ENV built-in support', () => {
 
     // Some convenience helpers are available on the cleaned env object:
     assert.strictEqual(cleanEnv({ NODE_ENV: 'production' }, {}).isProduction, true)
+    assert.strictEqual(cleanEnv({ NODE_ENV: 'production' }, {}).isProd, true)
     assert.strictEqual(cleanEnv({ NODE_ENV: 'test' }, {}).isTest, true)
     assert.strictEqual(cleanEnv({ NODE_ENV: 'development' }, {}).isDev, true)
+    assert.strictEqual(cleanEnv({ NODE_ENV: 'development' }, {}).isDevelopment, true)
 
     // assume production if NODE_ENV is not specified:
     assert.strictEqual(cleanEnv({}, {}).isProduction, true)
+    assert.strictEqual(cleanEnv({}, {}).isProd, true)
     assert.strictEqual(cleanEnv({}, {}).isDev, false)
+    assert.strictEqual(cleanEnv({}, {}).isDevelopment, false)
     assert.strictEqual(cleanEnv({}, {}).isTest, false)
 
     // Non-standard values throw an error:
@@ -163,14 +167,18 @@ test('NODE_ENV built-in support', () => {
     // still use the default value:
     const unsetEnv = cleanEnv({ NODE_ENV: '' }, {})
     assert.strictEqual(unsetEnv.isProduction, true)
+    assert.strictEqual(unsetEnv.isProd, true)
     assert.strictEqual(unsetEnv.isDev, false)
+    assert.strictEqual(unsetEnv.isDevelopment, false)
 
     // You can override the built-in NODE_ENV validation if you want
     // The built-in convenience helpers can't be overridden though.
     const customSpec = { NODE_ENV: str({ default: 'FOO' }) }
     assert.deepEqual(cleanEnv({}, customSpec), { NODE_ENV: 'FOO' })
     assert.strictEqual(cleanEnv({}, customSpec).isProduction, false)
+    assert.strictEqual(cleanEnv({}, customSpec).isProd, false)
     assert.strictEqual(cleanEnv({}, customSpec).isDev, false)
+    assert.strictEqual(cleanEnv({}, customSpec).isDevelopment, false)
 })
 
 test('testOnly', () => {

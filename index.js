@@ -124,10 +124,15 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
     // defineProperties() call, otherwise the properties would be lost
     output = options.strict ? output : extend(env, output)
 
+    // Provide is{Prod/Dev/Test} properties for more readable NODE_ENV checks
+    // Node that isDev and isProd are just aliases to isDevelopment and isProduction
+    const computedNodeEnv = defaultNodeEnv || output.NODE_ENV
     Object.defineProperties(output, {
-        isDev: { value: (defaultNodeEnv || output.NODE_ENV) === 'development' },
-        isProduction: { value: (defaultNodeEnv || output.NODE_ENV) === 'production' },
-        isTest: { value: (defaultNodeEnv || output.NODE_ENV) === 'test' }
+        isDevelopment: { value: computedNodeEnv === 'development' },
+        isDev: { value: computedNodeEnv === 'development' },
+        isProduction: { value: computedNodeEnv === 'production' },
+        isProd: { value: computedNodeEnv === 'production' },
+        isTest: { value: computedNodeEnv === 'test' }
     })
 
     if (options.transformer) {
