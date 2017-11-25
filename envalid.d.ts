@@ -78,7 +78,7 @@ interface CleanOptions {
  * Returns a sanitized, immutable environment object.
  * @param environment An object containing your env vars (eg. process.env).
  */
-export function cleanEnv<T>(environment: any): T & CleanEnv
+export function cleanEnv<T>(environment: any): Readonly<T> & CleanEnv
 /**
  * Returns a sanitized, immutable environment object.
  * @param environment An object containing your env vars (eg. process.env).
@@ -89,7 +89,7 @@ export function cleanEnv<T>(
     environment: any,
     validators: { [K in keyof T]: ValidatorSpec<T[K]> },
     options?: CleanOptions
-): T & CleanEnv
+): Readonly<T> & CleanEnv
 /**
  * Returns a sanitized, immutable environment object.
  * @param environment An object containing your env vars (eg. process.env).
