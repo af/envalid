@@ -8,7 +8,7 @@ interface Spec<T> {
      */
     default?: T
     /**
-     * A fallback value to use only when NODE_ENV is not 'production'. 
+     * A fallback value to use only when NODE_ENV is not 'production'.
      * This is handy for env vars that are required for production environments, but optional for development and testing.
      */
     devDefault?: T
@@ -77,19 +77,26 @@ interface CleanOptions {
 /**
  * Returns a sanitized, immutable environment object.
  * @param environment An object containing your env vars (eg. process.env).
- * @param validators An object that specifies the format of required vars.
  */
-export function cleanEnv(environment: any, validators?: Specs, options?: CleanOptions): any
+export function cleanEnv<T>(environment: any): T & CleanEnv
 /**
  * Returns a sanitized, immutable environment object.
  * @param environment An object containing your env vars (eg. process.env).
  * @param validators An object that specifies the format of required vars.
+ * @param options An object that specifies options for cleanEnv.
  */
 export function cleanEnv<T>(
     environment: any,
-    validators?: Specs,
+    validators: { [K in keyof T]: ValidatorSpec<T[K]> },
     options?: CleanOptions
 ): T & CleanEnv
+/**
+ * Returns a sanitized, immutable environment object.
+ * @param environment An object containing your env vars (eg. process.env).
+ * @param validators An object that specifies the format of required vars.
+ * @param options An object that specifies options for cleanEnv.
+ */
+export function cleanEnv(environment: any, validators?: Specs, options?: CleanOptions): any
 
 /**
  * Create your own validator functions.
