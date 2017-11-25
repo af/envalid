@@ -7,10 +7,10 @@ interface Env {
 // Test cleanEnv
 cleanEnv({})
 const env = cleanEnv<Env>({})
-typeof env.foo === 'string'
-const isDev: Boolean = env.isDev
-const isProduction: Boolean = env.isProduction
-const isTest: Boolean = env.isTest
+const foo: string = env.foo
+const isDev: boolean = env.isDev
+const isProduction: boolean = env.isProduction
+const isTest: boolean = env.isTest
 cleanEnv(
     {},
     {},
@@ -46,8 +46,31 @@ const spec: Specs = {
 }
 spec[0]._parse('test')
 spec[0].type === 'test'
-const inferredEnv = cleanEnv({}, spec)
-typeof inferredEnv.bool === 'boolean'
+cleanEnv({}, spec)
+
+const inferredEnv = cleanEnv(
+    {},
+    {
+        foo: str({
+            desc: 'description',
+            default: ''
+        }),
+        bool: bool({}),
+        num: num({
+            choices: [1, 2, 3]
+        }),
+        json: json({
+            devDefault: { foo: 'bar' }
+        }),
+        url: url(),
+        email: email({
+            example: 'example',
+            docs: 'http://example.com'
+        })
+    }
+)
+
+const inferredUrl: string = inferredEnv.url
 
 // Custom validator
 const validator = makeValidator<Number>((input: string) => 3.33, 'CUSTOM_TYPE')
