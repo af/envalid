@@ -70,7 +70,34 @@ const inferredEnv = cleanEnv(
     }
 )
 
-const inferredUrl: string = inferredEnv.url
+const inferredBool: boolean = inferredEnv.bool
+const valueFromNonStrictCleanEnv: string = inferredEnv.propertyNotDefinedInValidators
+
+const strictEnv = cleanEnv(
+    {},
+    {
+        foo: str({
+            desc: 'description',
+            default: ''
+        }),
+        bool: bool({}),
+        num: num({
+            choices: [1, 2, 3]
+        }),
+        json: json({
+            devDefault: { foo: 'bar' }
+        }),
+        url: url(),
+        email: email({
+            example: 'example',
+            docs: 'http://example.com'
+        })
+    },
+    { strict: true }
+)
+
+const inferredEmail: string = strictEnv.email
+// const invalidField: string = strictEnv.nonsense
 
 // Custom validator
 const validator = makeValidator<Number>((input: string) => 3.33, 'CUSTOM_TYPE')

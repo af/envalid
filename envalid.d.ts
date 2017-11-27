@@ -74,11 +74,23 @@ interface CleanOptions {
     dotEnvPath?: string
 }
 
+interface StrictCleanOptions extends CleanOptions {
+    strict: true
+}
+
 /**
- * Returns a sanitized, immutable environment object.
+ * Returns a sanitized, immutable environment object. _Only_ the env vars
+ * specified in the `validators` parameter will be accessible on the returned
+ * object.
  * @param environment An object containing your env vars (eg. process.env).
+ * @param validators An object that specifies the format of required vars.
+ * @param options An object that specifies options for cleanEnv.
  */
-export function cleanEnv<T>(environment: any): Readonly<T> & CleanEnv
+export function cleanEnv<T>(
+    environment: any,
+    validators: { [K in keyof T]: ValidatorSpec<T[K]> },
+    options: StrictCleanOptions
+): Readonly<T> & CleanEnv
 /**
  * Returns a sanitized, immutable environment object.
  * @param environment An object containing your env vars (eg. process.env).
@@ -87,16 +99,9 @@ export function cleanEnv<T>(environment: any): Readonly<T> & CleanEnv
  */
 export function cleanEnv<T>(
     environment: any,
-    validators: { [K in keyof T]: ValidatorSpec<T[K]> },
+    validators?: { [K in keyof T]: ValidatorSpec<T[K]> },
     options?: CleanOptions
-): Readonly<T> & CleanEnv
-/**
- * Returns a sanitized, immutable environment object.
- * @param environment An object containing your env vars (eg. process.env).
- * @param validators An object that specifies the format of required vars.
- * @param options An object that specifies options for cleanEnv.
- */
-export function cleanEnv(environment: any, validators?: Specs, options?: CleanOptions): any
+): Readonly<T> & CleanEnv & { readonly [varName: string]: string }
 
 /**
  * Create your own validator functions.
