@@ -31,10 +31,6 @@ interface ValidatorSpec<T> extends Spec<T> {
     _parse: (input: string) => T
 }
 
-interface Specs {
-    [key: string]: ValidatorSpec<any>
-}
-
 interface CleanEnv {
     /** true if NODE_ENV === 'development' */
     readonly isDevelopment: boolean

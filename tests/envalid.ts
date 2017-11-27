@@ -1,4 +1,4 @@
-import { cleanEnv, makeValidator, str, bool, num, json, url, email, Spec, Specs } from '..'
+import { cleanEnv, makeValidator, str, bool, num, json, url, email, Spec } from '..'
 
 interface Env {
     foo: string
@@ -26,7 +26,7 @@ cleanEnv(
 )
 
 // Test validator specs
-const spec: Specs = {
+const spec = {
     foo: str({
         desc: 'description',
         default: ''
@@ -44,8 +44,8 @@ const spec: Specs = {
         docs: 'http://example.com'
     })
 }
-spec[0]._parse('test')
-spec[0].type === 'test'
+spec.foo._parse('test')
+spec.foo.type === 'test'
 cleanEnv({}, spec)
 
 const inferredEnv = cleanEnv(
