@@ -8,7 +8,7 @@ interface Spec<T> {
      */
     default?: T
     /**
-     * A fallback value to use only when NODE_ENV is not 'production'. 
+     * A fallback value to use only when NODE_ENV is not 'production'.
      * This is handy for env vars that are required for production environments, but optional for development and testing.
      */
     devDefault?: T
@@ -29,10 +29,6 @@ interface Spec<T> {
 interface ValidatorSpec<T> extends Spec<T> {
     type: string
     _parse: (input: string) => T
-}
-
-interface Specs {
-    [key: string]: ValidatorSpec<any>
 }
 
 interface CleanEnv {
@@ -74,22 +70,34 @@ interface CleanOptions {
     dotEnvPath?: string
 }
 
+interface StrictCleanOptions extends CleanOptions {
+    strict: true
+}
+
 /**
- * Returns a sanitized, immutable environment object.
+ * Returns a sanitized, immutable environment object. _Only_ the env vars
+ * specified in the `validators` parameter will be accessible on the returned
+ * object.
  * @param environment An object containing your env vars (eg. process.env).
  * @param validators An object that specifies the format of required vars.
- */
-export function cleanEnv(environment: any, validators?: Specs, options?: CleanOptions): any
-/**
- * Returns a sanitized, immutable environment object.
- * @param environment An object containing your env vars (eg. process.env).
- * @param validators An object that specifies the format of required vars.
+ * @param options An object that specifies options for cleanEnv.
  */
 export function cleanEnv<T>(
     environment: any,
-    validators?: Specs,
+    validators: { [K in keyof T]: ValidatorSpec<T[K]> },
+    options: StrictCleanOptions
+): Readonly<T> & CleanEnv
+/**
+ * Returns a sanitized, immutable environment object.
+ * @param environment An object containing your env vars (eg. process.env).
+ * @param validators An object that specifies the format of required vars.
+ * @param options An object that specifies options for cleanEnv.
+ */
+export function cleanEnv<T>(
+    environment: any,
+    validators?: { [K in keyof T]: ValidatorSpec<T[K]> },
     options?: CleanOptions
-): T & CleanEnv
+): Readonly<T> & CleanEnv & { readonly [varName: string]: string }
 
 /**
  * Create your own validator functions.
