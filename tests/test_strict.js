@@ -109,3 +109,15 @@ test('strict mode allows `hasOwnProperty` on self', () => {
     assert.strictEqual(env.hasOwnProperty('FOO'), true)
     assert.strictEqual(env.hasOwnProperty('BAR'), false)
 })
+
+test('strict mode env object not error out on .length checks (#70)', () => {
+    const env = cleanEnv(
+        { FOO: 'foo' },
+        {
+            FOO: str()
+        },
+        strictOption
+    )
+
+    assert.doesNotThrow(() => env.length)
+})
