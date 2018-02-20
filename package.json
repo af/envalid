@@ -51,7 +51,7 @@
     "chalk": "2.1.0",
     "dotenv": "4.0.0",
     "meant": "1.0.0",
-    "validator": "8.1.0"
+    "validator": "9.4.1"
   },
   "typings": "envalid.d.ts",
   "lint-staged": {
