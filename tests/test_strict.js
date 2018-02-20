@@ -1,5 +1,6 @@
 const fs = require('fs')
 const { createGroup, assert } = require('painless')
+const isPromise = require('is-promise')
 const { cleanEnv, str, num } = require('..')
 const test = createGroup()
 const strictOption = { strict: true }
@@ -120,4 +121,16 @@ test('strict mode env object not error out on .length checks (#70)', () => {
     )
 
     assert.doesNotThrow(() => env.length)
+})
+
+test('strict mode allows is-promise check without throwing', () => {
+    const env = cleanEnv(
+        { FOO: 'foo' },
+        {
+            FOO: str()
+        },
+        strictOption
+    )
+
+    assert.doesNotThrow(() => isPromise(env))
 })
