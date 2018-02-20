@@ -121,3 +121,15 @@ test('strict mode env object not error out on .length checks (#70)', () => {
 
     assert.doesNotThrow(() => env.length)
 })
+
+test('strict mode allows `then` on self', () => {
+    const env = cleanEnv(
+        { FOO: 'foo' },
+        {
+            FOO: str()
+        },
+        strictOption
+    )
+
+    assert.doesNotThrow(() => env.then)
+})
