@@ -38,7 +38,6 @@
     "eslint": "4.5.0",
     "eslint-plugin-prettier": "2.2.0",
     "husky": "0.14.3",
-    "is-promise": "2.1.0",
     "lint-staged": "4.0.4",
     "nyc": "11.1.0",
     "painless": "0.9.5",
