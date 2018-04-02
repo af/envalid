@@ -45,7 +45,7 @@ const env = envalid.cleanEnv(process.env, {
 })
 
 
-// Read an environment variable, which is validated and cleaned during 
+// Read an environment variable, which is validated and cleaned during
 // and/or filtering that you specified with cleanEnv().
 env.ADMIN_EMAIL     // -> 'admin@example.com'
 
@@ -75,6 +75,7 @@ url, email address). To these ends, the following validation functions are avail
 * `port()` - Ensures an env var is a TCP port (1-65535)
 * `url()` - Ensures an env var is a url with a protocol and hostname
 * `json()` - Parses an env var with `JSON.parse`
+* `array()` - Parses an enn var to an array, splits on `,\s?`
 
 Each validation function accepts an (optional) object with the following attributes:
 

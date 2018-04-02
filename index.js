@@ -9,7 +9,8 @@ const {
     url,
     email,
     host,
-    port
+    port,
+    array
 } = require('./lib/validators')
 
 const extend = (x = {}, y = {}) => Object.assign({}, x, y)
@@ -173,5 +174,6 @@ module.exports = {
     host,
     port,
     url,
-    email
+    email,
+    array
 }
