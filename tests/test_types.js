@@ -10,7 +10,8 @@ const {
     host,
     port,
     url,
-    json
+    json,
+    array
 } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
@@ -136,6 +137,35 @@ test('str()', () => {
     assert.deepEqual(withEmpty, { FOO: '' })
 
     assert.throws(() => cleanEnv({ FOO: 42 }, { FOO: str() }, makeSilent), EnvError)
+})
+
+test('array()', () => {
+    assert.equal(array().type, 'array')
+    const withEmpty = cleanEnv({ FOO: '' }, { FOO: array() })
+    assert.deepEqual(withEmpty, { FOO: '' })
+
+    const withOnlyBrackets = cleanEnv({ FOO: '[]' }, { FOO: array() })
+    assert.deepEqual(withOnlyBrackets, { FOO: '' })
+
+    const withOpeningBracket = cleanEnv({ FOO: '[test, otherTest' }, { FOO: array() })
+    assert.deepEqual(withOpeningBracket, { FOO: ['test', 'otherTest'] })
+
+    const withClosingBracket = cleanEnv({ FOO: 'test, otherTest]' }, { FOO: array() })
+    assert.deepEqual(withClosingBracket, { FOO: ['test', 'otherTest'] })
+
+    const withBracketInValue = cleanEnv({ FOO: 'te[st, other]Test' }, { FOO: array() })
+    assert.deepEqual(withBracketInValue, { FOO: ['te[st', 'other]Test'] })
+
+    const withBrackets = cleanEnv({ FOO: '[test, otherTest]' }, { FOO: array() })
+    assert.deepEqual(withBrackets, { FOO: ['test', 'otherTest'] })
+
+    const withoutSpace = cleanEnv({ FOO: '[test,otherTest]' }, { FOO: array() })
+    assert.deepEqual(withoutSpace, { FOO: ['test', 'otherTest'] })
+
+    const withoutBrackets = cleanEnv({ FOO: 'test, otherTest' }, { FOO: array() })
+    assert.deepEqual(withoutBrackets, { FOO: ['test', 'otherTest'] })
+
+    assert.throws(() => cleanEnv({ FOO: 42 }, { FOO: array() }, makeSilent), EnvError)
 })
 
 test('custom types', () => {
