@@ -44,6 +44,11 @@ interface CleanEnv {
     readonly isProd: boolean
 }
 
+interface ReporterOptions {
+    errors: { [key: string]: Error }
+    env: any
+}
+
 interface CleanOptions {
     /**
      * If true, the output of cleanEnv will only contain the env vars that were specified in the validators argument.
@@ -55,7 +60,7 @@ interface CleanOptions {
      * Pass in a function to override the default error handling and console output.
      * See lib/reporter.js for the default implementation.
      */
-    reporter?: (errors: { [key: string]: Error }, env: any) => void
+    reporter?: (opts: ReporterOptions) => void
 
     /**
      * A function used to transform the cleaned environment object before it is returned from cleanEnv.
