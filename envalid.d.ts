@@ -67,7 +67,7 @@ interface CleanOptions {
      * Pass null if you want to skip dotenv processing entirely and only load from process.env.
      * @default ".env"
      */
-    dotEnvPath?: string
+    dotEnvPath?: string | null
 }
 
 interface StrictCleanOptions extends CleanOptions {
