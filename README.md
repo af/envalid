@@ -87,6 +87,7 @@ Each validation function accepts an (optional) object with the following attribu
 * `desc` - A string that describes the env var.
 * `example` - An example value for the env var.
 * `docs` - A url that leads to more detailed documentation about the env var.
+* `requiredWhen` - A function that receives the raw env vars and must return a boolean. If true, this env var will be required. If false, this env var will be optional.
 
 
 ## Custom validators

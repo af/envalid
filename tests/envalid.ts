@@ -38,7 +38,9 @@ const spec = {
     json: json({
         devDefault: { foo: 'bar' }
     }),
-    url: url(),
+    url: url({
+        requiredWhen: () => true
+    }),
     email: email({
         example: 'example',
         docs: 'http://example.com'
@@ -62,7 +64,9 @@ const inferredEnv = cleanEnv(
         json: json({
             devDefault: { foo: 'bar' }
         }),
-        url: url(),
+        url: url({
+            requiredWhen: () => true
+        }),
         email: email({
             example: 'example',
             docs: 'http://example.com'

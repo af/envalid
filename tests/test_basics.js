@@ -1,5 +1,5 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, EnvMissingError, str, num, testOnly } = require('..')
+const { cleanEnv, EnvError, EnvMissingError, str, num, bool, testOnly } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }
@@ -204,4 +204,24 @@ test('testOnly', () => {
         () => cleanEnv({ NODE_ENV: 'development' }, makeSpec(), makeSilent),
         EnvMissingError
     )
+})
+
+test('conditionally required env', () => {
+    // Throws when the env var isn't in the given choices:
+    const spec = {
+        FOO: str({ requiredWhen: rawEnv => !!rawEnv.REQUIRE_FOO }),
+        REQUIRE_FOO: bool({ default: false })
+    }
+
+    // FOO not required when REQUIRE_FOO is false
+    assert.deepEqual(cleanEnv({}, spec, makeSilent), { REQUIRE_FOO: false })
+
+    // FOO is still read when REQUIRE_FOO is false
+    assert.deepEqual(cleanEnv({ FOO: 'bar' }, spec, makeSilent), { REQUIRE_FOO: false, FOO: 'bar' })
+
+    // FOO is required when REQUIRE_FOO is true and FOO is not provided
+    assert.throws(() => cleanEnv({ REQUIRE_FOO: true }, spec, makeSilent), EnvMissingError)
+
+    // Works fine when REQUIRE_FOO is true and FOO is satisfied
+    assertPassthrough({ REQUIRE_FOO: true, FOO: 'bar' }, spec)
 })

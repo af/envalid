@@ -24,6 +24,11 @@ interface Spec<T> {
      * A url that leads to more detailed documentation about the env var.
      */
     docs?: string
+    /**
+     * A function that receives the full raw environment and returns a boolean
+     * indicating if this field is required or optional.
+     */
+    requiredWhen?: (env: any) => boolean
 }
 
 interface ValidatorSpec<T> extends Spec<T> {

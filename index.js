@@ -105,6 +105,12 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
                 throw new EnvMissingError(formatSpecDescription(spec))
             }
 
+            if (typeof spec.requiredWhen === 'function') {
+                if (!spec.requiredWhen(env)) {
+                    continue
+                }
+            }
+
             if (rawValue === undefined) {
                 if (!usingFalsyDefault) {
                     throw new EnvMissingError(formatSpecDescription(spec))
