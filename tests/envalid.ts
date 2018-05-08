@@ -16,7 +16,7 @@ cleanEnv(
     {},
     {
         dotEnvPath: null,
-        reporter: (errors, e) => {
+        reporter: ({ errors, env: e }) => {
             const errorMessage: string = errors[0].message
             const errorName: string = errors[0].name
         },
