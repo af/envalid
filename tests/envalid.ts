@@ -21,7 +21,7 @@ cleanEnv(
             const errorName: string = errors[0].name
         },
         strict: false,
-        transformer: envToTransform => {}
+        transformer: envToTransform => envToTransform
     }
 )
 
@@ -71,7 +71,7 @@ const inferredEnv = cleanEnv(
 )
 
 const inferredBool: boolean = inferredEnv.bool
-const valueFromNonStrictCleanEnv: string = inferredEnv.propertyNotDefinedInValidators
+const valueFromNonStrictCleanEnv = inferredEnv.propertyNotDefinedInValidators
 
 const strictEnv = cleanEnv(
     {},
