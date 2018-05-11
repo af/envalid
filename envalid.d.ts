@@ -42,11 +42,13 @@ interface CleanEnv {
     /** true if NODE_ENV === 'production' */
     readonly isProduction: boolean
     readonly isProd: boolean
+
+    readonly [key: string]: string | object | number | boolean | undefined
 }
 
 interface ReporterOptions {
     errors: { [key: string]: Error }
-    env: any
+    env: CleanEnv
 }
 
 interface CleanOptions {
@@ -65,7 +67,7 @@ interface CleanOptions {
     /**
      * A function used to transform the cleaned environment object before it is returned from cleanEnv.
      */
-    transformer?: (env: any) => any
+    transformer?: (env: CleanEnv) => CleanEnv
 
     /**
      * Path to the file that is parsed by dotenv to optionally load more env vars at runtime.
@@ -88,7 +90,7 @@ interface StrictCleanOptions extends CleanOptions {
  * @param options An object that specifies options for cleanEnv.
  */
 export function cleanEnv<T>(
-    environment: any,
+    environment: NodeJS.ProcessEnv,
     validators: { [K in keyof T]: ValidatorSpec<T[K]> },
     options: StrictCleanOptions
 ): Readonly<T> & CleanEnv
@@ -99,10 +101,10 @@ export function cleanEnv<T>(
  * @param options An object that specifies options for cleanEnv.
  */
 export function cleanEnv<T>(
-    environment: any,
+    environment: NodeJS.ProcessEnv,
     validators?: { [K in keyof T]: ValidatorSpec<T[K]> },
     options?: CleanOptions
-): Readonly<T> & CleanEnv & { readonly [varName: string]: string }
+): Readonly<T> & CleanEnv
 
 /**
  * Create your own validator functions.
