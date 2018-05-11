@@ -11,7 +11,10 @@ test('string passthrough', () => {
 test('transformer option: allow transformation of keys', () => {
     const lowerCaseKey = (acc, [key, value]) => Object.assign(acc, { [key.toLowerCase()]: value })
     const opts = {
-        transformer: i => Object.keys(i).map(e => [e, i[e]]).reduce(lowerCaseKey, {})
+        transformer: i =>
+            Object.keys(i)
+                .map(e => [e, i[e]])
+                .reduce(lowerCaseKey, {})
     }
     const env = cleanEnv(
         { FOO: 'bar', FOO_BAR: 'baz' },

@@ -17,11 +17,11 @@ const extend = (x = {}, y = {}) => Object.assign({}, x, y)
 const testOnlySymbol = Symbol('envalid - test only')
 
 /**
-* Validate a single env var, given a spec object
-*
-* @throws EnvError - If validation is unsuccessful
-* @return - The cleaned value
-*/
+ * Validate a single env var, given a spec object
+ *
+ * @throws EnvError - If validation is unsuccessful
+ * @return - The cleaned value
+ */
 function validateVar({ spec = {}, name, rawValue }) {
     if (typeof spec._parse !== 'function') {
         throw new EnvError(`Invalid spec for "${name}"`)
@@ -148,10 +148,10 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
 }
 
 /**
-* Utility function for providing default values only when NODE_ENV=test
-*
-* For more context, see https://github.com/af/envalid/issues/32
-*/
+ * Utility function for providing default values only when NODE_ENV=test
+ *
+ * For more context, see https://github.com/af/envalid/issues/32
+ */
 const testOnly = defaultValueForTests => {
     return process.env.NODE_ENV === 'test' ? defaultValueForTests : testOnlySymbol
 }
