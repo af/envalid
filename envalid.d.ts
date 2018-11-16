@@ -146,3 +146,8 @@ export function host(spec?: Spec<string>): ValidatorSpec<string>
  * Ensures an env var is a TCP port (1-65535)
  */
 export function port(spec?: Spec<number>): ValidatorSpec<number>
+
+/**
+ * Utility function for providing default values only when NODE_ENV=test
+ */
+export function testOnly(defaultValueForTests: any): any
