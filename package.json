@@ -4,7 +4,8 @@
   "description": "Validation for your environment variables",
   "main": "src/index.js",
   "types": "src/index.d.ts",
-  "browser": "src/browser.js",
+  "browser": "src/indexNoDotenv.js",
+  "react-native": "src/indexNoDotenv.js",
   "files": [
     "src/"
   ],

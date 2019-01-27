@@ -1,1 +1,1 @@
-export * from './envalid.d.ts'
+export * from './envalid'

@@ -1,1 +1,1 @@
-export * from './envalidWithDotenv.d.ts'
+export * from './envalidWithDotenv'
