@@ -195,17 +195,6 @@ const env = cleanEnv(process.env, {
 
 For more context see [this issue](https://github.com/af/envalid/issues/32).
 
-## Browsers
-
-If you want to use envalid within a browser environment you can use:
-
-```js
-const envalid = require('envalid/browsers')
-```
-
-This export does not include dotenv integration, so it does not require filesystem access.
-Usage is otherwise the same.
-
 ## Motivation
 
 http://www.12factor.net/config
