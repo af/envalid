@@ -1,4 +1,4 @@
-const { cleanEnv } = require('../src')
+const { cleanEnv } = require('../')
 const { assert } = require('painless')
 
 // Ensure that a given environment spec passes through all values from the given

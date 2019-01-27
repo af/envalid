@@ -1,6 +1,6 @@
 const fs = require('fs')
 const { createGroup, assert } = require('painless')
-const { cleanEnv, str, num } = require('../src')
+const { cleanEnv, str, num } = require('..')
 const test = createGroup()
 
 test.beforeEach(() =>

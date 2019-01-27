@@ -1,5 +1,5 @@
 const { createGroup, assert } = require('painless')
-const { cleanEnv, EnvError, EnvMissingError, str, num, testOnly } = require('../src')
+const { cleanEnv, EnvError, EnvMissingError, str, num, testOnly } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }
