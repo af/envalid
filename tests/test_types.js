@@ -11,7 +11,7 @@ const {
     port,
     url,
     json
-} = require('..')
+} = require('../src')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
 const makeSilent = { reporter: null }

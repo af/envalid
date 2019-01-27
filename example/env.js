@@ -1,4 +1,4 @@
-const envalid = require('..')
+const envalid = require('../src')
 
 module.exports = envalid.cleanEnv(process.env, {
     HOST: envalid.host({ default: '127.0.0.1' }),

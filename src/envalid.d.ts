@@ -60,7 +60,7 @@ interface CleanOptions {
 
     /**
      * Pass in a function to override the default error handling and console output.
-     * See lib/reporter.js for the default implementation.
+     * See ./reporter.js for the default implementation.
      */
     reporter?: (opts: ReporterOptions) => void
 

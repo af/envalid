@@ -2,13 +2,11 @@
   "name": "envalid",
   "version": "4.1.4",
   "description": "Validation for your environment variables",
-  "main": "index.js",
-  "browser": "browser.js",
-  "types": "index.d.ts",
+  "main": "src/index.js",
+  "types": "src/index.d.ts",
+  "browser": "src/browser.js",
   "files": [
-    "index.js",
-    "envalid.d.ts",
-    "lib/"
+    "src/"
   ],
   "engines": {
     "node": ">=6"
@@ -18,7 +16,7 @@
     "lint": "eslint . --ignore-pattern '!.eslintrc.js'",
     "lint-ts": "npm run prettier-ts -- --list-different",
     "test": "painless -r spec tests/*.js",
-    "prettier-ts": "prettier lib/envalid.d.ts --tab-width 4 --print-width 100 --single-quote --no-semi",
+    "prettier-ts": "prettier 'src/**/*.d.ts' --tab-width 4 --print-width 100 --single-quote --no-semi",
     "coverage": "nyc npm test",
     "precommit": "lint-staged",
     "prepush": "npm run lint && npm run lint-ts && npm test"

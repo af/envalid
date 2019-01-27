@@ -1,6 +1,6 @@
 const fs = require('fs')
 const { createGroup, assert } = require('painless')
-const { cleanEnv, str, num } = require('..')
+const { cleanEnv, str, num } = require('../src')
 const test = createGroup()
 const strictOption = { strict: true }
 

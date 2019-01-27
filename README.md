@@ -23,7 +23,7 @@ positional arguments:
 * `options` - An (optional) object, which supports the following keys:
     * `strict` - (default: `false`) Enable more rigorous behavior. See "Strict Mode" below
     * `reporter` - Pass in a function to override the default error handling and
-                   console output. See `lib/reporter.js` for the default implementation.
+                   console output. See `src/reporter.js` for the default implementation.
     * `transformer` - A function used to transform the cleaned environment object
                       before it is returned from `cleanEnv`
     * `dotEnvPath` - (default: `'.env'`) Path to the file that is parsed by
