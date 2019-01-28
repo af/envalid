@@ -1,3 +1,4 @@
+const url = require('universal-url')
 const isFQDN = require('validator/lib/isFQDN')
 const isIP = require('validator/lib/isIP')
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/ // intentionally non-exhaustive
@@ -84,7 +85,6 @@ exports.port = makeValidator(input => {
 }, 'port')
 
 exports.url = makeValidator(x => {
-    const url = require('url')
     let isValid = false
 
     if (url.URL) {

@@ -36,9 +36,9 @@
     "validation"
   ],
   "devDependencies": {
+    "@types/node": "^10.0.6",
     "eslint": "4.19.1",
     "eslint-plugin-prettier": "2.6.0",
-    "@types/node": "^10.0.6",
     "husky": "0.14.3",
     "lint-staged": "7.1.0",
     "nyc": "11.7.3",
@@ -53,6 +53,7 @@
     "chalk": "2.4.1",
     "dotenv": "4.0.0",
     "meant": "1.0.1",
+    "universal-url": "2.0.0",
     "validator": "9.4.1"
   },
   "lint-staged": {
