@@ -2,10 +2,10 @@
   "name": "envalid",
   "version": "4.1.4",
   "description": "Validation for your environment variables",
-  "main": "src/index.js",
-  "types": "src/index.d.ts",
-  "browser": "src/indexNoDotenv.js",
-  "react-native": "src/indexNoDotenv.js",
+  "main": "src/envalid.js",
+  "types": "src/envalid.d.ts",
+  "browser": "src/envalidWithoutDotenv.js",
+  "react-native": "src/envalidWithoutDotenv.js",
   "files": [
     "src/"
   ],
