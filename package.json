@@ -55,7 +55,6 @@
     "meant": "1.0.1",
     "validator": "9.4.1"
   },
-  "typings": "envalid.d.ts",
   "lint-staged": {
     "*.js": [
       "eslint --fix",
