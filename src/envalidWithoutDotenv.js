@@ -11,7 +11,7 @@ const {
     host,
     port
 } = require('./validators')
-const extend = require('./extend')
+const { extend } = require('./utils')
 
 const testOnlySymbol = Symbol('envalid - test only')
 

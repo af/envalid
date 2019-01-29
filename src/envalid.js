@@ -1,5 +1,5 @@
 const envalid = require('./envalidWithoutDotenv')
-const extend = require('./extend')
+const { extend } = require('./utils')
 const fs = require('fs')
 const dotenv = require('dotenv')
 
