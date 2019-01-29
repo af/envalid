@@ -23,7 +23,7 @@ positional arguments:
 * `options` - An (optional) object, which supports the following keys:
     * `strict` - (default: `false`) Enable more rigorous behavior. See "Strict Mode" below
     * `reporter` - Pass in a function to override the default error handling and
-                   console output. See `lib/reporter.js` for the default implementation.
+                   console output. See `src/reporter.js` for the default implementation.
     * `transformer` - A function used to transform the cleaned environment object
                       before it is returned from `cleanEnv`
     * `dotEnvPath` - (default: `'.env'`) Path to the file that is parsed by
@@ -152,11 +152,11 @@ Envalid wraps the very handy [dotenv](https://www.npmjs.com/package/dotenv) pack
 so if you have a `.env` file in your project, envalid will read and validate the
 env vars from that file as well.
 
-
-
 ## Usage within React Native
 
-Envalid can be used within React Native with a custom reporter. Also the usage of `dotenv` must be disabled by setting `options.dotEnvPath` to `null`.
+When using Envalid within React Native the `dotenv` integration will not work, and the `dotEnvPath` option will be ignored.
+
+Envalid can be used within React Native with a custom reporter.
 
 Instead of `dotenv` [react-native-config](https://www.npmjs.com/package/react-native-config) can be used to read the configuration.
 
@@ -179,6 +179,10 @@ const validatedConfig = envalid.cleanEnv(
   },
 )
 ```
+
+## Usage within browsers
+
+When using Envalid within browsers the `dotenv` integration will not work, and the `dotEnvPath` option will be ignored.
 
 ## Utils
 

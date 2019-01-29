@@ -10,9 +10,8 @@ const {
     email,
     host,
     port
-} = require('./lib/validators')
-
-const extend = (x = {}, y = {}) => Object.assign({}, x, y)
+} = require('./validators')
+const { extend } = require('./utils')
 
 const testOnlySymbol = Symbol('envalid - test only')
 
@@ -46,33 +45,10 @@ function formatSpecDescription(spec) {
     return `${spec.desc}${egText}${docsText}` || ''
 }
 
-// Extend an env var object with the values parsed from a ".env"
-// file, whose path is given by the second argument.
-function extendWithDotEnv(inputEnv, dotEnvPath = '.env') {
-    // fs and dotenv cannot be required inside react-native.
-    // The react-native packager detects the require calls even if they
-    // are not on the top level, so we need to obfuscate them
-    const _require = require
-    const fs = _require('fs')
-    const dotenv = _require('dotenv')
-
-    let dotEnvBuffer = null
-    try {
-        dotEnvBuffer = fs.readFileSync(dotEnvPath)
-    } catch (err) {
-        if (err.code === 'ENOENT') return inputEnv
-        throw err
-    }
-    const parsed = dotenv.parse(dotEnvBuffer)
-    return extend(parsed, inputEnv)
-}
-
-function cleanEnv(inputEnv, specs = {}, options = {}) {
+function cleanEnv(env, specs = {}, options = {}) {
     let output = {}
     let defaultNodeEnv = ''
     const errors = {}
-    const env =
-        options.dotEnvPath !== null ? extendWithDotEnv(inputEnv, options.dotEnvPath) : inputEnv
     const varKeys = Object.keys(specs)
 
     // If validation for NODE_ENV isn't specified, use the default validation:
@@ -139,10 +115,10 @@ function cleanEnv(inputEnv, specs = {}, options = {}) {
         output = options.transformer(output)
     }
 
-    const reporter = options.reporter || require('./lib/reporter')
+    const reporter = options.reporter || require('./reporter')
     reporter({ errors, env: output })
 
-    if (options.strict) output = require('./lib/strictProxy')(output, env)
+    if (options.strict) output = require('./strictProxy')(output, env)
 
     return Object.freeze(output)
 }

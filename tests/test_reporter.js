@@ -1,5 +1,5 @@
 const { createGroup, assert, stub } = require('painless')
-const reporter = require('../lib/reporter')
+const reporter = require('../src/reporter')
 const test = createGroup()
 let logSpy = null
 let exitSpy = null

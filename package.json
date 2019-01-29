@@ -2,11 +2,11 @@
   "name": "envalid",
   "version": "4.1.4",
   "description": "Validation for your environment variables",
-  "main": "index.js",
+  "main": "src/envalid.js",
+  "types": "src/envalid.d.ts",
+  "browser": "src/envalidWithoutDotenv.js",
   "files": [
-    "index.js",
-    "envalid.d.ts",
-    "lib/"
+    "src/"
   ],
   "engines": {
     "node": ">=6"
@@ -16,7 +16,7 @@
     "lint": "eslint . --ignore-pattern '!.eslintrc.js'",
     "lint-ts": "npm run prettier-ts -- --list-different",
     "test": "painless -r spec tests/*.js",
-    "prettier-ts": "prettier envalid.d.ts --tab-width 4 --print-width 100 --single-quote --no-semi",
+    "prettier-ts": "prettier 'src/**/*.d.ts' --tab-width 4 --print-width 100 --single-quote --no-semi",
     "coverage": "nyc npm test",
     "precommit": "lint-staged",
     "prepush": "npm run lint && npm run lint-ts && npm test"
@@ -35,9 +35,9 @@
     "validation"
   ],
   "devDependencies": {
+    "@types/node": "^10.0.6",
     "eslint": "4.19.1",
     "eslint-plugin-prettier": "2.6.0",
-    "@types/node": "^10.0.6",
     "husky": "0.14.3",
     "lint-staged": "7.1.0",
     "nyc": "11.7.3",
@@ -54,7 +54,6 @@
     "meant": "1.0.1",
     "validator": "9.4.1"
   },
-  "typings": "envalid.d.ts",
   "lint-staged": {
     "*.js": [
       "eslint --fix",
