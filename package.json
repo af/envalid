@@ -17,9 +17,7 @@
     "lint-ts": "npm run prettier-ts -- --list-different",
     "test": "painless -r spec tests/*.js",
     "prettier-ts": "prettier 'src/**/*.d.ts' --tab-width 4 --print-width 100 --single-quote --no-semi",
-    "coverage": "nyc npm test",
-    "precommit": "lint-staged",
-    "prepush": "npm run lint && npm run lint-ts && npm test"
+    "coverage": "nyc npm test"
   },
   "repository": {
     "type": "git",
@@ -64,5 +62,11 @@
       "git add"
     ]
   },
-  "prettier": {}
+  "prettier": {},
+  "husky": {
+    "hooks": {
+      "pre-commit": "lint-staged",
+      "pre-push": "npm run lint && npm run lint-ts && npm test"
+    }
+  }
 }
