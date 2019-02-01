@@ -2,6 +2,7 @@ const envalid = require('./envalidWithoutDotenv')
 const { extend } = require('./utils')
 const fs = require('fs')
 const dotenv = require('dotenv')
+const { EnvError, EnvMissingError } = require('./validators')
 
 // Extend an env var object with the values parsed from a ".env"
 // file, whose path is given by the second argument.
@@ -24,5 +25,8 @@ envalid.cleanEnv = function cleanEnv(inputEnv, specs = {}, options = {}) {
         options.dotEnvPath !== null ? extendWithDotEnv(inputEnv, options.dotEnvPath) : inputEnv
     return originalCleanEnv(env, specs, options)
 }
+
+envalid.EnvError = EnvError
+envalid.EnvMissingError = EnvMissingError
 
 module.exports = envalid
