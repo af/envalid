@@ -151,3 +151,11 @@ export function port(spec?: Spec<number>): ValidatorSpec<number>
  * Utility function for providing default values only when NODE_ENV=test
  */
 export function testOnly(defaultValueForTests: any): any
+
+declare class EnvError extends TypeError {
+    constructor(...args: any[])
+}
+
+declare class EnvMissingError extends ReferenceError {
+    constructor(...args: any[])
+}
