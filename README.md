@@ -135,6 +135,23 @@ const env = cleanEnv(process.env, myValidators, {
 })
 ```
 
+Additionally, envalid exposes `EnvError` and `EnvMissingError`, which can be checked in case specific error handling is desired:
+
+```js
+const env = cleanEnv(process.env, myValidators, {
+    reporter: ({ errors, env }) => {
+        errors.forEach(err => {
+            if (err instanceof envalid.EnvError) {
+                ...
+            } else if (err instanceof envalid.EnvMissingError) {
+                ...
+            } else {
+                ...
+            }
+        }); 
+    }
+})
+```
 
 ## Strict mode
 
