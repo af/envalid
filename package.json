@@ -1,6 +1,6 @@
 {
   "name": "envalid",
-  "version": "4.2.0",
+  "version": "4.2.1",
   "description": "Validation for your environment variables",
   "main": "src/envalid.js",
   "types": "src/envalid.d.ts",
