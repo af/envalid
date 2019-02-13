@@ -12,6 +12,18 @@ const didYouMean = (scmd, commands) => {
     }
 }
 
+const inspectables = [
+    'length',
+    'inspect',
+    'hasOwnProperty',
+    Symbol.toStringTag,
+    Symbol.iterator,
+
+    // For libs that use `then` checks to see if objects are Promises (see #74):
+    'then'
+]
+const inspectSymbolStrings = ['Symbol(util.inspect.custom)', 'Symbol(nodejs.util.inspect.custom)']
+
 /**
  * Wrap the environment object with a Proxy that throws when:
  * a) trying to mutate an env var
@@ -26,18 +38,9 @@ module.exports = (envObj, originalEnv) =>
             // proxy that throws crashes the entire process. This whitelists
             // the necessary properties for `console.log(envObj)`, `envObj.length`,
             // `envObj.hasOwnProperty('string')` to work.
-            const inspectables = [
-                'length',
-                'inspect',
-                'hasOwnProperty',
-                Symbol.toStringTag,
-                Symbol.iterator,
-
-                // For libs that use `then` checks to see if objects are Promises (see #74):
-                'then'
-            ]
-            if (inspectables.includes(name)) return envObj[name]
-            if (name.toString() === 'Symbol(util.inspect.custom)') return envObj[name]
+            if (inspectables.includes(name) || inspectSymbolStrings.includes(name.toString())) {
+                return envObj[name]
+            }
 
             const varExists = envObj.hasOwnProperty(name)
             if (!varExists) {
