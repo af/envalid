@@ -102,7 +102,7 @@ export function cleanEnv<T>(
     environment: unknown,
     validators?: { [K in keyof T]: ValidatorSpec<T[K]> },
     options?: CleanOptions
-): Readonly<T> & CleanEnv & { readonly [varName: string]: string }
+): Readonly<T> & CleanEnv & { readonly [varName: string]: string | undefined }
 // The preceding line is not a mistake! In a non-strict environment, the
 // returned environment object can have properties other than the ones we've
 // validated. these are not parsed or processed, and thus are always of type

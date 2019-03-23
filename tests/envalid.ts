@@ -71,7 +71,7 @@ const inferredEnv = cleanEnv(
 )
 
 const inferredBool: boolean = inferredEnv.bool
-const valueFromNonStrictCleanEnv = inferredEnv.propertyNotDefinedInValidators
+const valueFromNonStrictCleanEnv: string = inferredEnv.propertyNotDefinedInValidators!
 
 const strictEnv = cleanEnv(
     {},
