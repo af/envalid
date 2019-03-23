@@ -42,13 +42,11 @@ interface CleanEnv {
     /** true if NODE_ENV === 'production' */
     readonly isProduction: boolean
     readonly isProd: boolean
-
-    readonly [key: string]: string | object | number | boolean | undefined
 }
 
 interface ReporterOptions {
     errors: { [key: string]: Error }
-    env: CleanEnv
+    env: unknown
 }
 
 interface CleanOptions {
@@ -67,7 +65,7 @@ interface CleanOptions {
     /**
      * A function used to transform the cleaned environment object before it is returned from cleanEnv.
      */
-    transformer?: (env: CleanEnv) => CleanEnv
+    transformer?: (env: unknown) => unknown
 
     /**
      * Path to the file that is parsed by dotenv to optionally load more env vars at runtime.
@@ -90,7 +88,7 @@ interface StrictCleanOptions extends CleanOptions {
  * @param options An object that specifies options for cleanEnv.
  */
 export function cleanEnv<T>(
-    environment: NodeJS.ProcessEnv,
+    environment: unknown,
     validators: { [K in keyof T]: ValidatorSpec<T[K]> },
     options: StrictCleanOptions
 ): Readonly<T> & CleanEnv
@@ -101,10 +99,15 @@ export function cleanEnv<T>(
  * @param options An object that specifies options for cleanEnv.
  */
 export function cleanEnv<T>(
-    environment: NodeJS.ProcessEnv,
+    environment: unknown,
     validators?: { [K in keyof T]: ValidatorSpec<T[K]> },
     options?: CleanOptions
-): Readonly<T> & CleanEnv
+): Readonly<T> & CleanEnv & { readonly [varName: string]: string }
+// The preceding line is not a mistake! In a non-strict environment, the
+// returned environment object can have properties other than the ones we've
+// validated. these are not parsed or processed, and thus are always of type
+// `string`. If you need better type safety and a fully-inferred environment,
+// use `cleanEnv` in strict mode.
 
 /**
  * Create your own validator functions.
