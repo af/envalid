@@ -1,5 +1,10 @@
 // Toy envalid example app.
-// This will start up an http server using the
+
+// This will start up an http server using the port and hostname specified in
+// any of three places. In descending order of preference, these are:
+// 1) The process environment
+// 2) A '.env' file
+// 3) Default values passed to envalid (via the 'default' or 'devDefault' properties.)
 
 const http = require('http')
 const env = require('./env')

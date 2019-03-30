@@ -1,0 +1,14 @@
+{
+  "scripts": {
+    "start": "ts-node server.ts",
+    "test": "tsc --noEmit && echo 'Typecheck ok.'"
+  },
+  "dependencies": {
+    "envalid": "../.."
+  },
+  "devDependencies": {
+    "@types/node": "^11.12.2",
+    "ts-node": "^8.0.3",
+    "typescript": "^3.2.4"
+  }
+}
