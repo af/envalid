@@ -133,3 +133,15 @@ test('strict mode allows `then` on self', () => {
 
     assert.doesNotThrow(() => env.then)
 })
+
+test('strict mode allows `__esModule` on self', () => {
+    const env = cleanEnv(
+        { FOO: 'foo' },
+        {
+            FOO: str()
+        },
+        strictOption
+    )
+
+    assert.doesNotThrow(() => env.__esModule)
+})
