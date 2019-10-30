@@ -1,4 +1,4 @@
-interface Spec<T> {
+export interface Spec<T> {
     /**
      * An Array that lists the admissable parsed values for the env var.
      */
@@ -26,12 +26,12 @@ interface Spec<T> {
     docs?: string
 }
 
-interface ValidatorSpec<T> extends Spec<T> {
+export interface ValidatorSpec<T> extends Spec<T> {
     type: string
     _parse: (input: string) => T
 }
 
-interface CleanEnv {
+export interface CleanEnv {
     /** true if NODE_ENV === 'development' */
     readonly isDevelopment: boolean
     readonly isDev: boolean
@@ -44,12 +44,12 @@ interface CleanEnv {
     readonly isProd: boolean
 }
 
-interface ReporterOptions {
+export interface ReporterOptions {
     errors: { [key: string]: Error }
     env: unknown
 }
 
-interface CleanOptions {
+export interface CleanOptions {
     /**
      * If true, the output of cleanEnv will only contain the env vars that were specified in the validators argument.
      * @default false
@@ -75,7 +75,7 @@ interface CleanOptions {
     dotEnvPath?: string | null
 }
 
-interface StrictCleanOptions extends CleanOptions {
+export interface StrictCleanOptions extends CleanOptions {
     strict: true
 }
 
