@@ -40,8 +40,7 @@
     "nyc": "^14.1.1",
     "painless": "^0.9.5",
     "prettier": "^1.18.2",
-    "typescript": "^3.6.4",
-    "typescript-definition-tester": "^0.0.6"
+    "typescript": "^3.6.4"
   },
   "author": "Aaron Franks",
   "license": "MIT",
