@@ -9,7 +9,7 @@
     "src/"
   ],
   "engines": {
-    "node": ">=6"
+    "node": ">=8.12"
   },
   "engineStrict": true,
   "scripts": {
@@ -33,14 +33,14 @@
     "validation"
   ],
   "devDependencies": {
-    "eslint": "^5.16.0",
+    "eslint": "^6.6.0",
     "eslint-plugin-prettier": "^3.1.0",
-    "husky": "2.4.1",
-    "lint-staged": "^8.2.0",
+    "husky": "3.0.9",
+    "lint-staged": "^9.4.2",
     "nyc": "^14.1.1",
     "painless": "^0.9.5",
     "prettier": "^1.18.2",
-    "typescript": "^3.5.1",
+    "typescript": "^3.6.4",
     "typescript-definition-tester": "^0.0.6"
   },
   "author": "Aaron Franks",
@@ -49,7 +49,7 @@
     "chalk": "^2.4.1",
     "dotenv": "^6.2.0",
     "meant": "^1.0.1",
-    "validator": "^11.0.0"
+    "validator": "^12.0.0"
   },
   "lint-staged": {
     "*.js": [

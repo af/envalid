@@ -26,6 +26,7 @@ module.exports = {
         'no-extra-bind': ERR,
         // "no-magic-numbers": [ERR, { "ignore": [0, 1, 2, -1] }],
         'no-param-reassign': WARN,
+        'no-prototype-builtins': OFF,
         'no-throw-literal': WARN,
         'no-warning-comments': WARN,
         'no-unexpected-multiline': ERR,
