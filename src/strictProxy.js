@@ -20,7 +20,9 @@ const inspectables = [
     Symbol.iterator,
 
     // For libs that use `then` checks to see if objects are Promises (see #74):
-    'then'
+    'then',
+    // For usage with TypeScript esModuleInterop flag
+    '__esModule'
 ]
 const inspectSymbolStrings = ['Symbol(util.inspect.custom)', 'Symbol(nodejs.util.inspect.custom)']
 
