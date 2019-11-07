@@ -157,3 +157,38 @@ test('custom types', () => {
     const withDefault = cleanEnv({}, { FOO: hex10({ default: 'abcabcabc0' }) })
     assert.deepEqual(withDefault, { FOO: 'abcabcabc0' })
 })
+
+test('custom types with additional configuration params', () => {
+    const rangeValidator = makeValidator((x, config) => {
+        if (!Number(x)) throw new Error('must be a number')
+        if (x < config.min) throw new Error('must be greater than min')
+        if (x > config.max) throw new Error('must be less than max')
+        return Number(x)
+    })
+
+    // default values work
+    const fooEnv = cleanEnv({ FOO: '4' }, { FOO: rangeValidator({ config: { min: 1, max: 5 } }) })
+    assert.deepEqual(fooEnv, { FOO: 4 })
+
+    // fails based on incorrect ranges
+    assert.throws(
+        () =>
+            cleanEnv(
+                { FOO: '6' },
+                { FOO: rangeValidator({ config: { min: 1, max: 5 } }) },
+                makeSilent
+            ),
+        Error,
+        'must be less than max'
+    )
+    assert.throws(
+        () =>
+            cleanEnv(
+                { FOO: '1' },
+                { FOO: rangeValidator({ config: { min: 2, max: 5 } }) },
+                makeSilent
+            ),
+        Error,
+        'must be greater than min'
+    )
+})

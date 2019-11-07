@@ -87,6 +87,7 @@ Each validation function accepts an (optional) object with the following attribu
 * `desc` - A string that describes the env var.
 * `example` - An example value for the env var.
 * `docs` - A url that leads to more detailed documentation about the env var.
+* `config` - Additional validation configuration that will be passed to the validator (e.g. min length of a string).
 
 
 ## Custom validators

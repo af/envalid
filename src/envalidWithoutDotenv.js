@@ -25,7 +25,7 @@ function validateVar({ spec = {}, name, rawValue }) {
     if (typeof spec._parse !== 'function') {
         throw new EnvError(`Invalid spec for "${name}"`)
     }
-    const value = spec._parse(rawValue)
+    const value = spec._parse(rawValue, spec.config)
 
     if (spec.choices) {
         if (!Array.isArray(spec.choices)) {

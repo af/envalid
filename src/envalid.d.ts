@@ -24,6 +24,10 @@ interface Spec<T> {
      * A url that leads to more detailed documentation about the env var.
      */
     docs?: string
+    /**
+     * Additional configuration to pass to the validator
+     */
+    config?: any
 }
 
 interface ValidatorSpec<T> extends Spec<T> {
@@ -125,6 +129,10 @@ export function bool(spec?: Spec<boolean>): ValidatorSpec<boolean>
  * Parses an env var (eg. "42", "0.23", "1e5") into a Number.
  */
 export function num(spec?: Spec<number>): ValidatorSpec<number>
+/**
+ * Parses an env var (eg. "42", "0.23", "1e5") into a Number and validates range.
+ */
+export function range(spec?: Spec<number>): ValidatorSpec<number>
 /**
  * Passes string values through, will ensure an value is present unless a default value is given.
  */
