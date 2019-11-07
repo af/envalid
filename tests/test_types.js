@@ -151,6 +151,34 @@ test('str()', () => {
     assert.deepEqual(withEmpty, { FOO: '' })
 
     assert.throws(() => cleanEnv({ FOO: 42 }, { FOO: str() }, makeSilent), EnvError)
+
+    const withValidLength = cleanEnv(
+        { FOO: 'just right' },
+        { FOO: str({ minLength: 1, maxLength: 12 }) }
+    )
+    assert.deepEqual(withValidLength, { FOO: 'just right' })
+
+    // maxLength fails
+    assert.throws(
+        () =>
+            cleanEnv(
+                { FOO: 'more than five characters' },
+                { FOO: str({ config: { minLength: 1, maxLength: 5 } }) },
+                makeSilent
+            ),
+        EnvError
+    )
+
+    // minLength fails
+    assert.throws(
+        () =>
+            cleanEnv(
+                { FOO: 'no' },
+                { FOO: str({ config: { minLength: 5, maxLength: 10 } }) },
+                makeSilent
+            ),
+        EnvError
+    )
 })
 
 test('custom types', () => {

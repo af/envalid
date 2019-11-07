@@ -58,8 +58,16 @@ exports.num = makeValidator((input, config = {}) => {
     return coerced
 }, 'num')
 
-exports.str = makeValidator(input => {
-    if (typeof input === 'string') return input
+exports.str = makeValidator((input, config = {}) => {
+    const minLength = config.minLength
+    const maxLength = config.maxLength
+    if (typeof input === 'string') {
+        if (minLength && input.length < minLength)
+            throw new EnvError(`String length less than min (${minLength}): "${input.length}"`)
+        if (maxLength && input.length > maxLength)
+            throw new EnvError(`String length grather than max (${maxLength}): "${input.length}"`)
+        return input
+    }
     throw new EnvError(`Not a string: "${input}"`)
 }, 'str')
 

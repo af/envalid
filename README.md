@@ -67,7 +67,7 @@ url, email address). To these ends, the following validation functions are avail
 
 * `str()` - Passes string values through, will ensure an value is present unless a
           `default` value is given. Note that an empty string is considered a valid value -
-          if this is undesirable you can easily create your own validator (see below)
+          if this is undesirable you can easily create your own validator (see below). You can also specify `config` values of `minLength` and `maxLength` to check string length.
 * `bool()` - Parses env var strings `"0", "1", "true", "false", "t", "f"` into booleans
 * `num()` - Parses an env var (eg. `"42", "0.23", "1e5"`) into a Number. Can specify `config` values of `min` and `max` to validate range.
 * `email()` - Ensures an env var is an email address
