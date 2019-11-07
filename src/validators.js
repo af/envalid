@@ -46,9 +46,15 @@ exports.bool = makeValidator(input => {
     }
 }, 'bool')
 
-exports.num = makeValidator(input => {
+exports.num = makeValidator((input, config = {}) => {
     const coerced = +input
+    const min = +config.min
+    const max = +config.max
+
     if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
+
+    if (min && coerced < min) throw new EnvError(`Number less than min (${min}): "${input}"`)
+    if (max && coerced > max) throw new EnvError(`Number greater than max (${max}): "${input}"`)
     return coerced
 }, 'num')
 

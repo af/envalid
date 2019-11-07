@@ -62,6 +62,21 @@ test('num()', () => {
     const withZero = cleanEnv({ FOO: 0 }, { FOO: num() })
     assert.deepEqual(withZero, { FOO: 0 })
 
+    const withRange = cleanEnv({ FOO: '3' }, { FOO: num({ min: 1, max: 5 }) })
+    assert.deepEqual(withRange, { FOO: 3 })
+
+    // max range fails
+    assert.throws(
+        () => cleanEnv({ FOO: '6' }, { FOO: num({ config: { min: 1, max: 5 } }) }, makeSilent),
+        EnvError
+    )
+
+    // min range fails
+    assert.throws(
+        () => cleanEnv({ FOO: '0' }, { FOO: num({ config: { min: 1, max: 5 } }) }, makeSilent),
+        EnvError
+    )
+
     assert.throws(() => cleanEnv({ FOO: 'asdf' }, { FOO: num() }, makeSilent), EnvError)
 })
 
