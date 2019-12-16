@@ -2,7 +2,7 @@ interface Spec<T> {
     /**
      * An Array that lists the admissable parsed values for the env var.
      */
-    choices?: T[]
+    choices?: ReadonlyArray<T>
     /**
      * A fallback value, which will be used if the env var wasn't specified. Providing a default effectively makes the env var optional.
      */
