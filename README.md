@@ -3,7 +3,7 @@
 # Envalid
 
 Envalid is a small library for validating and accessing environment variables in
-Node.js (v6.0 or later) programs, aiming to:
+Node.js (v8.12 or later) programs, aiming to:
 
 * ensure that your program only runs when all of its environment dependencies are met
 * give you executable documentation about the environment your program expects to run in
@@ -45,7 +45,7 @@ const env = envalid.cleanEnv(process.env, {
 })
 
 
-// Read an environment variable, which is validated and cleaned during 
+// Read an environment variable, which is validated and cleaned during
 // and/or filtering that you specified with cleanEnv().
 env.ADMIN_EMAIL     // -> 'admin@example.com'
 
@@ -148,7 +148,7 @@ const env = cleanEnv(process.env, myValidators, {
             } else {
                 ...
             }
-        }); 
+        });
     }
 })
 ```

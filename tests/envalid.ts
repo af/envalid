@@ -91,6 +91,10 @@ const strictEnv = cleanEnv(
         email: email({
             example: 'example',
             docs: 'http://example.com'
+        }),
+        specificStrings: str<'hello'>({
+            example: 'example',
+            docs: 'http://example.com'
         })
     },
     { strict: true }
@@ -98,6 +102,7 @@ const strictEnv = cleanEnv(
 
 const inferredEmail: string = strictEnv.email
 // const invalidField: string = strictEnv.nonsense
+const specificStrings: 'hello' = strictEnv.specificStrings
 
 // Custom validator
 const validator = makeValidator<Number>((input: string) => 3.33, 'CUSTOM_TYPE')
