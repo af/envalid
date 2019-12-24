@@ -113,7 +113,7 @@ export function cleanEnv<T>(
  * Create your own validator functions.
  */
 export function makeValidator<T>(
-    parser: (input: string) => any,
+    parser: (input: string) => T,
     type?: string
 ): (spec?: Spec<T>) => ValidatorSpec<T>
 
