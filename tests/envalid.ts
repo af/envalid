@@ -100,8 +100,25 @@ const inferredEmail: string = strictEnv.email
 // const invalidField: string = strictEnv.nonsense
 
 // Custom validator
-const validator = makeValidator<Number>((input: string) => 3.33, 'CUSTOM_TYPE')
-validator({
+const validator = makeValidator<number>((input: string) => 3.33, 'CUSTOM_TYPE')
+const validatorSpec = validator({
     default: 3.33,
     desc: 'Test Validator'
 })
+const shouldBeNum: number = validatorSpec._parse('3')
+// const shouldNotBeString: string = validatorSpec._parse('56')
+
+function isArrayOfStrings(arr: any[]): arr is string[] {
+    return arr.every(s => typeof s === 'string')
+}
+
+const validatorThatThrows = makeValidator<string[]>((input: string) => {
+    const arrStr = JSON.parse(input)
+    if (!Array.isArray(arrStr)) throw new Error('Should be an array!')
+    if (!isArrayOfStrings(arrStr)) {
+        throw new Error('Should be strings!')
+    }
+    return arrStr
+}, 'CUSTOM_TYPE')
+
+// const badValidator = makeValidator<number>((input: string) => '3.33', 'CUSTOM_TYPE')
