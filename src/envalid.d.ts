@@ -132,7 +132,7 @@ export function str(spec?: Spec<string>): ValidatorSpec<string>
 /**
  * Parses an env var with JSON.parse.
  */
-export function json(spec?: Spec<any>): ValidatorSpec<any>
+export function json<T = any>(spec?: Spec<T>): ValidatorSpec<T>
 /**
  * Ensures an env var is a url with a protocol and hostname
  */
