@@ -120,15 +120,15 @@ export function makeValidator<T>(
 /**
  * Parses env var string "0", "1", "true", "false", "t", "f" into Boolean.
  */
-export function bool(spec?: Spec<boolean>): ValidatorSpec<boolean>
+export function bool<T extends boolean = boolean>(spec?: Spec<T>): ValidatorSpec<T>
 /**
  * Parses an env var (eg. "42", "0.23", "1e5") into a Number.
  */
-export function num(spec?: Spec<number>): ValidatorSpec<number>
+export function num<T extends number = number>(spec?: Spec<T>): ValidatorSpec<T>
 /**
  * Passes string values through, will ensure an value is present unless a default value is given.
  */
-export function str(spec?: Spec<string>): ValidatorSpec<string>
+export function str<T extends string = string>(spec?: Spec<T>): ValidatorSpec<T>
 /**
  * Parses an env var with JSON.parse.
  */
@@ -136,19 +136,19 @@ export function json<T = any>(spec?: Spec<T>): ValidatorSpec<T>
 /**
  * Ensures an env var is a url with a protocol and hostname
  */
-export function url(spec?: Spec<string>): ValidatorSpec<string>
+export function url<T extends string = string>(spec?: Spec<T>): ValidatorSpec<T>
 /**
  * Ensures an env var is an email address
  */
-export function email(spec?: Spec<string>): ValidatorSpec<string>
+export function email<T extends string = string>(spec?: Spec<T>): ValidatorSpec<T>
 /**
  * Ensures an env var is either a domain name or an ip address (v4 or v6)
  */
-export function host(spec?: Spec<string>): ValidatorSpec<string>
+export function host<T extends string = string>(spec?: Spec<T>): ValidatorSpec<T>
 /**
  * Ensures an env var is a TCP port (1-65535)
  */
-export function port(spec?: Spec<number>): ValidatorSpec<number>
+export function port<T extends number = number>(spec?: Spec<T>): ValidatorSpec<T>
 
 /**
  * Utility function for providing default values only when NODE_ENV=test
