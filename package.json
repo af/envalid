@@ -33,14 +33,14 @@
     "validation"
   ],
   "devDependencies": {
-    "eslint": "^6.6.0",
-    "eslint-plugin-prettier": "^3.1.0",
-    "husky": "3.0.9",
-    "lint-staged": "^9.4.2",
-    "nyc": "^14.1.1",
+    "eslint": "^6.8.0",
+    "eslint-plugin-prettier": "^3.1.2",
+    "husky": "4.2.3",
+    "lint-staged": "^10.0.8",
+    "nyc": "^15.0.0",
     "painless": "^0.9.5",
     "prettier": "^1.18.2",
-    "typescript": "^3.6.4"
+    "typescript": "^3.8.3"
   },
   "author": "Aaron Franks",
   "license": "MIT",
@@ -48,7 +48,7 @@
     "chalk": "^3.0.0",
     "dotenv": "^8.2.0",
     "meant": "^1.0.1",
-    "validator": "^12.0.0"
+    "validator": "^12.2.0"
   },
   "lint-staged": {
     "*.js": [
