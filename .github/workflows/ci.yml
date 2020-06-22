@@ -1,0 +1,35 @@
+name: CI via GitHub Actions
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master, actions-ci ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 10, 12, 14 ]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install dependencies
+      run: yarn --frozen-lockfile
+
+    - name: ESLint
+      run: yarn lint
+
+    - name: Lint for TS
+      run: yarn lint-ts
+
+    - name: Unit tests
+      run: yarn test
