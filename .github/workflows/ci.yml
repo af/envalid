@@ -1,0 +1,32 @@
+name: continuous-integration
+
+on:
+  push:
+    branches: [ master, v7 ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    strategy:
+      matrix:
+        node-version: [ 10, 12, 14 ]
+
+    steps:
+    - uses: actions/checkout@v2
+
+    - name: Use Node.js ${{ matrix.node-version }}
+      uses: actions/setup-node@v1
+      with:
+        node-version: ${{ matrix.node-version }}
+
+    - name: Install dependencies
+      run: yarn --frozen-lockfile
+
+    - name: ESLint
+      run: yarn lint
+
+    - name: Unit tests
+      run: yarn test

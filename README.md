@@ -1,5 +1,3 @@
-[![Build Status](https://travis-ci.org/af/envalid.svg?branch=master)](https://travis-ci.org/af/envalid)
-
 # Envalid
 
 Envalid is a small library for validating and accessing environment variables in
