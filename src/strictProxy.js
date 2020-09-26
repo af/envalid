@@ -22,7 +22,7 @@ const inspectables = [
     // For libs that use `then` checks to see if objects are Promises (see #74):
     'then',
     // For usage with TypeScript esModuleInterop flag
-    '__esModule'
+    '__esModule',
 ]
 const inspectSymbolStrings = ['Symbol(util.inspect.custom)', 'Symbol(nodejs.util.inspect.custom)']
 
@@ -61,5 +61,5 @@ module.exports = (envObj, originalEnv) =>
 
         set(target, name) {
             throw new TypeError(`[envalid] Attempt to mutate environment value: ${name}`)
-        }
+        },
     })

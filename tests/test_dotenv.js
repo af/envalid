@@ -19,7 +19,7 @@ test('.env contents are cleaned', () => {
         { FOO: 'bar' },
         {
             FOO: str(),
-            MYNUM: num()
+            MYNUM: num(),
         }
     )
     assert.deepEqual(env, { FOO: 'bar', BAR: 'asdfasdf', MYNUM: 4 })

@@ -6,12 +6,12 @@ module.exports = {
     parserOptions: {
         impliedStrict: true,
         sourceType: 'module',
-        ecmaVersion: 7
+        ecmaVersion: 7,
     },
     env: {
         es6: true,
         node: true,
-        browser: true
+        browser: true,
     },
     globals: {},
     rules: {
@@ -78,6 +78,9 @@ module.exports = {
         // JSDoc
         // "require-jsdoc": OFF,
         // "valid-jsdoc": WARN
-        'prettier/prettier': [ERR, { singleQuote: true, semi: false, printWidth: 100, tabWidth: 4 }]
-    }
+        'prettier/prettier': [
+            ERR,
+            { singleQuote: true, semi: false, printWidth: 100, tabWidth: 4 },
+        ],
+    },
 }

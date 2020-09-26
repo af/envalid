@@ -16,7 +16,7 @@ test.afterEach(() => {
 test('reporter', () => {
     reporter({
         errors: { FOO: new Error('hi') },
-        env: {}
+        env: {},
     })
     assert.strictEqual(logSpy.callCount, 1)
 

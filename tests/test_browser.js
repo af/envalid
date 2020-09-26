@@ -10,7 +10,7 @@ test('smoke test to ensure the browser export works', () => {
     const env = cleanEnv(
         {},
         {
-            FOO: str({ default: 'asdf' })
+            FOO: str({ default: 'asdf' }),
         }
     )
     assert.deepEqual(env, { FOO: 'asdf' })

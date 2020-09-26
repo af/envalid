@@ -31,7 +31,7 @@ test('strict option: only specified fields are passed through', () => {
     const env = cleanEnv(
         { FOO: 'bar', BAZ: 'baz' },
         {
-            FOO: str()
+            FOO: str(),
         },
         strictOption
     )
@@ -42,7 +42,7 @@ test('.env test in strict mode', () => {
     const env = cleanEnv(
         { FOO: 'bar', BAZ: 'baz' },
         {
-            MYNUM: num()
+            MYNUM: num(),
         },
         strictOption
     )
@@ -53,7 +53,7 @@ test('strict mode objects throw when invalid attrs are accessed', () => {
     const env = cleanEnv(
         { FOO: 'bar', BAZ: 'baz' },
         {
-            FOO: str()
+            FOO: str(),
         },
         strictOption
     )
@@ -65,7 +65,7 @@ test('strict mode objects throw when attempting to mutate', () => {
     const env = cleanEnv(
         { FOO: 'bar', BAZ: 'baz' },
         {
-            FOO: str()
+            FOO: str(),
         },
         strictOption
     )
@@ -76,7 +76,7 @@ test('strict mode objects throw and suggest add validator if in orig env', () =>
     const env = cleanEnv(
         { FOO: 'foo' },
         {
-            BAR: str()
+            BAR: str(),
         },
         strictOption
     )
@@ -90,7 +90,7 @@ test('strict mode objects throw and suggest typo', () => {
     const env = cleanEnv(
         {},
         {
-            BAR: str()
+            BAR: str(),
         },
         strictOption
     )
@@ -101,7 +101,7 @@ test('strict mode allows `hasOwnProperty` on self', () => {
     const env = cleanEnv(
         { FOO: 'foo' },
         {
-            FOO: str()
+            FOO: str(),
         },
         strictOption
     )
@@ -114,7 +114,7 @@ test('strict mode env object not error out on .length checks (#70)', () => {
     const env = cleanEnv(
         { FOO: 'foo' },
         {
-            FOO: str()
+            FOO: str(),
         },
         strictOption
     )
@@ -126,7 +126,7 @@ test('strict mode allows `then` on self', () => {
     const env = cleanEnv(
         { FOO: 'foo' },
         {
-            FOO: str()
+            FOO: str(),
         },
         strictOption
     )
@@ -138,7 +138,7 @@ test('strict mode allows `__esModule` on self', () => {
     const env = cleanEnv(
         { FOO: 'foo' },
         {
-            FOO: str()
+            FOO: str(),
         },
         strictOption
     )

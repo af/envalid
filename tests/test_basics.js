@@ -11,15 +11,15 @@ test('string passthrough', () => {
 test('transformer option: allow transformation of keys', () => {
     const lowerCaseKey = (acc, [key, value]) => Object.assign(acc, { [key.toLowerCase()]: value })
     const opts = {
-        transformer: i =>
+        transformer: (i) =>
             Object.keys(i)
-                .map(e => [e, i[e]])
-                .reduce(lowerCaseKey, {})
+                .map((e) => [e, i[e]])
+                .reduce(lowerCaseKey, {}),
     }
     const env = cleanEnv(
         { FOO: 'bar', FOO_BAR: 'baz' },
         {
-            FOO: str()
+            FOO: str(),
         },
         opts
     )
@@ -40,7 +40,7 @@ test('using provided default value', () => {
     const env = cleanEnv(
         {},
         {
-            FOO: str({ default: 'asdf' })
+            FOO: str({ default: 'asdf' }),
         }
     )
     assert.deepEqual(env, { FOO: 'asdf' })
@@ -50,7 +50,7 @@ test('default value can be blank', () => {
     const env = cleanEnv(
         {},
         {
-            FOO: str({ default: '' })
+            FOO: str({ default: '' }),
         }
     )
     assert.deepEqual(env, { FOO: '' })
@@ -60,7 +60,7 @@ test('default set to undefined', () => {
     const env = cleanEnv(
         {},
         {
-            FOO: str({ default: undefined })
+            FOO: str({ default: undefined }),
         }
     )
     assert.deepEqual(env, { FOO: undefined })
@@ -70,7 +70,7 @@ test('devDefault set to undefined', () => {
     const env = cleanEnv(
         { NODE_ENV: 'test' },
         {
-            FOO: str({ devDefault: undefined })
+            FOO: str({ devDefault: undefined }),
         }
     )
     assert.deepEqual(env, { NODE_ENV: 'test', FOO: undefined })
@@ -78,7 +78,7 @@ test('devDefault set to undefined', () => {
 
 test('devDefault', () => {
     const spec = {
-        FOO: str({ devDefault: 'hi' })
+        FOO: str({ devDefault: 'hi' }),
     }
 
     // For testing/development environments, devDefault values can make fields optional:
@@ -92,7 +92,7 @@ test('devDefault', () => {
 test('falsy devDefault', () => {
     // Falsy values for devDefault work the same as falsy regular defaults
     const spec = {
-        FOO: str({ devDefault: '' })
+        FOO: str({ devDefault: '' }),
     }
 
     const env = cleanEnv({ NODE_ENV: 'test' }, spec)
@@ -103,7 +103,7 @@ test('falsy devDefault', () => {
 
 test('devDefault and default together', () => {
     const spec = {
-        FOO: num({ devDefault: 3000, default: 80 })
+        FOO: num({ devDefault: 3000, default: 80 }),
     }
 
     const env = cleanEnv({ NODE_ENV: 'test' }, spec)
@@ -116,7 +116,7 @@ test('devDefault and default together', () => {
 test('choices field', () => {
     // Throws when the env var isn't in the given choices:
     const spec = {
-        FOO: str({ choices: ['foo', 'bar', 'baz'] })
+        FOO: str({ choices: ['foo', 'bar', 'baz'] }),
     }
     assert.throws(() => cleanEnv({}, spec, makeSilent), EnvMissingError)
     assert.throws(() => cleanEnv({ FOO: 'bad' }, spec, makeSilent), EnvError, 'not in choices')
@@ -187,7 +187,7 @@ test('NODE_ENV built-in support', () => {
 test('testOnly', () => {
     const processEnv = process.env.NODE_ENV
     const makeSpec = () => ({
-        FOO: str({ devDefault: testOnly('sup') })
+        FOO: str({ devDefault: testOnly('sup') }),
     })
 
     // Create an env spec that has our testOnly value applied as the devDefault,

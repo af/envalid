@@ -10,7 +10,7 @@ const {
     host,
     port,
     url,
-    json
+    json,
 } = require('..')
 const { assertPassthrough } = require('./utils')
 const test = createGroup()
@@ -139,14 +139,14 @@ test('str()', () => {
 })
 
 test('custom types', () => {
-    const alwaysFoo = makeValidator(x => 'foo')
+    const alwaysFoo = makeValidator((x) => 'foo')
     assert.equal(alwaysFoo().type, 'unknown')
-    assert.equal(makeValidator(x => 'foo', 'some type')().type, 'some type')
+    assert.equal(makeValidator((x) => 'foo', 'some type')().type, 'some type')
 
     const fooEnv = cleanEnv({ FOO: 'asdf' }, { FOO: alwaysFoo() })
     assert.deepEqual(fooEnv, { FOO: 'foo' })
 
-    const hex10 = makeValidator(x => {
+    const hex10 = makeValidator((x) => {
         if (/^[a-f0-9]{10}$/.test(x)) return x
         throw new Error('need 10 hex chars')
     })

@@ -9,7 +9,7 @@ const {
     url,
     email,
     host,
-    port
+    port,
 } = require('./validators')
 const { extend } = require('./utils')
 
@@ -56,7 +56,7 @@ function cleanEnv(env, specs = {}, options = {}) {
         defaultNodeEnv = validateVar({
             name: 'NODE_ENV',
             spec: str({ choices: ['development', 'test', 'production'] }),
-            rawValue: env.NODE_ENV || 'production'
+            rawValue: env.NODE_ENV || 'production',
         })
     }
 
@@ -108,7 +108,7 @@ function cleanEnv(env, specs = {}, options = {}) {
         isDev: { value: computedNodeEnv === 'development' },
         isProduction: { value: computedNodeEnv === 'production' },
         isProd: { value: computedNodeEnv === 'production' },
-        isTest: { value: computedNodeEnv === 'test' }
+        isTest: { value: computedNodeEnv === 'test' },
     })
 
     if (options.transformer) {
@@ -128,7 +128,7 @@ function cleanEnv(env, specs = {}, options = {}) {
  *
  * For more context, see https://github.com/af/envalid/issues/32
  */
-const testOnly = defaultValueForTests => {
+const testOnly = (defaultValueForTests) => {
     return process.env.NODE_ENV === 'test' ? defaultValueForTests : testOnlySymbol
 }
 
@@ -149,5 +149,5 @@ module.exports = {
     host,
     port,
     url,
-    email
+    email,
 }

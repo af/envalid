@@ -21,7 +21,7 @@ class EnvMissingError extends ReferenceError {
 exports.EnvMissingError = EnvMissingError
 
 function makeValidator(parseFn, type = 'unknown') {
-    return function(spec = {}) {
+    return function (spec = {}) {
         spec.type = type
         spec._parse = parseFn
         return spec
@@ -29,7 +29,7 @@ function makeValidator(parseFn, type = 'unknown') {
 }
 exports.makeValidator = makeValidator
 
-exports.bool = makeValidator(input => {
+exports.bool = makeValidator((input) => {
     switch (input) {
         case true:
         case 'true':
@@ -46,30 +46,30 @@ exports.bool = makeValidator(input => {
     }
 }, 'bool')
 
-exports.num = makeValidator(input => {
+exports.num = makeValidator((input) => {
     const coerced = +input
     if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
     return coerced
 }, 'num')
 
-exports.str = makeValidator(input => {
+exports.str = makeValidator((input) => {
     if (typeof input === 'string') return input
     throw new EnvError(`Not a string: "${input}"`)
 }, 'str')
 
-exports.email = makeValidator(x => {
+exports.email = makeValidator((x) => {
     if (EMAIL_REGEX.test(x)) return x
     throw new EnvError(`Invalid email address: "${x}"`)
 }, 'email')
 
-exports.host = makeValidator(input => {
+exports.host = makeValidator((input) => {
     if (!isFQDN(input, { require_tld: false }) && !isIP(input)) {
         throw new EnvError(`Invalid host (domain or ip): "${input}"`)
     }
     return input
 }, 'host')
 
-exports.port = makeValidator(input => {
+exports.port = makeValidator((input) => {
     const coerced = +input
     if (
         Number.isNaN(coerced) ||
@@ -83,7 +83,7 @@ exports.port = makeValidator(input => {
     return coerced
 }, 'port')
 
-exports.url = makeValidator(x => {
+exports.url = makeValidator((x) => {
     const url = require('url')
     let isValid = false
 
@@ -103,7 +103,7 @@ exports.url = makeValidator(x => {
     throw new EnvError(`Invalid url: "${x}"`)
 }, 'url')
 
-exports.json = makeValidator(x => {
+exports.json = makeValidator((x) => {
     try {
         return JSON.parse(x)
     } catch (e) {
