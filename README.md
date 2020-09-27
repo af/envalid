@@ -10,6 +10,27 @@ Node.js (v8.12 or later) programs, aiming to:
 * give you an immutable API for your environment variables, so they don't change
   from under you while the program is running
 
+## Changes in v7.x
+
+* Rewritten in TypeScript; now zero runtime dependencies
+* The mode-currently-known-as-`strict` is now enabled by default. This means:
+  * The env object will *only* contain the env vars that were specified by your `validators`.
+  * Any attempt to access an invalid/missing property on the env object will cause a thrown error.
+  * Any attempt to mutate the cleaned env object will cause a thrown error.
+  You can still opt-out of strict mode by disabling the `strictProxyMiddleware`, but it's not
+  recommended.
+* The `dotenv` package is no longer shipped as part of this library. You can easily install/use it directly
+  and pass the resulting environment object into envalid.
+* The `transformer` option is gone, replaced by the ability to add custom middleware
+* The `host` and `ip` validators are now less exhaustive. If you need these to be airtight, use
+  your own custom validator instead
+* When you try to access an invalid property on the cleaned env object, the error will no longer
+  suggest an env variable that you may have meant. You can re-implement the old behavior with a custom
+  middleware if you wish
+* `NODE_ENV` support is now less opinionated, and an error is no longer thrown if a value other
+  than production/development/test is passed in. You can provide your own validator for `NODE_ENV`
+  to get exactly the behavior you want. The `isDev`, `isProduction`, etc properties still work as
+  before, and are implemented as middleware so you can override their behavior as needed.
 
 ## API
 
@@ -21,18 +42,14 @@ positional arguments:
 * `environment` - An object containing your env vars (eg. `process.env`)
 * `validators` - An object that specifies the format of required vars.
 * `options` - An (optional) object, which supports the following keys:
-    * `strict` - (default: `false`) Enable more rigorous behavior. See "Strict Mode" below
-    * `reporter` - Pass in a function to override the default error handling and
-                   console output. See `src/reporter.js` for the default implementation.
-    * `transformer` - A function used to transform the cleaned environment object
-                      before it is returned from `cleanEnv`
-    * `dotEnvPath` - (default: `'.env'`) Path to the file that is parsed by
-                     [dotenv](https://github.com/motdotla/dotenv) to
-                     optionally load more env vars at runtime. Pass `null` if you want
-                     to skip `dotenv` processing entirely and only load from `process.env`.
+  * `reporter` - Pass in a function to override the default error handling and
+                 console output. See `src/reporter.js` for the default implementation.
+  * `middleware` - (optional) An array of functions that can modify the env object after it's
+                   validated and cleaned. Envalid ships with default middleware, but you can
+                   customize most of its behavior by supplying your own middleware stack
 
-By default, `cleanEnv()` will log an error message and exit if any required
-env vars are missing or invalid.
+By default, `cleanEnv()` will log an error message and exit (in Node) or throw (in browser) if any required
+env vars are missing or invalid. You can override this behavior by writing your own reporter.
 
 ```js
 const envalid = require('envalid')
@@ -49,7 +66,7 @@ const env = envalid.cleanEnv(process.env, {
 // and/or filtering that you specified with cleanEnv().
 env.ADMIN_EMAIL     // -> 'admin@example.com'
 
-// Envalid parses NODE_ENV automatically, and provides the following
+// Envalid checks for NODE_ENV automatically, and provides the following
 // shortcut (boolean) properties for checking its value:
 env.isProduction    // true if NODE_ENV === 'production'
 env.isTest          // true if NODE_ENV === 'test'
@@ -107,19 +124,6 @@ const env = cleanEnv(process.env, {
 });
 ```
 
-You can, and should, also provide a `type` with your validator. This can be exposed by tools
-to help other developers better understand you configuration options.
-
-To add it, pass a string with the name as the second argument to `makeValidator`.
-
-```js
-const { makeValidator } = require('envalid')
-const twochars = makeValidator(x => {
-    if (/^[A-Za-z]{2}$/.test(x)) return x.toUpperCase()
-    else throw new Error('Expected two letters')
-}, 'twochars')
-```
-
 
 ## Error Reporting
 
@@ -153,29 +157,11 @@ const env = cleanEnv(process.env, myValidators, {
 })
 ```
 
-## Strict mode
-
-By passing the `{ strict: true }` option, envalid gives you extra tight guarantees
-about the cleaned env object:
-
-* The env object will *only* contain the env vars that were specified by your `validators`.
-* Any attempt to access an invalid/missing property on the env object will cause a thrown error.
-* Any attempt to mutate the cleaned env object will cause a thrown error.
-
-
-## `.env` File Support
-
-Envalid wraps the very handy [dotenv](https://www.npmjs.com/package/dotenv) package,
-so if you have a `.env` file in your project, envalid will read and validate the
-env vars from that file as well.
-
 ## Usage within React Native
-
-When using Envalid within React Native the `dotenv` integration will not work, and the `dotEnvPath` option will be ignored.
 
 Envalid can be used within React Native with a custom reporter.
 
-Instead of `dotenv` [react-native-config](https://www.npmjs.com/package/react-native-config) can be used to read the configuration.
+[react-native-config](https://www.npmjs.com/package/react-native-config) can be useful for reading env vars from a `.env` file.
 
 Example:
 
@@ -189,21 +175,12 @@ const validatedConfig = envalid.cleanEnv(
     // validators
   },
   {
-    dotEnvPath: null,
     reporter: ({ errors = {}, env = {} }) => {
       // handle errors
     },
   },
 )
 ```
-
-## Usage within browsers
-
-When using Envalid within browsers the `dotenv` integration will not work, and the `dotEnvPath` option will be ignored.
-
-## Usage within [Fastify](https://www.fastify.io/)
-
-See [fastify-envalid](https://github.com/alemagio/fastify-envalid).
 
 ## Utils
 
