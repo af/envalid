@@ -68,9 +68,9 @@ export interface CleanOptions {
   transformer?: (env: unknown) => unknown
 }
 
-interface StrictCleanOptions extends CleanOptions {
-  strict: true
-}
+// interface StrictCleanOptions extends CleanOptions {
+//   strict: true
+// }
 /**
  * Returns a sanitized, immutable environment object. _Only_ the env vars
  * specified in the `validators` parameter will be accessible on the returned
