@@ -26,10 +26,6 @@ positional arguments:
                    console output. See `src/reporter.js` for the default implementation.
     * `transformer` - A function used to transform the cleaned environment object
                       before it is returned from `cleanEnv`
-    * `dotEnvPath` - (default: `'.env'`) Path to the file that is parsed by
-                     [dotenv](https://github.com/motdotla/dotenv) to
-                     optionally load more env vars at runtime. Pass `null` if you want
-                     to skip `dotenv` processing entirely and only load from `process.env`.
 
 By default, `cleanEnv()` will log an error message and exit if any required
 env vars are missing or invalid.
@@ -171,11 +167,9 @@ env vars from that file as well.
 
 ## Usage within React Native
 
-When using Envalid within React Native the `dotenv` integration will not work, and the `dotEnvPath` option will be ignored.
-
 Envalid can be used within React Native with a custom reporter.
 
-Instead of `dotenv` [react-native-config](https://www.npmjs.com/package/react-native-config) can be used to read the configuration.
+[react-native-config](https://www.npmjs.com/package/react-native-config) can be useful for reading env vars from a `.env` file.
 
 Example:
 
@@ -189,21 +183,12 @@ const validatedConfig = envalid.cleanEnv(
     // validators
   },
   {
-    dotEnvPath: null,
     reporter: ({ errors = {}, env = {} }) => {
       // handle errors
     },
   },
 )
 ```
-
-## Usage within browsers
-
-When using Envalid within browsers the `dotenv` integration will not work, and the `dotEnvPath` option will be ignored.
-
-## Usage within [Fastify](https://www.fastify.io/)
-
-See [fastify-envalid](https://github.com/alemagio/fastify-envalid).
 
 ## Utils
 

@@ -1,9 +1,12 @@
 {
   "compilerOptions": {
+    "rootDir": "./src",
     "strict": true,
-    "module": "commonjs",
-    "target": "es2016",
+    "module": "esnext",
+    "moduleResolution": "node",
+    "target": "es2016"
   },
+  "include": ["src"],
   "exclude": [
     "node_modules",
     "**/node_modules/*"

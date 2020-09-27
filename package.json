@@ -2,22 +2,24 @@
   "name": "envalid",
   "version": "6.0.2",
   "description": "Validation for your environment variables",
-  "main": "src/envalid.js",
-  "types": "src/envalid.d.ts",
-  "browser": "src/envalidWithoutDotenv.js",
-  "files": [
-    "src/"
-  ],
+  "main": "dist/index.js",
+  "module": "dist/envalid.esm.js",
+  "typings": "dist/index.d.ts",
   "engines": {
     "node": ">=8.12"
   },
   "engineStrict": true,
+  "files": [
+    "dist",
+    "src"
+  ],
   "scripts": {
-    "lint": "eslint . --ignore-pattern '!.eslintrc.js'",
-    "lint-ts": "npm run prettier-ts -- --list-different",
-    "test": "painless -r spec tests/*.js",
-    "prettier-ts": "prettier 'src/**/*.d.ts' --tab-width 4 --print-width 100 --single-quote --no-semi",
-    "coverage": "nyc npm test"
+    "build": "tsdx build",
+    "coverage": "nyc npm test",
+    "lint": "tsdx lint",
+    "prepare": "tsdx build",
+    "start": "tsdx watch",
+    "test": "tsdx test"
   },
   "repository": {
     "type": "git",
@@ -33,36 +35,29 @@
     "validation"
   ],
   "devDependencies": {
-    "eslint": "^7.10.0",
-    "eslint-plugin-prettier": "^3.1.4",
     "husky": "4.3.0",
-    "lint-staged": "^10.4.0",
     "nyc": "^15.1.0",
     "painless": "^0.9.5",
-    "prettier": "^2.1.2",
+    "tsdx": "^0.14.0",
     "typescript": "^4.0.3"
   },
   "author": "Aaron Franks",
   "license": "MIT",
   "dependencies": {
-    "chalk": "^4.1.0",
     "dotenv": "^8.2.0",
     "meant": "^1.0.2",
     "validator": "^13.1.17"
   },
-  "lint-staged": {
-    "*.js": [
-      "eslint --fix"
-    ],
-    "*.ts": [
-      "npm run prettier-ts -- --write"
-    ]
+  "prettier": {
+    "printWidth": 100,
+    "semi": false,
+    "singleQuote": true,
+    "trailingComma": "all"
   },
-  "prettier": {},
   "husky": {
     "hooks": {
-      "pre-commit": "lint-staged",
-      "pre-push": "npm run lint && npm run lint-ts && npm test"
+      "pre-commit": "tsdx lint --fix",
+      "pre-push": "npm test"
     }
   }
 }
