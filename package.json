@@ -15,8 +15,8 @@
   ],
   "scripts": {
     "build": "tsdx build",
-    "coverage": "nyc npm test",
-    "lint": "tsdx lint",
+    "coverage": "tsdx test --coverage",
+    "lint": "tsdx lint src tests",
     "prepare": "tsdx build",
     "start": "tsdx watch",
     "test": "tsdx test"
@@ -36,18 +36,12 @@
   ],
   "devDependencies": {
     "husky": "4.3.0",
-    "nyc": "^15.1.0",
-    "painless": "^0.9.5",
     "tsdx": "^0.14.0",
     "typescript": "^4.0.3"
   },
   "author": "Aaron Franks",
   "license": "MIT",
-  "dependencies": {
-    "dotenv": "^8.2.0",
-    "meant": "^1.0.2",
-    "validator": "^13.1.17"
-  },
+  "dependencies": {},
   "prettier": {
     "printWidth": 100,
     "semi": false,
@@ -56,7 +50,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "tsdx lint --fix",
+      "pre-commit": "yarn lint --fix",
       "pre-push": "npm test"
     }
   }

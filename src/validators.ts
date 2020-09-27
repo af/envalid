@@ -43,7 +43,7 @@ export class EnvMissingError extends ReferenceError {
 }
 
 export const makeValidator = <T>(parseFn: (input: string) => T, type: string = 'unknown') => {
-  return function(spec: Spec<T>): ValidatorSpec<T> {
+  return function(spec?: Spec<T>): ValidatorSpec<T> {
     return { ...spec, type, _parse: parseFn }
   }
 }

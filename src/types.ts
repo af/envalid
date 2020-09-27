@@ -51,7 +51,7 @@ interface ReporterOptions {
 
 export interface CleanOptions {
   /**
-   * If true, the output of cleanEnv will only contain the env vars that were specified in the validators argument.
+   * If true, accessing a property on cleanEnv not specified in the validators will throw an error
    * @default false
    */
   strict?: boolean
@@ -60,46 +60,8 @@ export interface CleanOptions {
    * Pass in a function to override the default error handling and console output.
    * See ./reporter.js for the default implementation.
    */
-  reporter?: (opts: ReporterOptions) => void
-
-  /**
-   * A function used to transform the cleaned environment object before it is returned from cleanEnv.
-   */
-  transformer?: (env: unknown) => unknown
+  reporter?: ((opts: ReporterOptions) => void) | null
 }
-
-// interface StrictCleanOptions extends CleanOptions {
-//   strict: true
-// }
-/**
- * Returns a sanitized, immutable environment object. _Only_ the env vars
- * specified in the `validators` parameter will be accessible on the returned
- * object.
- * @param environment An object containing your env vars (eg. process.env).
- * @param validators An object that specifies the format of required vars.
- * @param options An object that specifies options for cleanEnv.
- */
-// export function cleanEnv<T>(
-//   environment: unknown,
-//   validators: { [K in keyof T]: ValidatorSpec<T[K]> },
-//   options: StrictCleanOptions,
-// ): Readonly<T> & CleanEnv
-/**
- * Returns a sanitized, immutable environment object.
- * @param environment An object containing your env vars (eg. process.env).
- * @param validators An object that specifies the format of required vars.
- * @param options An object that specifies options for cleanEnv.
- */
-// export function cleanEnv<T>(
-//   environment: unknown,
-//   validators?: { [K in keyof T]: ValidatorSpec<T[K]> },
-//   options?: CleanOptions,
-// ): Readonly<T> & CleanEnv & { readonly [varName: string]: string | undefined }
-// The preceding line is not a mistake! In a non-strict environment, the
-// returned environment object can have properties other than the ones we've
-// validated. these are not parsed or processed, and thus are always of type
-// `string`. If you need better type safety and a fully-inferred environment,
-// use `cleanEnv` in strict mode.
 
 /**
  * Create your own validator functions.

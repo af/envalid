@@ -1,5 +1,5 @@
 import { EnvError, EnvMissingError, str } from './validators'
-import { Spec } from './types'
+import { CleanEnv, CleanOptions, Spec, ValidatorSpec } from './types'
 import defaultReporter from './reporter'
 
 const testOnlySymbol = Symbol('envalid - test only')
@@ -43,31 +43,48 @@ function formatSpecDescription<T>(spec: Spec<T>) {
 }
 
 // FIXME: type this (strict and non-strict)
-function cleanEnv(env: any, specs: any = {}, options: any = {}) {
-  let output = {} as any
+
+/**
+ * Returns a sanitized, immutable environment object. _Only_ the env vars
+ * specified in the `validators` parameter will be accessible on the returned
+ * object.
+ * @param environment An object containing your env vars (eg. process.env).
+ * @param validators An object that specifies the format of required vars.
+ * @param options An object that specifies options for cleanEnv.
+ */
+// export function cleanEnv<T>(
+//   environment: unknown,
+//   validators: { [K in keyof T]: ValidatorSpec<T[K]> },
+//   options: StrictCleanOptions,
+// ): Readonly<T> & CleanEnv
+function cleanEnv<T>(
+  env: unknown,
+  specs: { [K in keyof T]: ValidatorSpec<T[K]> },
+  options: CleanOptions = {},
+): Readonly<T> & CleanEnv {
+  let output: any = {}
   let defaultNodeEnv = ''
-  const errors = {} as any
-  const varKeys = Object.keys(specs)
+  const errors: any = {}
+  const varKeys = Object.keys(specs) as Array<keyof T>
+  const rawNodeEnv = (env as any).NODE_ENV
 
   // FIXME: make this opt-in, as an exported util
   // If validation for NODE_ENV isn't specified, use the default validation:
-  if (!varKeys.includes('NODE_ENV')) {
+  // @ts-ignore FIXME
+  if (!rawNodeEnv) {
     defaultNodeEnv = validateVar({
       name: 'NODE_ENV',
       spec: str({ choices: ['development', 'test', 'production'] }),
-      rawValue: env.NODE_ENV || 'production',
+      rawValue: rawNodeEnv || 'production',
     })
   }
 
   for (const k of varKeys) {
     const spec = specs[k]
-    const usingDevDefault = env.NODE_ENV !== 'production' && spec.hasOwnProperty('devDefault')
+    const usingDevDefault = rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
     const devDefault = usingDevDefault ? spec.devDefault : undefined
-    let rawValue = env[k]
-
-    if (rawValue === undefined) {
-      rawValue = devDefault === undefined ? spec.default : devDefault
-    }
+    // @ts-ignore FIXME
+    const rawValue = env[k] ?? (devDefault === undefined ? spec.default : devDefault)
 
     // Default values can be anything falsy (including an explicitly set undefined), without
     // triggering validation errors:
@@ -76,6 +93,7 @@ function cleanEnv(env: any, specs: any = {}, options: any = {}) {
       (usingDevDefault && devDefault === rawValue)
 
     try {
+      // @ts-ignore FIXME
       if (rawValue === testOnlySymbol) {
         throw new EnvMissingError(formatSpecDescription(spec))
       }
@@ -87,6 +105,7 @@ function cleanEnv(env: any, specs: any = {}, options: any = {}) {
 
         output[k] = undefined
       } else {
+        // @ts-ignore FIXME
         output[k] = validateVar({ name: k, spec, rawValue })
       }
     } catch (err) {
@@ -95,9 +114,7 @@ function cleanEnv(env: any, specs: any = {}, options: any = {}) {
     }
   }
 
-  // If we need to run Object.assign() on output, we must do it before the
-  // defineProperties() call, otherwise the properties would be lost
-  output = options.strict ? output : { ...env, ...output }
+  // TODO: replace all the below with middleware: cleanedEnv => modifiedEnv
 
   // Provide is{Prod/Dev/Test} properties for more readable NODE_ENV checks
   // Node that isDev and isProd are just aliases to isDevelopment and isProduction
@@ -110,15 +127,11 @@ function cleanEnv(env: any, specs: any = {}, options: any = {}) {
     isTest: { value: computedNodeEnv === 'test' },
   })
 
-  if (options.transformer) {
-    output = options.transformer(output)
-  }
-
   const reporter = options.reporter || defaultReporter
   reporter({ errors, env: output })
 
   // FIXME
-  // if (options.strict) output = require('./strictProxy')(output, env)
+  // output = require('./strictProxy')(output, env)
 
   return Object.freeze(output)
 }
