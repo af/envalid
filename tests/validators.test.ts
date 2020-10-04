@@ -1,15 +1,4 @@
-import {
-  cleanEnv,
-  makeValidator,
-  str,
-  bool,
-  num,
-  email,
-  host,
-  port,
-  url,
-  json,
-} from '../src'
+import { cleanEnv, makeValidator, str, bool, num, email, host, port, url, json } from '../src'
 import { assertPassthrough } from './utils'
 
 const makeSilent = { reporter: null }

@@ -1,6 +1,7 @@
 import { EnvError, EnvMissingError, str } from './validators'
 import { CleanEnv, CleanOptions, Spec, ValidatorSpec } from './types'
 import defaultReporter from './reporter'
+import { defaultMiddlewares } from './middleware'
 
 const testOnlySymbol = Symbol('envalid - test only')
 
@@ -42,8 +43,6 @@ function formatSpecDescription<T>(spec: Spec<T>) {
   return `${spec.desc}${egText}${docsText}` || ''
 }
 
-// FIXME: type this (strict and non-strict)
-
 /**
  * Returns a sanitized, immutable environment object. _Only_ the env vars
  * specified in the `validators` parameter will be accessible on the returned
@@ -60,7 +59,7 @@ function formatSpecDescription<T>(spec: Spec<T>) {
 function cleanEnv<T>(
   env: unknown,
   specs: { [K in keyof T]: ValidatorSpec<T[K]> },
-  options: CleanOptions = {},
+  options: CleanOptions = { middleware: defaultMiddlewares },
 ): Readonly<T> & CleanEnv {
   let output: any = {}
   let defaultNodeEnv = ''
@@ -130,10 +129,9 @@ function cleanEnv<T>(
   const reporter = options.reporter || defaultReporter
   reporter({ errors, env: output })
 
-  // FIXME
-  // output = require('./strictProxy')(output, env)
-
-  return Object.freeze(output)
+  // Apply middlewares to transform the validated env object
+  if (!options.middleware?.length) return output
+  return options.middleware.reduce((acc, mw) => mw(acc, env), output)
 }
 
 /**

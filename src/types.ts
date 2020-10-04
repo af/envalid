@@ -49,18 +49,19 @@ interface ReporterOptions {
   env: unknown
 }
 
-export interface CleanOptions {
-  /**
-   * If true, accessing a property on cleanEnv not specified in the validators will throw an error
-   * @default false
-   */
-  strict?: boolean
+export type Middleware<T = unknown, U = unknown> = (inputEnv: T, rawEnv: unknown) => U
 
+export interface CleanOptions {
   /**
    * Pass in a function to override the default error handling and console output.
    * See ./reporter.js for the default implementation.
    */
   reporter?: ((opts: ReporterOptions) => void) | null
+
+  /**
+   * Array of functions that can transform the cleaned environment object after validation
+   */
+  middleware?: Middleware[]
 }
 
 /**

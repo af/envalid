@@ -14,7 +14,7 @@ test('missing required string field', () => {
 test('output is immutable', () => {
   const env = cleanEnv({ FOO: 'bar' }, { FOO: str() })
   // @ts-expect-error This misuse should be a type error
-  expect(() => env.FOO = 'baz').toThrow()
+  expect(() => (env.FOO = 'baz')).toThrow()
   expect(env.FOO).toEqual('bar')
 })
 
