@@ -1,4 +1,4 @@
-import { cleanEnv, EnvError, EnvMissingError, str, num, testOnly } from '../src'
+import { cleanEnv, str, num, testOnly } from '../src'
 import { assertPassthrough } from './utils'
 
 const makeSilent = { reporter: null }
@@ -8,13 +8,13 @@ test('string passthrough', () => {
 })
 
 test('missing required string field', () => {
-  expect(() => cleanEnv({}, { FOO: str() }, makeSilent)).toThrow(EnvMissingError)
+  expect(() => cleanEnv({}, { FOO: str() }, makeSilent)).toThrow()
 })
 
 test('output is immutable', () => {
   const env = cleanEnv({ FOO: 'bar' }, { FOO: str() })
   // @ts-expect-error This misuse should be a type error
-  env.FOO = 'baz'
+  expect(() => env.FOO = 'baz').toThrow()
   expect(env.FOO).toEqual('bar')
 })
 
@@ -49,10 +49,13 @@ test('default set to undefined', () => {
 })
 
 test('devDefault set to undefined', () => {
-  const env = cleanEnv({ NODE_ENV: 'test' }, {
-    FOO: str({ devDefault: undefined }),
-  })
-  expect(env).toEqual({ NODE_ENV: 'test', FOO: undefined })
+  const env = cleanEnv(
+    { NODE_ENV: 'test' },
+    {
+      FOO: str({ devDefault: undefined }),
+    },
+  )
+  expect(env).toEqual({ FOO: undefined })
 })
 
 test('devDefault', () => {
@@ -62,12 +65,10 @@ test('devDefault', () => {
 
   // For testing/development environments, devDefault values can make fields optional:
   const env = cleanEnv({ NODE_ENV: 'test' }, spec)
-  expect(env).toEqual({ NODE_ENV: 'test', FOO: 'hi' })
+  expect(env).toEqual({ FOO: 'hi' })
 
   // For a production environment, the field is required:
-  expect(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent)).toThrow(
-    EnvMissingError,
-  )
+  expect(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent)).toThrow()
 })
 
 test('falsy devDefault', () => {
@@ -77,11 +78,9 @@ test('falsy devDefault', () => {
   }
 
   const env = cleanEnv({ NODE_ENV: 'test' }, spec)
-  expect(env).toEqual({ NODE_ENV: 'test', FOO: '' })
+  expect(env).toEqual({ FOO: '' })
 
-  expect(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent)).toThrow(
-    EnvMissingError,
-  )
+  expect(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent)).toThrow()
 })
 
 test('devDefault and default together', () => {
@@ -90,10 +89,10 @@ test('devDefault and default together', () => {
   }
 
   const env = cleanEnv({ NODE_ENV: 'test' }, spec)
-  expect(env).toEqual({ NODE_ENV: 'test', FOO: 3000 })
+  expect(env).toEqual({ FOO: 3000 })
 
   const prodEnv = cleanEnv({ NODE_ENV: 'production' }, spec)
-  expect(prodEnv).toEqual({ NODE_ENV: 'production', FOO: 80 })
+  expect(prodEnv).toEqual({ FOO: 80 })
 })
 
 test('choices field', () => {
@@ -101,8 +100,8 @@ test('choices field', () => {
   const spec = {
     FOO: str({ choices: ['foo', 'bar', 'baz'] }),
   }
-  expect(() => cleanEnv({}, spec, makeSilent)).toThrow(EnvMissingError)
-  expect(() => cleanEnv({ FOO: 'bad' }, spec, makeSilent)).toThrow(EnvError)
+  expect(() => cleanEnv({}, spec, makeSilent)).toThrow()
+  expect(() => cleanEnv({ FOO: 'bad' }, spec, makeSilent)).toThrow()
 
   // Works fine when a valid choice is given
   assertPassthrough({ FOO: 'bar' }, spec)
@@ -111,20 +110,21 @@ test('choices field', () => {
 
   // Throws an error when `choices` is not an array
   // @ts-expect-error This misuse should be a type error
-  expect(() => cleanEnv({ FOO: 'hi' }, { FOO: str({ choices: 123 }) }, makeSilent)).toThrow(Error)
+  expect(() => cleanEnv({ FOO: 'hi' }, { FOO: str({ choices: 123 }) }, makeSilent)).toThrow()
 })
 
 test('misconfigured spec', () => {
   // Validation throws with different error if spec is invalid
   // @ts-expect-error This misuse should be a type error
-  expect(() => cleanEnv({ FOO: 'asdf' }, { FOO: {} }, makeSilent)).toThrow(EnvError)
+  expect(() => cleanEnv({ FOO: 'asdf' }, { FOO: {} }, makeSilent)).toThrow()
 })
 
 test('NODE_ENV built-in support', () => {
   // By default, envalid will parse and accept 3 standard NODE_ENV values:
-  assertPassthrough({ NODE_ENV: 'production' }, {})
-  assertPassthrough({ NODE_ENV: 'development' }, {})
-  assertPassthrough({ NODE_ENV: 'test' }, {})
+  // TODO: should this be brought back?
+  // assertPassthrough({ NODE_ENV: 'production' }, {})
+  // assertPassthrough({ NODE_ENV: 'development' }, {})
+  // assertPassthrough({ NODE_ENV: 'test' }, {})
 
   // Some convenience helpers are available on the cleaned env object:
   expect(cleanEnv({ NODE_ENV: 'production' }, {}).isProduction).toEqual(true)
@@ -141,7 +141,7 @@ test('NODE_ENV built-in support', () => {
   expect(cleanEnv({}, {}).isTest).toEqual(false)
 
   // Non-standard values throw an error:
-  expect(() => cleanEnv({ NODE_ENV: 'asdf' }, {}, makeSilent)).toThrow(EnvError)
+  expect(() => cleanEnv({ NODE_ENV: 'asdf' }, {}, makeSilent)).toThrow()
 
   // NODE_ENV should always be set. If it is un-set, isProduction & isDev
   // still use the default value:
@@ -174,12 +174,12 @@ test('testOnly', () => {
   process.env.NODE_ENV = processEnv
 
   const env = cleanEnv({ NODE_ENV: 'test' }, testSpec)
-  expect(env).toEqual({ NODE_ENV: 'test', FOO: 'sup' })
+  expect(env).toEqual({ FOO: 'sup' })
 
-  expect(() => cleanEnv({ NODE_ENV: 'production' }, makeSpec(), makeSilent)).toThrow(
-    EnvMissingError,
-  )
-  expect(() => cleanEnv({ NODE_ENV: 'development' }, makeSpec(), makeSilent)).toThrow(
-    EnvMissingError,
-  )
+  process.env.NODE_ENV = 'production'
+  expect(() => cleanEnv({}, makeSpec(), makeSilent)).toThrow()
+
+  process.env.NODE_ENV = 'development'
+  expect(() => cleanEnv({}, makeSpec(), makeSilent)).toThrow()
+  process.env.NODE_ENV = processEnv
 })

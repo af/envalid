@@ -68,10 +68,10 @@ function cleanEnv<T>(
   const varKeys = Object.keys(specs) as Array<keyof T>
   const rawNodeEnv = (env as any).NODE_ENV
 
-  // FIXME: make this opt-in, as an exported util
+  // FIXME: make this opt-in, as an exported util?
   // If validation for NODE_ENV isn't specified, use the default validation:
-  // @ts-ignore FIXME
-  if (!rawNodeEnv) {
+  // @ts-expect-error
+  if (!varKeys.includes('NODE_ENV')) {
     defaultNodeEnv = validateVar({
       name: 'NODE_ENV',
       spec: str({ choices: ['development', 'test', 'production'] }),
