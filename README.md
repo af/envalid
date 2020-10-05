@@ -10,6 +10,21 @@ Node.js (v8.12 or later) programs, aiming to:
 * give you an immutable API for your environment variables, so they don't change
   from under you while the program is running
 
+## Changes in v7.x
+
+* Rewritten in TypeScript; now zero runtime dependencies
+* The mode-currently-known-as-`strict` is now enabled by default. This means:
+  * The env object will *only* contain the env vars that were specified by your `validators`.
+  * Any attempt to access an invalid/missing property on the env object will cause a thrown error.
+  * Any attempt to mutate the cleaned env object will cause a thrown error.
+* The `dotenv` package is no longer shipped as part of this library. You can easily install/use it directly
+  and pass the resulting environment object into envalid.
+* The `transformer` option is gone, replaced by the ability to add custom middleware
+* The `host` and `ip` validators are now less exhaustive. If you need these to be airtight, use
+  your own custom validator instead
+* When you try to access an invalid property on the cleaned env object, the error will no longer
+  suggest an env variable that you may have meant. You can re-implement the old behavior with a custom
+  middleware if you wish
 
 ## API
 
@@ -21,9 +36,11 @@ positional arguments:
 * `environment` - An object containing your env vars (eg. `process.env`)
 * `validators` - An object that specifies the format of required vars.
 * `options` - An (optional) object, which supports the following keys:
-    * `strict` - (default: `false`) Enable more rigorous behavior. See "Strict Mode" below
-    * `reporter` - Pass in a function to override the default error handling and
-                   console output. See `src/reporter.js` for the default implementation.
+  * `reporter` - Pass in a function to override the default error handling and
+                 console output. See `src/reporter.js` for the default implementation.
+  * `middleware` - (optional) An array of functions that can modify the env object after it's
+                   validated and cleaned. Envalid ships with default middleware, but you can
+                   customize its behavior by supplying your own
 
 By default, `cleanEnv()` will log an error message and exit if any required
 env vars are missing or invalid.
@@ -146,22 +163,6 @@ const env = cleanEnv(process.env, myValidators, {
     }
 })
 ```
-
-## Strict mode
-
-By passing the `{ strict: true }` option, envalid gives you extra tight guarantees
-about the cleaned env object:
-
-* The env object will *only* contain the env vars that were specified by your `validators`.
-* Any attempt to access an invalid/missing property on the env object will cause a thrown error.
-* Any attempt to mutate the cleaned env object will cause a thrown error.
-
-
-## `.env` File Support
-
-Envalid wraps the very handy [dotenv](https://www.npmjs.com/package/dotenv) package,
-so if you have a `.env` file in your project, envalid will read and validate the
-env vars from that file as well.
 
 ## Usage within React Native
 
