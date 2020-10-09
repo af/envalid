@@ -40,7 +40,7 @@ function validateVar<T>({
 function formatSpecDescription<T>(spec: Spec<T>) {
   const egText = spec.example ? ` (eg. "${spec.example}")` : ''
   const docsText = spec.docs ? `. See ${spec.docs}` : ''
-  return `${spec.desc}${egText}${docsText}` || ''
+  return `${spec.desc}${egText}${docsText}`
 }
 
 /**
