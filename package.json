@@ -4,7 +4,7 @@
   "description": "Validation for your environment variables",
   "main": "dist/index.js",
   "module": "dist/envalid.esm.js",
-  "typings": "dist/index.d.ts",
+  "types": "dist/index.d.ts",
   "engines": {
     "node": ">=8.12"
   },
