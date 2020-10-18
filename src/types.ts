@@ -43,19 +43,19 @@ export interface CleanEnv {
   readonly isProd: boolean
 }
 
-interface ReporterOptions {
-  errors: { [key: string]: Error }
+interface ReporterOptions<T> {
+  errors: Record<keyof T, Error>
   env: unknown
 }
 
 export type Middleware<T = unknown, U = unknown> = (inputEnv: T, rawEnv: unknown) => U
 
-export interface CleanOptions {
+export interface CleanOptions<T> {
   /**
    * Pass in a function to override the default error handling and console output.
    * See ./reporter.js for the default implementation.
    */
-  reporter?: ((opts: ReporterOptions) => void) | null
+  reporter?: ((opts: ReporterOptions<T>) => void) | null
 
   /**
    * Array of functions that can transform the cleaned environment object after validation

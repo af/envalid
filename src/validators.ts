@@ -47,6 +47,9 @@ export const makeValidator = <T>(parseFn: (input: string) => T) => {
   }
 }
 
+// The reason for the function wrapper is to enable the <T extends boolean = boolean> type parameter
+// that enables better type inference. For more context, check out the following PR:
+// https://github.com/af/envalid/pull/118
 export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
   return makeValidator((input: string | boolean) => {
     switch (input) {

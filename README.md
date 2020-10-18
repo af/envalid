@@ -42,8 +42,8 @@ positional arguments:
                    validated and cleaned. Envalid ships with default middleware, but you can
                    customize its behavior by supplying your own
 
-By default, `cleanEnv()` will log an error message and exit if any required
-env vars are missing or invalid.
+By default, `cleanEnv()` will log an error message and exit (in Node) or throw (in browser) if any required
+env vars are missing or invalid. You can override this behavior by writing your own reporter.
 
 ```js
 const envalid = require('envalid')

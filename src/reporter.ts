@@ -6,7 +6,7 @@ type ReporterInput = {
   env: unknown
 }
 
-const isNode = typeof process === 'object'
+const isNode = !!(typeof process === 'object' && process?.versions?.node)
 const colorWith = (colorCode: string) => (str: string) =>
   isNode ? `\x1b[${colorCode}m${str}\x1b[0m` : str
 

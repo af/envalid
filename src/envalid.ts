@@ -48,24 +48,19 @@ function formatSpecDescription<T>(spec: Spec<T>) {
  * specified in the `validators` parameter will be accessible on the returned
  * object.
  * @param environment An object containing your env vars (eg. process.env).
- * @param validators An object that specifies the format of required vars.
+ * @param specs An object that specifies the format of required vars.
  * @param options An object that specifies options for cleanEnv.
  */
-// export function cleanEnv<T>(
-//   environment: unknown,
-//   validators: { [K in keyof T]: ValidatorSpec<T[K]> },
-//   options: StrictCleanOptions,
-// ): Readonly<T> & CleanEnv
 function cleanEnv<T>(
-  env: unknown,
+  environment: unknown,
   specs: { [K in keyof T]: ValidatorSpec<T[K]> },
-  options: CleanOptions = { middleware: defaultMiddlewares },
+  options: CleanOptions<T> = { middleware: defaultMiddlewares },
 ): Readonly<T> & CleanEnv {
   let output: any = {}
   let defaultNodeEnv = ''
   const errors: any = {}
   const varKeys = Object.keys(specs) as Array<keyof T>
-  const rawNodeEnv = (env as any).NODE_ENV
+  const rawNodeEnv = (environment as any).NODE_ENV
 
   // FIXME: make this opt-in, as an exported util?
   // If validation for NODE_ENV isn't specified, use the default validation:
@@ -83,7 +78,7 @@ function cleanEnv<T>(
     const usingDevDefault = rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
     const devDefault = usingDevDefault ? spec.devDefault : undefined
     // @ts-ignore FIXME
-    const rawValue = env[k] ?? (devDefault === undefined ? spec.default : devDefault)
+    const rawValue = environment[k] ?? (devDefault === undefined ? spec.default : devDefault)
 
     // Default values can be anything falsy (including an explicitly set undefined), without
     // triggering validation errors:
@@ -131,7 +126,7 @@ function cleanEnv<T>(
 
   // Apply middlewares to transform the validated env object
   if (!options.middleware?.length) return output
-  return options.middleware.reduce((acc, mw) => mw(acc, env), output)
+  return options.middleware.reduce((acc, mw) => mw(acc, environment), output)
 }
 
 /**
