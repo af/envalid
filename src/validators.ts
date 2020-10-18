@@ -41,9 +41,9 @@ export class EnvMissingError extends ReferenceError {
   }
 }
 
-export const makeValidator = <T>(parseFn: (input: string) => T, type: string = 'unknown') => {
+export const makeValidator = <T>(parseFn: (input: string) => T) => {
   return function(spec?: Spec<T>): ValidatorSpec<T> {
-    return { ...spec, type, _parse: parseFn }
+    return { ...spec, _parse: parseFn }
   }
 }
 
@@ -63,7 +63,7 @@ export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
       default:
         return null
     }
-  }, 'bool')(spec)
+  })(spec)
 }
 
 export function num<T extends number = number>(spec?: Spec<T>) {
@@ -71,21 +71,21 @@ export function num<T extends number = number>(spec?: Spec<T>) {
     const coerced = +input
     if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
     return coerced
-  }, 'num')(spec)
+  })(spec)
 }
 
 export function str<T extends string = string>(spec?: Spec<T>) {
   return makeValidator((input: string) => {
     if (typeof input === 'string') return input
     throw new EnvError(`Not a string: "${input}"`)
-  }, 'str')(spec)
+  })(spec)
 }
 
 export function email<T extends string = string>(spec?: Spec<T>) {
   return makeValidator((x: string) => {
     if (EMAIL_REGEX.test(x)) return x
     throw new EnvError(`Invalid email address: "${x}"`)
-  }, 'email')(spec)
+  })(spec)
 }
 
 export function host<T extends string = string>(spec?: Spec<T>) {
@@ -94,7 +94,7 @@ export function host<T extends string = string>(spec?: Spec<T>) {
       throw new EnvError(`Invalid host (domain or ip): "${input}"`)
     }
     return input
-  }, 'host')(spec)
+  })(spec)
 }
 
 export function port<T extends number = number>(spec?: Spec<T>) {
@@ -110,7 +110,7 @@ export function port<T extends number = number>(spec?: Spec<T>) {
       throw new EnvError(`Invalid port input: "${input}"`)
     }
     return coerced
-  }, 'port')(spec)
+  })(spec)
 }
 
 export function url<T extends string = string>(spec?: Spec<T>) {
@@ -121,7 +121,7 @@ export function url<T extends string = string>(spec?: Spec<T>) {
     } catch (e) {
       throw new EnvError(`Invalid url: "${x}"`)
     }
-  }, 'url')(spec)
+  })(spec)
 }
 
 export function json<T = any>(spec?: Spec<T>) {
@@ -131,5 +131,5 @@ export function json<T = any>(spec?: Spec<T>) {
     } catch (e) {
       throw new EnvError(`Invalid json: "${x}"`)
     }
-  }, 'json')(spec)
+  })(spec)
 }

@@ -118,19 +118,6 @@ const env = cleanEnv(process.env, {
 });
 ```
 
-You can, and should, also provide a `type` with your validator. This can be exposed by tools
-to help other developers better understand you configuration options.
-
-To add it, pass a string with the name as the second argument to `makeValidator`.
-
-```js
-const { makeValidator } = require('envalid')
-const twochars = makeValidator(x => {
-    if (/^[A-Za-z]{2}$/.test(x)) return x.toUpperCase()
-    else throw new Error('Expected two letters')
-}, 'twochars')
-```
-
 
 ## Error Reporting
 

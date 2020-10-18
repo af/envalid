@@ -4,7 +4,6 @@ import { assertPassthrough } from './utils'
 const makeSilent = { reporter: null }
 
 test('bool() works with various formats', () => {
-  expect(bool().type).toEqual('bool')
   expect(() => cleanEnv({ FOO: 'asfd' }, { FOO: bool() }, makeSilent)).toThrow()
 
   const trueBool = cleanEnv({ FOO: true }, { FOO: bool() })
@@ -34,7 +33,6 @@ test('bool() works with various formats', () => {
 })
 
 test('num()', () => {
-  expect(num().type).toEqual('num')
   const withInt = cleanEnv({ FOO: '1' }, { FOO: num() })
   expect(withInt).toEqual({ FOO: 1 })
 
@@ -51,7 +49,6 @@ test('num()', () => {
 })
 
 test('email()', () => {
-  expect(email().type).toEqual('email')
   const spec = { FOO: email() }
   assertPassthrough({ FOO: 'foo@example.com' }, spec)
   assertPassthrough({ FOO: 'foo.bar@my.example.com' }, spec)
@@ -61,7 +58,6 @@ test('email()', () => {
 })
 
 test('host()', () => {
-  expect(host().type).toEqual('host')
   const spec = { FOO: host() }
   assertPassthrough({ FOO: 'example.com' }, spec)
   assertPassthrough({ FOO: 'localhost' }, spec)
@@ -73,7 +69,6 @@ test('host()', () => {
 })
 
 test('port()', () => {
-  expect(port().type).toEqual('port')
   const spec = { FOO: port() }
 
   const with1 = cleanEnv({ FOO: '1' }, spec)
@@ -95,7 +90,6 @@ test('port()', () => {
 })
 
 test('json()', () => {
-  expect(json().type).toEqual('json')
   const env = cleanEnv({ FOO: '{"x": 123}' }, { FOO: json() })
   expect(env).toEqual({ FOO: { x: 123 } })
 
@@ -103,7 +97,6 @@ test('json()', () => {
 })
 
 test('url()', () => {
-  expect(url().type).toEqual('url')
   assertPassthrough({ FOO: 'http://foo.com' }, { FOO: url() })
   assertPassthrough({ FOO: 'http://foo.com/bar/baz' }, { FOO: url() })
   assertPassthrough({ FOO: 'custom://foo.com/bar/baz?hi=1' }, { FOO: url() })
@@ -112,7 +105,6 @@ test('url()', () => {
 })
 
 test('str()', () => {
-  expect(str().type).toEqual('str')
   const withEmpty = cleanEnv({ FOO: '' }, { FOO: str() })
   expect(withEmpty).toEqual({ FOO: '' })
 
@@ -121,8 +113,6 @@ test('str()', () => {
 
 test('custom types', () => {
   const alwaysFoo = makeValidator(_x => 'foo')
-  expect(alwaysFoo().type).toEqual('unknown')
-  expect(makeValidator(_x => 'foo', 'some type')().type).toEqual('some type')
 
   const fooEnv = cleanEnv({ FOO: 'asdf' }, { FOO: alwaysFoo() })
   expect(fooEnv).toEqual({ FOO: 'foo' })

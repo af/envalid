@@ -27,7 +27,6 @@ export interface Spec<T> {
 }
 
 export interface ValidatorSpec<T> extends Spec<T> {
-  type: string
   _parse: (input: string) => T
 }
 
