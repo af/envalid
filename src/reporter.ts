@@ -33,8 +33,8 @@ const defaultReporter = ({ errors = {} }: { errors: { [key: string]: Error }; en
 
   const output = [
     RULE,
-    invalidVarsOutput.join('\n'),
-    missingVarsOutput.join('\n'),
+    invalidVarsOutput.sort().join('\n'),
+    missingVarsOutput.sort().join('\n'),
     colors.yellow('\n Exiting with error code 1'),
     RULE,
   ]
