@@ -1,7 +1,15 @@
 /* eslint-disable no-console */
 import { EnvMissingError } from './validators'
 
-const colorWith = (colorCode: string) => (str: string) => `\x1b[${colorCode}m${str}\x1b[0m`
+type ReporterInput = {
+  errors: { [key: string]: Error }
+  env: unknown
+}
+
+const isNode = typeof process === 'object'
+const colorWith = (colorCode: string) => (str: string) =>
+  isNode ? `\x1b[${colorCode}m${str}\x1b[0m` : str
+
 const colors = {
   blue: colorWith('34'),
   white: colorWith('37'),
@@ -10,7 +18,7 @@ const colors = {
 
 const RULE = colors.white('================================')
 
-const defaultReporter = ({ errors = {} }: { errors: { [key: string]: Error }; env: unknown }) => {
+const defaultReporter = ({ errors = {} }: ReporterInput) => {
   const errorKeys = Object.keys(errors)
   if (!errorKeys.length) return
 
@@ -42,7 +50,12 @@ const defaultReporter = ({ errors = {} }: { errors: { [key: string]: Error }; en
     .join('\n')
 
   console.error(output)
-  process.exit(1)
+
+  if (isNode) {
+    process.exit(1)
+  } else {
+    throw new TypeError('Environment validation failed')
+  }
 }
 
 export default defaultReporter
