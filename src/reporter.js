@@ -26,8 +26,8 @@ module.exports = function defaultReporter({ errors = {}, env = {} }) {
 
     const output = [
         RULE,
-        invalidVarsOutput.join('\n'),
-        missingVarsOutput.join('\n'),
+        invalidVarsOutput.sort().join('\n'),
+        missingVarsOutput.sort().join('\n'),
         chalk.yellow('\n Exiting with error code 1'),
         RULE,
     ]
