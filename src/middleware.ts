@@ -1,6 +1,6 @@
 import { Middleware } from './types'
 
-export const strictProxyMiddleware = (envObj: object, rawEnv: object) => {
+export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: unknown) => {
   const inspectables = [
     'length',
     'inspect',
@@ -26,13 +26,13 @@ export const strictProxyMiddleware = (envObj: object, rawEnv: object) => {
       // the necessary properties for `console.log(envObj)`, `envObj.length`,
       // `envObj.hasOwnProperty('string')` to work.
       if (inspectables.includes(name) || inspectSymbolStrings.includes(name.toString())) {
-        // @ts-ignore FIXME
+        // @ts-expect-error TS doesn't like symbol types as indexers
         return envObj[name]
       }
 
       const varExists = envObj.hasOwnProperty(name)
       if (!varExists) {
-        if (rawEnv.hasOwnProperty(name)) {
+        if (typeof rawEnv === 'object' && rawEnv?.hasOwnProperty?.(name)) {
           throw new ReferenceError(
             `[envalid] Env var ${name} was accessed but not validated. This var is set in the environment; please add an envalid validator for it.`,
           )
@@ -41,8 +41,7 @@ export const strictProxyMiddleware = (envObj: object, rawEnv: object) => {
         throw new ReferenceError(`[envalid] Env var not found: ${name}`)
       }
 
-      // @ts-ignore FIXME
-      return envObj[name]
+      return envObj[name as keyof T]
     },
 
     set(_target, name: string) {
@@ -51,8 +50,4 @@ export const strictProxyMiddleware = (envObj: object, rawEnv: object) => {
   })
 }
 
-export const defaultMiddlewares: Middleware[] = [
-  // @ts-ignore FIXME
-  strictProxyMiddleware,
-  Object.freeze,
-]
+export const defaultMiddlewares = [strictProxyMiddleware, Object.freeze] as Middleware<unknown>[]

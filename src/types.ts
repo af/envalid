@@ -48,7 +48,10 @@ interface ReporterOptions<T> {
   env: unknown
 }
 
-export type Middleware<T = unknown, U = unknown> = (inputEnv: T, rawEnv: unknown) => U
+export type Middleware<T> = (
+  inputEnv: Record<keyof T, unknown>,
+  rawEnv: unknown,
+) => Record<keyof T, unknown>
 
 export interface CleanOptions<T> {
   /**
@@ -60,5 +63,5 @@ export interface CleanOptions<T> {
   /**
    * Array of functions that can transform the cleaned environment object after validation
    */
-  middleware?: Middleware[]
+  middleware?: Middleware<T>[]
 }

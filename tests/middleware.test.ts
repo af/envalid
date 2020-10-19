@@ -1,5 +1,58 @@
 import { cleanEnv, str } from '..'
 
+describe('middleware type inference', () => {
+  test('causes no false errors', () => {
+    const raw = { FOO: 'bar' }
+    const cleaned = cleanEnv(
+      raw,
+      { FOO: str() },
+      {
+        middleware: [
+          // @ts-ignore FIXME can inputEnv.FOO be inferred more specifically than unknown?
+          inputEnv => ({ ...inputEnv, FOO: inputEnv.FOO.toUpperCase() }),
+        ],
+      },
+    )
+
+    expect(cleaned).toEqual({ FOO: 'BAR' })
+  })
+
+  test('flags errors on input env', () => {
+    const raw = { FOO: 'bar' }
+    const cleaned = cleanEnv(
+      raw,
+      { FOO: str() },
+      {
+        middleware: [
+          inputEnv => {
+            // @ts-expect-error Inference should tell us this property is invalid
+            const _x = inputEnv.WRONG_NAME
+            return inputEnv
+          },
+        ],
+      },
+    )
+
+    expect(cleaned).toEqual(raw)
+  })
+
+  test('flags errors on middleware output', () => {
+    const raw = { FOO: 'bar' }
+    const cleaned = cleanEnv(
+      raw,
+      { FOO: str() },
+      {
+        middleware: [
+          // @ts-expect-error Inference should yell about the incorrect return value
+          _inputEnv => 'bad value',
+        ],
+      },
+    )
+
+    expect(cleaned).toEqual('bad value')
+  })
+})
+
 describe('proxy middleware', () => {
   test('only specified fields are passed through from validation', () => {
     const env = cleanEnv(
