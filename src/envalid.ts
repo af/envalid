@@ -1,4 +1,5 @@
-import { EnvError, EnvMissingError, str } from './validators'
+import { EnvError, EnvMissingError } from './errors'
+import { str } from './validators'
 import { CleanEnv, CleanOptions, Spec, ValidatorSpec } from './types'
 import defaultReporter from './reporter'
 import { defaultMiddlewares } from './middleware'

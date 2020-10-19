@@ -1,5 +1,5 @@
 /* eslint-disable no-console */
-import { EnvMissingError } from './validators'
+import { EnvMissingError } from './errors'
 
 type ReporterInput = {
   errors: { [key: string]: Error }

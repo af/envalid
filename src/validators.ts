@@ -1,4 +1,5 @@
 import { Spec, ValidatorSpec } from './types'
+import { EnvError } from './errors'
 
 // Simplified adaptation of https://github.com/validatorjs/validator.js/blob/master/src/lib/isFQDN.js
 const isFQDN = (input: string) => {
@@ -24,22 +25,6 @@ const isIP = (input: string) => {
 }
 
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/ // intentionally non-exhaustive
-
-export class EnvError extends TypeError {
-  constructor(message?: string) {
-    super(message)
-    Error.captureStackTrace(this, EnvError)
-    this.name = 'EnvError'
-  }
-}
-
-export class EnvMissingError extends ReferenceError {
-  constructor(message?: string) {
-    super(message)
-    Error.captureStackTrace(this, EnvMissingError)
-    this.name = 'EnvMissingError'
-  }
-}
 
 export const makeValidator = <T>(parseFn: (input: string) => T) => {
   return function(spec?: Spec<T>): ValidatorSpec<T> {
