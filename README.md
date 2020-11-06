@@ -65,7 +65,7 @@ Node's `process.env` only stores strings, but sometimes you want to retrieve oth
 (booleans, numbers), or validate that an env var is in a specific format (JSON,
 url, email address). To these ends, the following validation functions are available:
 
-* `str()` - Passes string values through, will ensure an value is present unless a
+* `str()` - Parses string values through, will ensure an value is present unless a
           `default` value is given. Note that an empty string is considered a valid value -
           if this is undesirable you can easily create your own validator (see below)
 * `bool()` - Parses env var strings `"1", "0", "true", "false", "t", "f"` into booleans
