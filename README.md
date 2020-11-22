@@ -201,6 +201,10 @@ const validatedConfig = envalid.cleanEnv(
 
 When using Envalid within browsers the `dotenv` integration will not work, and the `dotEnvPath` option will be ignored.
 
+## Usage within [Fastify](https://www.fastify.io/)
+
+See [fastify-envalid](https://github.com/alemagio/fastify-envalid).
+
 ## Utils
 
 ### testOnly
