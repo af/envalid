@@ -55,8 +55,10 @@ function formatSpecDescription<T>(spec: Spec<T>) {
 function cleanEnv<T>(
   environment: unknown,
   specs: { [K in keyof T]: ValidatorSpec<T[K]> },
+  // @ts-ignore FIXME
   options: CleanOptions<T> = { middleware: defaultMiddlewares },
 ): Readonly<T> & CleanEnv {
+  // FIXME anys here
   let output: any = {}
   let defaultNodeEnv = ''
   const errors: any = {}
@@ -100,8 +102,7 @@ function cleanEnv<T>(
 
         output[k] = undefined
       } else {
-        // @ts-ignore FIXME
-        output[k] = validateVar({ name: k, spec, rawValue })
+        output[k] = validateVar({ name: k as string, spec, rawValue })
       }
     } catch (err) {
       if (options.reporter === null) throw err
