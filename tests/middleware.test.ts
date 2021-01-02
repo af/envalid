@@ -7,9 +7,7 @@ describe('middleware type inference', () => {
       raw,
       { FOO: str() },
       {
-        middleware: [
-          inputEnv => ({ ...inputEnv, FOO: inputEnv.FOO.toUpperCase() }),
-        ],
+        middleware: [inputEnv => ({ ...inputEnv, FOO: inputEnv.FOO.toUpperCase() })],
       },
     )
 

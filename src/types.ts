@@ -44,14 +44,11 @@ export interface CleanedEnvAccessors {
 }
 
 interface ReporterOptions<T> {
-  errors: Record<keyof T, Error>
+  errors: Partial<Record<keyof T, Error>>
   env: unknown
 }
 
-export type Middleware<T> = (
-  inputEnv: T,
-  rawEnv: Record<keyof T, string>,
-) => T
+export type Middleware<T> = (inputEnv: T, rawEnv: Record<keyof T, string>) => T
 
 export interface CleanOptions<T> {
   /**

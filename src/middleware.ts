@@ -1,6 +1,9 @@
 import { Middleware } from './types'
 
-export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: Record<keyof T, string>) => {
+export const strictProxyMiddleware = <T extends object>(
+  envObj: T,
+  rawEnv: Record<keyof T, string>,
+) => {
   const inspectables = [
     'length',
     'inspect',
@@ -73,5 +76,5 @@ export const accessorMiddleware = <T>(envObj: T, rawEnv: T) => {
 export const defaultMiddlewares = [
   accessorMiddleware,
   strictProxyMiddleware,
-  Object.freeze
+  Object.freeze,
 ] as Middleware<unknown>[]

@@ -57,9 +57,8 @@ function cleanEnv<T>(
   // @ts-ignore FIXME
   options: CleanOptions<T> = { middleware: defaultMiddlewares },
 ): Readonly<T> & CleanedEnvAccessors {
-  // FIXME anys here
-  let output: any = {}
-  const errors: any = {}
+  let output = {} as T
+  const errors: Partial<Record<keyof T, Error>> = {}
   const varKeys = Object.keys(specs) as Array<keyof T>
   const rawNodeEnv = (environment as any).NODE_ENV
 
@@ -86,8 +85,6 @@ function cleanEnv<T>(
         if (!usingFalsyDefault) {
           throw new EnvMissingError(formatSpecDescription(spec))
         }
-
-        output[k] = undefined
       } else {
         output[k] = validateVar({ name: k as string, spec, rawValue })
       }
@@ -98,12 +95,14 @@ function cleanEnv<T>(
   }
 
   // Apply middlewares to transform the validated env object
+  // @ts-ignore FIXME
   if (!options.middleware?.length) return output
   output = options.middleware.reduce((acc, mw) => mw(acc, environment as any), output)
 
   const reporter = options.reporter || defaultReporter
   reporter({ errors, env: output })
 
+  // @ts-ignore FIXME
   return output
 }
 

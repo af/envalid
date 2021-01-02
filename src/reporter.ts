@@ -1,8 +1,8 @@
 /* eslint-disable no-console */
 import { EnvMissingError } from './errors'
 
-type ReporterInput = {
-  errors: { [key: string]: Error }
+type ReporterInput<T> = {
+  errors: Partial<Record<keyof T, Error>>
   env: unknown
 }
 
@@ -18,7 +18,7 @@ const colors = {
 
 const RULE = colors.white('================================')
 
-const defaultReporter = ({ errors = {} }: ReporterInput) => {
+const defaultReporter = ({ errors = {} }: ReporterInput<any>) => {
   const errorKeys = Object.keys(errors)
   if (!errorKeys.length) return
 
@@ -27,8 +27,8 @@ const defaultReporter = ({ errors = {} }: ReporterInput) => {
   for (const k of errorKeys) {
     const err = errors[k]
     if (err instanceof EnvMissingError) {
-      missingVarsOutput.push(`    ${colors.blue(k)}: ${errors[k].message || '(required)'}`)
-    } else invalidVarsOutput.push(`    ${colors.blue(k)}: ${errors[k].message}`)
+      missingVarsOutput.push(`    ${colors.blue(k)}: ${errors[k]?.message || '(required)'}`)
+    } else invalidVarsOutput.push(`    ${colors.blue(k)}: ${errors[k]?.message}`)
   }
 
   // Prepend "header" output for each section of the output:
