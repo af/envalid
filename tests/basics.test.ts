@@ -140,8 +140,8 @@ test('NODE_ENV built-in support', () => {
   expect(cleanEnv({}, {}).isDevelopment).toEqual(false)
   expect(cleanEnv({}, {}).isTest).toEqual(false)
 
-  // Non-standard values throw an error:
-  expect(() => cleanEnv({ NODE_ENV: 'asdf' }, {}, makeSilent)).toThrow()
+  // Non-standard values DO NOT throw an error (this changed in v7 to allow custom NODE_ENV values):
+  expect(() => cleanEnv({ NODE_ENV: 'staging' }, {})).not.toThrow()
 
   // NODE_ENV should always be set. If it is un-set, isProduction & isDev
   // still use the default value:

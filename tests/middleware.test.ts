@@ -8,7 +8,6 @@ describe('middleware type inference', () => {
       { FOO: str() },
       {
         middleware: [
-          // @ts-ignore FIXME can inputEnv.FOO be inferred more specifically than unknown?
           inputEnv => ({ ...inputEnv, FOO: inputEnv.FOO.toUpperCase() }),
         ],
       },

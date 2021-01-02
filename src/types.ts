@@ -30,7 +30,7 @@ export interface ValidatorSpec<T> extends Spec<T> {
   _parse: (input: string) => T
 }
 
-export interface CleanEnv {
+export interface CleanedEnvAccessors {
   /** true if NODE_ENV === 'development' */
   readonly isDevelopment: boolean
   readonly isDev: boolean
@@ -49,9 +49,9 @@ interface ReporterOptions<T> {
 }
 
 export type Middleware<T> = (
-  inputEnv: Record<keyof T, unknown>,
-  rawEnv: unknown,
-) => Record<keyof T, unknown>
+  inputEnv: T,
+  rawEnv: Record<keyof T, string>,
+) => T
 
 export interface CleanOptions<T> {
   /**

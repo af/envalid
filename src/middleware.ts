@@ -1,6 +1,6 @@
 import { Middleware } from './types'
 
-export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: unknown) => {
+export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: Record<keyof T, string>) => {
   const inspectables = [
     'length',
     'inspect',
@@ -50,4 +50,28 @@ export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: unkno
   })
 }
 
-export const defaultMiddlewares = [strictProxyMiddleware, Object.freeze] as Middleware<unknown>[]
+export const accessorMiddleware = <T>(envObj: T, rawEnv: T) => {
+  // Attach is{Prod/Dev/Test} properties for more readable NODE_ENV checks
+  // Note that isDev and isProd are just aliases to isDevelopment and isProduction
+
+  // @ts-ignore attempt to read NODE_ENV even if it's not in the spec
+  const computedNodeEnv = envObj.NODE_ENV || rawEnv.NODE_ENV
+
+  // If NODE_ENV is not set, assume production
+  const isProd = !computedNodeEnv || computedNodeEnv === 'production'
+
+  Object.defineProperties(envObj, {
+    isDevelopment: { value: computedNodeEnv === 'development' },
+    isDev: { value: computedNodeEnv === 'development' },
+    isProduction: { value: isProd },
+    isProd: { value: isProd },
+    isTest: { value: computedNodeEnv === 'test' },
+  })
+  return envObj
+}
+
+export const defaultMiddlewares = [
+  accessorMiddleware,
+  strictProxyMiddleware,
+  Object.freeze
+] as Middleware<unknown>[]

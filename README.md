@@ -17,6 +17,8 @@ Node.js (v8.12 or later) programs, aiming to:
   * The env object will *only* contain the env vars that were specified by your `validators`.
   * Any attempt to access an invalid/missing property on the env object will cause a thrown error.
   * Any attempt to mutate the cleaned env object will cause a thrown error.
+  You can still opt-out of strict mode by disabling the `strictProxyMiddleware`, but it's not
+  recommended.
 * The `dotenv` package is no longer shipped as part of this library. You can easily install/use it directly
   and pass the resulting environment object into envalid.
 * The `transformer` option is gone, replaced by the ability to add custom middleware
@@ -25,6 +27,10 @@ Node.js (v8.12 or later) programs, aiming to:
 * When you try to access an invalid property on the cleaned env object, the error will no longer
   suggest an env variable that you may have meant. You can re-implement the old behavior with a custom
   middleware if you wish
+* `NODE_ENV` support is now less opinionated, and an error is no longer thrown if a value other
+  than production/development/test is passed in. You can provide your own validator for `NODE_ENV`
+  to get exactly the behavior you want. The `isDev`, `isProduction`, etc properties still work as
+  before, and are implemented as middleware so you can override their behavior as needed.
 
 ## API
 
@@ -40,7 +46,7 @@ positional arguments:
                  console output. See `src/reporter.js` for the default implementation.
   * `middleware` - (optional) An array of functions that can modify the env object after it's
                    validated and cleaned. Envalid ships with default middleware, but you can
-                   customize its behavior by supplying your own
+                   customize most of its behavior by supplying your own middleware stack
 
 By default, `cleanEnv()` will log an error message and exit (in Node) or throw (in browser) if any required
 env vars are missing or invalid. You can override this behavior by writing your own reporter.
@@ -60,7 +66,7 @@ const env = envalid.cleanEnv(process.env, {
 // and/or filtering that you specified with cleanEnv().
 env.ADMIN_EMAIL     // -> 'admin@example.com'
 
-// Envalid parses NODE_ENV automatically, and provides the following
+// Envalid checks for NODE_ENV automatically, and provides the following
 // shortcut (boolean) properties for checking its value:
 env.isProduction    // true if NODE_ENV === 'production'
 env.isTest          // true if NODE_ENV === 'test'

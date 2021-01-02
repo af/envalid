@@ -1,6 +1,5 @@
 import { EnvError, EnvMissingError } from './errors'
-import { str } from './validators'
-import { CleanEnv, CleanOptions, Spec, ValidatorSpec } from './types'
+import { CleanedEnvAccessors, CleanOptions, Spec, ValidatorSpec } from './types'
 import defaultReporter from './reporter'
 import { defaultMiddlewares } from './middleware'
 
@@ -57,24 +56,12 @@ function cleanEnv<T>(
   specs: { [K in keyof T]: ValidatorSpec<T[K]> },
   // @ts-ignore FIXME
   options: CleanOptions<T> = { middleware: defaultMiddlewares },
-): Readonly<T> & CleanEnv {
+): Readonly<T> & CleanedEnvAccessors {
   // FIXME anys here
   let output: any = {}
-  let defaultNodeEnv = ''
   const errors: any = {}
   const varKeys = Object.keys(specs) as Array<keyof T>
   const rawNodeEnv = (environment as any).NODE_ENV
-
-  // FIXME: make this opt-in, as an exported util?
-  // If validation for NODE_ENV isn't specified, use the default validation:
-  // @ts-expect-error
-  if (!varKeys.includes('NODE_ENV')) {
-    defaultNodeEnv = validateVar({
-      name: 'NODE_ENV',
-      spec: str({ choices: ['development', 'test', 'production'] }),
-      rawValue: rawNodeEnv || 'production',
-    })
-  }
 
   for (const k of varKeys) {
     const spec = specs[k]
@@ -110,25 +97,14 @@ function cleanEnv<T>(
     }
   }
 
-  // TODO: replace all the below with middleware: cleanedEnv => modifiedEnv
-
-  // Provide is{Prod/Dev/Test} properties for more readable NODE_ENV checks
-  // Node that isDev and isProd are just aliases to isDevelopment and isProduction
-  const computedNodeEnv = defaultNodeEnv || output.NODE_ENV
-  Object.defineProperties(output, {
-    isDevelopment: { value: computedNodeEnv === 'development' },
-    isDev: { value: computedNodeEnv === 'development' },
-    isProduction: { value: computedNodeEnv === 'production' },
-    isProd: { value: computedNodeEnv === 'production' },
-    isTest: { value: computedNodeEnv === 'test' },
-  })
+  // Apply middlewares to transform the validated env object
+  if (!options.middleware?.length) return output
+  output = options.middleware.reduce((acc, mw) => mw(acc, environment as any), output)
 
   const reporter = options.reporter || defaultReporter
   reporter({ errors, env: output })
 
-  // Apply middlewares to transform the validated env object
-  if (!options.middleware?.length) return output
-  return options.middleware.reduce((acc, mw) => mw(acc, environment), output)
+  return output
 }
 
 /**
