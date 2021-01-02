@@ -52,7 +52,7 @@
   "husky": {
     "hooks": {
       "pre-commit": "yarn lint --fix",
-      "pre-push": "npm test"
+      "pre-push": "yarn test"
     }
   }
 }
