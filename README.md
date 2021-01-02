@@ -43,7 +43,7 @@ positional arguments:
 * `validators` - An object that specifies the format of required vars.
 * `options` - An (optional) object, which supports the following keys:
   * `reporter` - Pass in a function to override the default error handling and
-                 console output. See `src/reporter.js` for the default implementation.
+                 console output. See `src/reporter.ts` for the default implementation.
   * `middleware` - (optional) An array of functions that can modify the env object after it's
                    validated and cleaned. Envalid ships with default middleware, but you can
                    customize most of its behavior by supplying your own middleware stack
@@ -157,36 +157,12 @@ const env = cleanEnv(process.env, myValidators, {
 })
 ```
 
-## Usage within React Native
-
-Envalid can be used within React Native with a custom reporter.
-
-[react-native-config](https://www.npmjs.com/package/react-native-config) can be useful for reading env vars from a `.env` file.
-
-Example:
-
-```js
-const reactNativeConfig = require('react-native-config')
-const rawConfig = reactNativeConfig.default
-
-const validatedConfig = envalid.cleanEnv(
-  rawConfig,
-  {
-    // validators
-  },
-  {
-    reporter: ({ errors = {}, env = {} }) => {
-      // handle errors
-    },
-  },
-)
-```
 
 ## Utils
 
 ### testOnly
 
-A helper function called `testOnly` is available, in case you need an default env var only when
+A helper function called `testOnly` is available, in case you need an default env var value only when
 `NODE_ENV=test`. It should be used along with `devDefault`, for example:
 
 ```js
@@ -196,6 +172,19 @@ const env = cleanEnv(process.env, {
 ```
 
 For more context see [this issue](https://github.com/af/envalid/issues/32).
+
+
+## Related projects
+
+* [dotenv](https://www.npmjs.com/package/dotenv) is a very handy tool for loading env vars from
+  `.env` files. It was previously used as a dependency of Envalid's. To use them together, simply
+  call `require('dotenv').config()` before you pass `process.env` to your `envalid.cleanEnv()`.
+
+* [react-native-config](https://www.npmjs.com/package/react-native-config) can be useful for React Native projects, enabling you to 
+  read env vars from a `.env` file
+
+* [fastify-envalid](https://github.com/alemagio/fastify-envalid) is a wrapper for using Envalid within [Fastify](https://www.fastify.io/)
+
 
 ## Motivation
 
