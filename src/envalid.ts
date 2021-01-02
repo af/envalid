@@ -115,7 +115,9 @@ function cleanEnv<T>(
  * For more context, see https://github.com/af/envalid/issues/32
  */
 const testOnly = <T>(defaultValueForTests: T) => {
-  return process.env.NODE_ENV === 'test' ? defaultValueForTests : testOnlySymbol
+  return process.env.NODE_ENV === 'test' ?
+    defaultValueForTests :
+    (testOnlySymbol as unknown as T)    // T is not strictly correct, but prevents type errors during usage
 }
 
 export { cleanEnv, testOnly }
