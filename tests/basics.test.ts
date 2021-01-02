@@ -119,46 +119,51 @@ test('misconfigured spec', () => {
   expect(() => cleanEnv({ FOO: 'asdf' }, { FOO: {} }, makeSilent)).toThrow()
 })
 
-test('NODE_ENV built-in support', () => {
-  // By default, envalid will parse and accept 3 standard NODE_ENV values:
-  // TODO: should this be brought back?
-  // assertPassthrough({ NODE_ENV: 'production' }, {})
-  // assertPassthrough({ NODE_ENV: 'development' }, {})
-  // assertPassthrough({ NODE_ENV: 'test' }, {})
+describe('NODE_ENV built-in support', () => {
+  // By default, envalid will NO LONGER validate and return the 3 standard NODE_ENV values by default
+  // (this was changed in v7). You need to create your own NODE_ENV validation if you want this
+  test('no longer validates NODE_ENV by default', () => {
+    expect(cleanEnv({ NODE_ENV: 'production' }, {})).toEqual({})
+    expect(cleanEnv({ NODE_ENV: 'development' }, {})).toEqual({})
+    expect(cleanEnv({ NODE_ENV: 'test' }, {})).toEqual({})
+
+    // Non-standard values DO NOT throw an error (this changed in v7 to allow custom NODE_ENV values):
+    expect(() => cleanEnv({ NODE_ENV: 'staging' }, {})).not.toThrow()
+  })
 
   // Some convenience helpers are available on the cleaned env object:
-  expect(cleanEnv({ NODE_ENV: 'production' }, {}).isProduction).toEqual(true)
-  expect(cleanEnv({ NODE_ENV: 'production' }, {}).isProd).toEqual(true)
-  expect(cleanEnv({ NODE_ENV: 'test' }, {}).isTest).toEqual(true)
-  expect(cleanEnv({ NODE_ENV: 'development' }, {}).isDev).toEqual(true)
-  expect(cleanEnv({ NODE_ENV: 'development' }, {}).isDevelopment).toEqual(true)
+  test('accessor helpers via middleware work as expected', () => {
+    expect(cleanEnv({ NODE_ENV: 'production' }, {}).isProduction).toEqual(true)
+    expect(cleanEnv({ NODE_ENV: 'production' }, {}).isProd).toEqual(true)
+    expect(cleanEnv({ NODE_ENV: 'test' }, {}).isTest).toEqual(true)
+    expect(cleanEnv({ NODE_ENV: 'development' }, {}).isDev).toEqual(true)
+    expect(cleanEnv({ NODE_ENV: 'development' }, {}).isDevelopment).toEqual(true)
 
-  // assume production if NODE_ENV is not specified:
-  expect(cleanEnv({}, {}).isProduction).toEqual(true)
-  expect(cleanEnv({}, {}).isProd).toEqual(true)
-  expect(cleanEnv({}, {}).isDev).toEqual(false)
-  expect(cleanEnv({}, {}).isDevelopment).toEqual(false)
-  expect(cleanEnv({}, {}).isTest).toEqual(false)
+    // assume production if NODE_ENV is not specified:
+    expect(cleanEnv({}, {}).isProduction).toEqual(true)
+    expect(cleanEnv({}, {}).isProd).toEqual(true)
+    expect(cleanEnv({}, {}).isDev).toEqual(false)
+    expect(cleanEnv({}, {}).isDevelopment).toEqual(false)
+    expect(cleanEnv({}, {}).isTest).toEqual(false)
 
-  // Non-standard values DO NOT throw an error (this changed in v7 to allow custom NODE_ENV values):
-  expect(() => cleanEnv({ NODE_ENV: 'staging' }, {})).not.toThrow()
+    // If NODE_ENV is un-set, isProduction & isDev still use the default value:
+    const unsetEnv = cleanEnv({ NODE_ENV: '' }, {})
+    expect(unsetEnv.isProduction).toEqual(true)
+    expect(unsetEnv.isProd).toEqual(true)
+    expect(unsetEnv.isDev).toEqual(false)
+    expect(unsetEnv.isDevelopment).toEqual(false)
+  })
 
-  // NODE_ENV should always be set. If it is un-set, isProduction & isDev
-  // still use the default value:
-  const unsetEnv = cleanEnv({ NODE_ENV: '' }, {})
-  expect(unsetEnv.isProduction).toEqual(true)
-  expect(unsetEnv.isProd).toEqual(true)
-  expect(unsetEnv.isDev).toEqual(false)
-  expect(unsetEnv.isDevelopment).toEqual(false)
-
-  // You can override the built-in NODE_ENV validation if you want
-  // The built-in convenience helpers can't be overridden though.
-  const customSpec = { NODE_ENV: str({ default: 'FOO' }) }
-  expect(cleanEnv({}, customSpec)).toEqual({ NODE_ENV: 'FOO' })
-  expect(cleanEnv({}, customSpec).isProduction).toEqual(false)
-  expect(cleanEnv({}, customSpec).isProd).toEqual(false)
-  expect(cleanEnv({}, customSpec).isDev).toEqual(false)
-  expect(cleanEnv({}, customSpec).isDevelopment).toEqual(false)
+  test('providing a custom NODE_ENV validator works as expected', () => {
+    // You can override the built-in NODE_ENV validation if you want
+    // The built-in convenience helpers can't be overridden though.
+    const customSpec = { NODE_ENV: str({ default: 'FOO' }) }
+    expect(cleanEnv({}, customSpec)).toEqual({ NODE_ENV: 'FOO' })
+    expect(cleanEnv({}, customSpec).isProduction).toEqual(false)
+    expect(cleanEnv({}, customSpec).isProd).toEqual(false)
+    expect(cleanEnv({}, customSpec).isDev).toEqual(false)
+    expect(cleanEnv({}, customSpec).isDevelopment).toEqual(false)
+  })
 })
 
 test('testOnly', () => {
