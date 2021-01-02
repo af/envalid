@@ -100,6 +100,7 @@ function cleanEnv<T>(
   output = options.middleware.reduce((acc, mw) => mw(acc, environment as any), output)
 
   const reporter = options.reporter || defaultReporter
+  // @ts-ignore FIXME
   reporter({ errors, env: output })
 
   // @ts-ignore FIXME

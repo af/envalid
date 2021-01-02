@@ -33,7 +33,7 @@ describe('default reporter', () => {
   test('does nothing when there are no errors', () => {
     reporter({
       errors: {},
-      env: { FOO: 'great success'},
+      env: { FOO: 'great success' },
     })
     expect(logSpy).toHaveBeenCalledTimes(0)
     expect(exitSpy).toHaveBeenCalledTimes(0)

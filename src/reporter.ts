@@ -1,11 +1,8 @@
 /* eslint-disable no-console */
 import { EnvMissingError } from './errors'
+import { ReporterOptions } from './types'
 
-type ReporterInput<T> = {
-  errors: Partial<Record<keyof T, Error>>
-  env: unknown
-}
-
+// Apply ANSI colors to the reporter output only if we detect that we're running in Node
 const isNode = !!(typeof process === 'object' && process?.versions?.node)
 const colorWith = (colorCode: string) => (str: string) =>
   isNode ? `\x1b[${colorCode}m${str}\x1b[0m` : str
@@ -18,7 +15,7 @@ const colors = {
 
 const RULE = colors.white('================================')
 
-const defaultReporter = ({ errors = {} }: ReporterInput<any>) => {
+const defaultReporter = ({ errors = {} }: ReporterOptions<any>) => {
   const errorKeys = Object.keys(errors)
   if (!errorKeys.length) return
 
