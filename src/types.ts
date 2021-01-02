@@ -43,7 +43,7 @@ export interface CleanedEnvAccessors {
   readonly isProd: boolean
 }
 
-interface ReporterOptions<T> {
+export interface ReporterOptions<T> {
   errors: Partial<Record<keyof T, Error>>
   env: unknown
 }

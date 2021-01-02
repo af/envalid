@@ -23,17 +23,17 @@ export const strictProxyMiddleware = <T extends object>(
   const inspectSymbolStrings = ['Symbol(util.inspect.custom)', 'Symbol(nodejs.util.inspect.custom)']
 
   return new Proxy(envObj, {
-    get(_target, name: string) {
+    get(target, name: string) {
       // These checks are needed because calling console.log on a
       // proxy that throws crashes the entire process. This permits access on
       // the necessary properties for `console.log(envObj)`, `envObj.length`,
       // `envObj.hasOwnProperty('string')` to work.
       if (inspectables.includes(name) || inspectSymbolStrings.includes(name.toString())) {
         // @ts-expect-error TS doesn't like symbol types as indexers
-        return envObj[name]
+        return target[name]
       }
 
-      const varExists = envObj.hasOwnProperty(name)
+      const varExists = target.hasOwnProperty(name)
       if (!varExists) {
         if (typeof rawEnv === 'object' && rawEnv?.hasOwnProperty?.(name)) {
           throw new ReferenceError(
@@ -44,7 +44,7 @@ export const strictProxyMiddleware = <T extends object>(
         throw new ReferenceError(`[envalid] Env var not found: ${name}`)
       }
 
-      return envObj[name as keyof T]
+      return target[name as keyof T]
     },
 
     set(_target, name: string) {
@@ -73,8 +73,4 @@ export const accessorMiddleware = <T>(envObj: T, rawEnv: T) => {
   return envObj
 }
 
-export const defaultMiddlewares = [
-  accessorMiddleware,
-  strictProxyMiddleware,
-  Object.freeze,
-] as Middleware<unknown>[]
+export const defaultMiddlewares = [accessorMiddleware, strictProxyMiddleware] as Middleware<any>[]
