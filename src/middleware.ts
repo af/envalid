@@ -73,8 +73,4 @@ export const accessorMiddleware = <T>(envObj: T, rawEnv: T) => {
   return envObj
 }
 
-export const defaultMiddlewares = [
-  accessorMiddleware,
-  strictProxyMiddleware,
-  Object.freeze,
-] as Middleware<unknown>[]
+export const defaultMiddlewares = [accessorMiddleware, strictProxyMiddleware] as Middleware<any>[]

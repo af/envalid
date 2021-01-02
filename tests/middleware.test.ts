@@ -15,6 +15,7 @@ describe('middleware type inference', () => {
   })
 
   test('flags errors on input env', () => {
+    const noop = (x: unknown) => x
     const raw = { FOO: 'bar' }
     const cleaned = cleanEnv(
       raw,
@@ -23,7 +24,7 @@ describe('middleware type inference', () => {
         middleware: [
           inputEnv => {
             // @ts-expect-error Inference should tell us this property is invalid
-            const _x = inputEnv.WRONG_NAME
+            noop(inputEnv.WRONG_NAME)
             return inputEnv
           },
         ],

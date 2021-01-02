@@ -17,13 +17,13 @@ function validateVar<T>({
   rawValue,
 }: {
   name: string
-  rawValue: string
+  rawValue: string | T
   spec: Spec<T> & { _parse: (input: string) => T }
 }) {
   if (typeof spec._parse !== 'function') {
     throw new EnvError(`Invalid spec for "${name}"`)
   }
-  const value = spec._parse(rawValue)
+  const value = spec._parse(rawValue as string)
 
   if (spec.choices) {
     if (!Array.isArray(spec.choices)) {
@@ -43,6 +43,12 @@ function formatSpecDescription<T>(spec: Spec<T>) {
   return `${spec.desc}${egText}${docsText}`
 }
 
+const readRawEnvValue = <T>(env: unknown, k: keyof T | 'NODE_ENV'): string | T[keyof T] => {
+  return (env as any)[k]
+}
+
+const isTestOnlySymbol = (value: any): value is symbol => value === testOnlySymbol
+
 /**
  * Returns a sanitized, immutable environment object. _Only_ the env vars
  * specified in the `validators` parameter will be accessible on the returned
@@ -54,20 +60,19 @@ function formatSpecDescription<T>(spec: Spec<T>) {
 function cleanEnv<T>(
   environment: unknown,
   specs: { [K in keyof T]: ValidatorSpec<T[K]> },
-  // @ts-ignore FIXME
   options: CleanOptions<T> = { middleware: defaultMiddlewares },
-): Readonly<T> & CleanedEnvAccessors {
+): Readonly<T & CleanedEnvAccessors> {
   let output = {} as T
   const errors: Partial<Record<keyof T, Error>> = {}
   const varKeys = Object.keys(specs) as Array<keyof T>
-  const rawNodeEnv = (environment as any).NODE_ENV
+  const rawNodeEnv = readRawEnvValue(environment, 'NODE_ENV')
 
   for (const k of varKeys) {
     const spec = specs[k]
     const usingDevDefault = rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
     const devDefault = usingDevDefault ? spec.devDefault : undefined
-    // @ts-ignore FIXME
-    const rawValue = environment[k] ?? (devDefault === undefined ? spec.default : devDefault)
+    const rawValue =
+      readRawEnvValue(environment, k) ?? (devDefault === undefined ? spec.default : devDefault)
 
     // Default values can be anything falsy (including an explicitly set undefined), without
     // triggering validation errors:
@@ -76,8 +81,7 @@ function cleanEnv<T>(
       (usingDevDefault && devDefault === rawValue)
 
     try {
-      // @ts-ignore FIXME
-      if (rawValue === testOnlySymbol) {
+      if (isTestOnlySymbol(rawValue)) {
         throw new EnvMissingError(formatSpecDescription(spec))
       }
 
@@ -94,17 +98,15 @@ function cleanEnv<T>(
     }
   }
 
-  // Apply middlewares to transform the validated env object
-  // @ts-ignore FIXME
-  if (!options.middleware?.length) return output
-  output = options.middleware.reduce((acc, mw) => mw(acc, environment as any), output)
-
   const reporter = options.reporter || defaultReporter
-  // @ts-ignore FIXME
   reporter({ errors, env: output })
 
-  // @ts-ignore FIXME
-  return output
+  // Apply middlewares to transform the validated env object
+  if (options.middleware?.length) {
+    output = options.middleware.reduce((acc, mw) => mw(acc, environment as any), output)
+  }
+
+  return Object.freeze(output as T & CleanedEnvAccessors)
 }
 
 /**
@@ -112,7 +114,7 @@ function cleanEnv<T>(
  *
  * For more context, see https://github.com/af/envalid/issues/32
  */
-const testOnly = (defaultValueForTests: any) => {
+const testOnly = <T>(defaultValueForTests: T) => {
   return process.env.NODE_ENV === 'test' ? defaultValueForTests : testOnlySymbol
 }
 
