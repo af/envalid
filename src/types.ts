@@ -48,17 +48,10 @@ export interface ReporterOptions<T> {
   env: unknown
 }
 
-export type Middleware<T> = (inputEnv: T, rawEnv: Record<keyof T, string>) => T
-
 export interface CleanOptions<T> {
   /**
    * Pass in a function to override the default error handling and console output.
-   * See ./reporter.js for the default implementation.
+   * See ./reporter.ts for the default implementation.
    */
   reporter?: ((opts: ReporterOptions<T>) => void) | null
-
-  /**
-   * Array of functions that can transform the cleaned environment object after validation
-   */
-  middleware?: Middleware<T>[]
 }

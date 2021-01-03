@@ -1,53 +1,49 @@
-import { cleanEnv, str } from '..'
+import { cleanEnv, customCleanEnv, str } from '../src'
+import { accessorMiddleware } from '../src/middleware'
 
-describe('middleware type inference', () => {
-  test('causes no false errors', () => {
+describe('customCleanEnv middleware type inference', () => {
+  test('allows access to properties on the output object', () => {
     const raw = { FOO: 'bar' }
-    const cleaned = cleanEnv(
-      raw,
-      { FOO: str() },
-      {
-        middleware: [inputEnv => ({ ...inputEnv, FOO: inputEnv.FOO.toUpperCase() })],
-      },
-    )
+    const cleaned = customCleanEnv(raw, { FOO: str() }, inputEnv => ({
+      ...inputEnv,
+      FOO: inputEnv.FOO.toUpperCase(),
+      ADDED: 123,
+    }))
 
-    expect(cleaned).toEqual({ FOO: 'BAR' })
+    expect(cleaned).toEqual({ FOO: 'BAR', ADDED: 123 })
   })
 
   test('flags errors on input env', () => {
     const noop = (x: unknown) => x
     const raw = { FOO: 'bar' }
-    const cleaned = cleanEnv(
-      raw,
-      { FOO: str() },
-      {
-        middleware: [
-          inputEnv => {
-            // @ts-expect-error Inference should tell us this property is invalid
-            noop(inputEnv.WRONG_NAME)
-            return inputEnv
-          },
-        ],
-      },
-    )
+    const cleaned = customCleanEnv(raw, { FOO: str() }, inputEnv => {
+      // @ts-expect-error Inference should tell us this property is invalid
+      noop(inputEnv.WRONG_NAME)
+      return inputEnv
+    })
 
     expect(cleaned).toEqual(raw)
   })
+})
 
-  test('flags errors on middleware output', () => {
+// Envalid v6 and below had a "strict" option, false by default, which let you access unvalidated
+// properties on the cleaned env output without throwing an error. That option is no longer present
+// in v7 and above, but you can emulate it by specifying your own middleware with customCleanEnv()
+// and omitting the strictProxyMiddleware that is now turned on by default
+describe('legacy non-strict emulation', () => {
+  const nonStrictMW = accessorMiddleware
+
+  test('allows access to unvalidated properties without runtime errors', () => {
     const raw = { FOO: 'bar' }
-    const cleaned = cleanEnv(
-      raw,
-      { FOO: str() },
-      {
-        middleware: [
-          // @ts-expect-error Inference should yell about the incorrect return value
-          _inputEnv => 'bad value',
-        ],
-      },
-    )
+    const cleaned = customCleanEnv(raw, { FOO: str() }, nonStrictMW)
+    expect(cleaned).toEqual({ FOO: 'bar' })
 
-    expect(cleaned).toEqual('bad value')
+    // Without the strictProxyMiddleware enabled, you CAN still access a non-validated
+    // property on the cleaned output without an error. However, if you're using TypeScript,
+    // you will still get a type error unless you explicitly type the output of your middleware in
+    // a really permissive way
+    // @ts-expect-error Inference will tell us this property is invalid
+    expect(cleaned.NOT_PRESENT).toEqual(undefined)
   })
 })
 

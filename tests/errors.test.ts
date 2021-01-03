@@ -1,4 +1,4 @@
-import { EnvError, EnvMissingError } from '..'
+import { EnvError, EnvMissingError } from '../src'
 
 test('EnvError', () => {
   const e = new EnvError('baz')

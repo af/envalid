@@ -1,9 +1,6 @@
-import { Middleware } from './types'
+import { CleanedEnvAccessors } from './types'
 
-export const strictProxyMiddleware = <T extends object>(
-  envObj: T,
-  rawEnv: Record<keyof T, string>,
-) => {
+export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: unknown) => {
   const inspectables = [
     'length',
     'inspect',
@@ -53,7 +50,7 @@ export const strictProxyMiddleware = <T extends object>(
   })
 }
 
-export const accessorMiddleware = <T>(envObj: T, rawEnv: T) => {
+export const accessorMiddleware = <T>(envObj: T, rawEnv: unknown) => {
   // Attach is{Prod/Dev/Test} properties for more readable NODE_ENV checks
   // Note that isDev and isProd are just aliases to isDevelopment and isProduction
 
@@ -70,7 +67,13 @@ export const accessorMiddleware = <T>(envObj: T, rawEnv: T) => {
     isProd: { value: isProd },
     isTest: { value: computedNodeEnv === 'test' },
   })
-  return envObj
+  return envObj as T & CleanedEnvAccessors
 }
 
-export const defaultMiddlewares = [accessorMiddleware, strictProxyMiddleware] as Middleware<any>[]
+export const applyDefaultMiddleware = <T>(cleanedEnv: T, rawEnv: unknown) => {
+  // Note: Ideally we would declare the default middlewares in an array and apply them in series with
+  // a generic pipe() function. However, a generically typed variadic pipe() appears to not be possible
+  // in TypeScript as of 4.x, so we just manually apply them below. See
+  // https://github.com/microsoft/TypeScript/pull/39094#issuecomment-647042984
+  return strictProxyMiddleware(accessorMiddleware(cleanedEnv, rawEnv), rawEnv)
+}
