@@ -10,7 +10,7 @@ Node.js (v8.12 or later) programs, aiming to:
 * give you an immutable API for your environment variables, so they don't change
   from under you while the program is running
 
-## Changes in v7.x
+## Changes upcoming in v7.x
 
 * Rewritten in TypeScript; now zero runtime dependencies
 * The mode-currently-known-as-`strict` is now enabled by default. This means:
