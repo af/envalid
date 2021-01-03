@@ -1,3 +1,5 @@
+![Build status](https://github.com/af/envalid/workflows/continuous-integration/badge.svg)
+
 # Envalid
 
 Envalid is a small library for validating and accessing environment variables in
