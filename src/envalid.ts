@@ -103,6 +103,12 @@ function cleanEnv<T>(
 
   // Apply middlewares to transform the validated env object
   if (options.middleware?.length) {
+    // Note: A generically typed variadic pipe() appears to not be possible in TS as of 4.x. See
+    // https://github.com/microsoft/TypeScript/pull/39094#issuecomment-647042984
+    //
+    // The middleware array's return type must be provided manually, to avoid having to implement
+    // this compose function with tons of overloads, eg:
+    // https://github.com/reduxjs/redux/blob/686d29b5d4e2dcb6709c16e31b79ecde90763156/index.d.ts#L451-L541
     output = options.middleware.reduce((acc, mw) => mw(acc, environment as any), output)
   }
 
