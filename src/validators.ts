@@ -49,7 +49,7 @@ export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
       case '0':
         return false
       default:
-        return null
+        throw new EnvError(`Invalid bool input: "${input}"`)
     }
   })(spec)
 }
