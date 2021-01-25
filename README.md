@@ -12,24 +12,27 @@ Node.js (v8.12 or later) programs, aiming to:
 
 ## Changes in v7.x
 
+Version 7 is a major update, with several breaking changes. Please review the breaking changes
+below before upgrading:
+
 * Rewritten in TypeScript
 * Removed _all_ runtime dependencies
-* The mode-currently-known-as-`strict` is now enabled by default. This means:
+* The mode-currently-known-as-`strict` is removed, and its behavior is enabled by default. This means:
   * The env object will *only* contain the env vars that were specified by your `validators`.
   * Any attempt to access an invalid/missing property on the env object will cause a thrown error.
   * Any attempt to mutate the cleaned env object will cause a thrown error.
   You can still opt-out of strict mode by disabling the `strictProxyMiddleware`, but it's not
-  recommended.
-* The `dotenv` package is no longer shipped as part of this library. You can easily install/use it directly
-  and pass the resulting environment object into envalid.
-* The `transformer` option is gone, replaced by the ability to add custom middleware
-* The `host` and `ip` validators are now less exhaustive. If you need these to be airtight, use
+  recommended (see "Custom Middleware", below).
+* The `dotenv` package is no longer shipped as part of this library. You can easily use it directly
+  by installing it and running `require('dotenv').config()` before you invoke envalid's `cleanEnv()`
+* The `transformer` validator option is gone, replaced by the ability to add custom middleware
+* The `host` and `ip` validators are now slightly less exhaustive. If you need these to be airtight, use
   your own custom validator instead
 * When you try to access an invalid property on the cleaned env object, the error will no longer
-  suggest an env variable that you may have meant. You can re-implement the old behavior with a custom
+  suggest an env variable that you may have intended. You can re-implement the old behavior with a custom
   middleware if you wish
 * `NODE_ENV` support is now less opinionated, and an error is no longer thrown if a value other
-  than production/development/test is passed in. You can provide your own validator for `NODE_ENV`
+  than `production`/`development`/`test` is passed in. You can provide your own validator for `NODE_ENV`
   to get exactly the behavior you want. The `isDev`, `isProduction`, etc properties still work as
   before, and are implemented as middleware so you can override their behavior as needed.
 
@@ -42,12 +45,9 @@ positional arguments:
 
 * `environment` - An object containing your env vars (eg. `process.env`)
 * `validators` - An object that specifies the format of required vars.
-* `options` - An (optional) object, which supports the following keys:
+* `options` - An (optional) object, which supports the following key:
   * `reporter` - Pass in a function to override the default error handling and
                  console output. See `src/reporter.ts` for the default implementation.
-  * `middleware` - (optional) An array of functions that can modify the env object after it's
-                   validated and cleaned. Envalid ships with default middleware, but you can
-                   customize most of its behavior by supplying your own middleware stack
 
 By default, `cleanEnv()` will log an error message and exit (in Node) or throw (in browser) if any required
 env vars are missing or invalid. You can override this behavior by writing your own reporter.
@@ -82,7 +82,6 @@ cd envalid
 yarn build
 node example/server.js
 ```
-
 
 ## Validator types
 
@@ -166,6 +165,23 @@ const env = cleanEnv(process.env, myValidators, {
 ```
 
 
+## Custom Middleware (advanced)
+
+In addition to `cleanEnv()`, as of v7 there is a new `customCleanEnv()` function,
+which allows you to completely replace the processing that Envalid applies after applying
+validations. You can use this custom escape hatch to transform the output however you wish.
+
+### `envalid.customCleanEnv(environment, validators, applyMiddleware, options)`
+
+`customCleanEnv()` uses the same API as `cleanEnv()`, but with an additional `applyMiddleware`
+argument required in the third position:
+
+* `applyMiddleware` - A functions that can modify the env object after it's
+                      validated and cleaned. Envalid ships (and exports) its own default
+                      middleware (see src/middleware.ts), which you can mix and match with your own
+                      custom logic to get the behavior you desire.
+
+
 ## Utils
 
 ### testOnly
@@ -188,8 +204,7 @@ For more context see [this issue](https://github.com/af/envalid/issues/32).
   `.env` files. It was previously used as a dependency of Envalid's. To use them together, simply
   call `require('dotenv').config()` before you pass `process.env` to your `envalid.cleanEnv()`.
 
-* [react-native-config](https://www.npmjs.com/package/react-native-config) can be useful for React Native projects, enabling you to 
-  read env vars from a `.env` file
+* [react-native-config](https://www.npmjs.com/package/react-native-config) can be useful for React Native projects for reading env vars from a `.env` file
 
 * [fastify-envalid](https://github.com/alemagio/fastify-envalid) is a wrapper for using Envalid within [Fastify](https://www.fastify.io/)
 
