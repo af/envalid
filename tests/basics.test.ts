@@ -120,8 +120,12 @@ test('misconfigured spec', () => {
 })
 
 describe('NODE_ENV built-in support', () => {
-  // By default, envalid will NO LONGER validate and return the 3 standard NODE_ENV values by default
-  // (this was changed in v7). You need to create your own NODE_ENV validation if you want this
+  // By default, envalid will NO LONGER validate and return a NODE_ENV value by default
+  // (this was changed in v7). You need to create your own NODE_ENV validation if you want this to
+  // happen.
+  //
+  // The isProduction/isTest/isDev properties are still supported out of the box for
+  // 'production'/'test'/'development', respectively
   test('no longer validates NODE_ENV by default', () => {
     expect(cleanEnv({ NODE_ENV: 'production' }, {})).toEqual({})
     expect(cleanEnv({ NODE_ENV: 'development' }, {})).toEqual({})
@@ -129,6 +133,16 @@ describe('NODE_ENV built-in support', () => {
 
     // Non-standard values DO NOT throw an error (this changed in v7 to allow custom NODE_ENV values):
     expect(() => cleanEnv({ NODE_ENV: 'staging' }, {})).not.toThrow()
+  })
+
+  test('allows you to use your own NODE_ENV validator with ad-hoc values', () => {
+    const spec = {
+      NODE_ENV: str({ choices: ['development', 'test', 'production', 'staging'] }),
+    }
+    expect(cleanEnv({ NODE_ENV: 'staging' }, spec)).toEqual({ NODE_ENV: 'staging' })
+
+    // Validation fails with our choices field when we pass in a value that doesn't match
+    expect(() => cleanEnv({ NODE_ENV: 'BAD' }, spec, makeSilent)).toThrow()
   })
 
   // Some convenience helpers are available on the cleaned env object:
