@@ -10,9 +10,10 @@ Node.js (v8.12 or later) programs, aiming to:
 * give you an immutable API for your environment variables, so they don't change
   from under you while the program is running
 
-## Changes upcoming in v7.x
+## Changes in v7.x
 
-* Rewritten in TypeScript; now zero runtime dependencies
+* Rewritten in TypeScript
+* Removed _all_ runtime dependencies
 * The mode-currently-known-as-`strict` is now enabled by default. This means:
   * The env object will *only* contain the env vars that were specified by your `validators`.
   * Any attempt to access an invalid/missing property on the env object will cause a thrown error.
@@ -74,6 +75,13 @@ env.isDev           // true if NODE_ENV === 'development'
 ```
 
 For an example you can play with, clone this repo and see the `example/` directory.
+
+```
+git clone https://github.com/af/envalid
+cd envalid
+yarn build
+node example/server.js
+```
 
 
 ## Validator types
