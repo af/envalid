@@ -35,6 +35,8 @@ below before upgrading:
   than `production`/`development`/`test` is passed in. You can provide your own validator for `NODE_ENV`
   to get exactly the behavior you want. The `isDev`, `isProduction`, etc properties still work as
   before, and are implemented as middleware so you can override their behavior as needed.
+* `devDefault` values are no longer used if `NODE_ENV` was not set in the environment (a case where
+  Envalid otherwise assumes `'production'` mode). Fixes #65
 
 ## API
 
@@ -57,9 +59,10 @@ const envalid = require('envalid')
 const { str, email, json } = envalid
 
 const env = envalid.cleanEnv(process.env, {
-    API_KEY:            str(),
-    ADMIN_EMAIL:        email({ default: 'admin@example.com' }),
-    EMAIL_CONFIG_JSON:  json({ desc: 'Additional email parameters' })
+  API_KEY:            str(),
+  ADMIN_EMAIL:        email({ default: 'admin@example.com' }),
+  EMAIL_CONFIG_JSON:  json({ desc: 'Additional email parameters' }),
+  NODE_ENV:           str({ choices: ['development', 'test', 'production', 'staging']}),
 })
 
 

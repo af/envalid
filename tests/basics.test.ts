@@ -69,6 +69,10 @@ test('devDefault', () => {
 
   // For a production environment, the field is required:
   expect(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent)).toThrow()
+
+  // If NODE_ENV is not set, devDefault should not be used and validation should fail if the
+  // env var was not provided (issue #65)
+  expect(() => cleanEnv({ NODE_ENV: undefined }, spec, makeSilent)).toThrow()
 })
 
 test('falsy devDefault', () => {

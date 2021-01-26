@@ -63,16 +63,20 @@ export function getSanitizedEnv<T>(
 
   for (const k of varKeys) {
     const spec = specs[k]
-    const usingDevDefault = rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
-    const devDefault = usingDevDefault ? spec.devDefault : undefined
+
+    // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
+    const usingDevDefault =
+      rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
+    const devDefaultValue = usingDevDefault ? spec.devDefault : undefined
     const rawValue =
-      readRawEnvValue(environment, k) ?? (devDefault === undefined ? spec.default : devDefault)
+      readRawEnvValue(environment, k) ??
+      (devDefaultValue === undefined ? spec.default : devDefaultValue)
 
     // Default values can be anything falsy (including an explicitly set undefined), without
     // triggering validation errors:
     const usingFalsyDefault =
       (spec.hasOwnProperty('default') && spec.default === rawValue) ||
-      (usingDevDefault && devDefault === rawValue)
+      (usingDevDefault && devDefaultValue === rawValue)
 
     try {
       if (isTestOnlySymbol(rawValue)) {
