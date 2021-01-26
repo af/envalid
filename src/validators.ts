@@ -112,8 +112,14 @@ export function url<T extends string = string>(spec?: Spec<T>) {
   })(spec)
 }
 
+// It's recommended that you provide an explicit type parameter for json validation
+// if you're using TypeScript. Otherwise the output will be typed as `any`. For example:
+//
+// cleanEnv({
+//   MY_VAR: json<{ foo: number }>({ default: { foo: 123 } }),
+// })
 export function json<T = any>(spec?: Spec<T>) {
-  return makeValidator((x: string) => {
+  return makeValidator<T>((x: string) => {
     try {
       return JSON.parse(x)
     } catch (e) {
