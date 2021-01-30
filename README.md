@@ -106,8 +106,9 @@ url, email address). To these ends, the following validation functions are avail
 Each validation function accepts an (optional) object with the following attributes:
 
 * `choices` - An Array that lists the admissable parsed values for the env var.
-* `default` - A fallback value, which will be used if the env var wasn't specified.
-              Providing a default effectively makes the env var optional.
+* `default` - A fallback value, which will be present in the output if the env var wasn't specified.
+              Providing a default effectively makes the env var optional. Note that `default`
+              values are not passed through validation logic.
 * `devDefault` - A fallback value to use *only* when `NODE_ENV` is _not_ `'production'`. This is handy
                  for env vars that are required for production environments, but optional
                  for development and testing.
