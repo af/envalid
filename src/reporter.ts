@@ -15,15 +15,18 @@ const colors = {
 
 const RULE = colors.white('================================')
 
-const defaultReporter = ({ errors = {} }: ReporterOptions<any>) => {
+const defaultReporter = <T = any>({ errors = {} }: ReporterOptions<T>) => {
   if (!Object.keys(errors).length) return
 
-  const missingVarsOutput = []
-  const invalidVarsOutput = []
+  const missingVarsOutput: string[] = []
+  const invalidVarsOutput: string[] = []
   for (const [k, err] of Object.entries(errors)) {
     if (err instanceof EnvMissingError) {
       missingVarsOutput.push(`    ${colors.blue(k)}: ${err.message || '(required)'}`)
-    } else invalidVarsOutput.push(`    ${colors.blue(k)}: ${err?.message || '(invalid format)'}`)
+    } else
+      invalidVarsOutput.push(
+        `    ${colors.blue(k)}: ${(err as Error)?.message || '(invalid format)'}`,
+      )
   }
 
   // Prepend "header" output for each section of the output:
