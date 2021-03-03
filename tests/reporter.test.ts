@@ -1,3 +1,4 @@
+import { defaultReporter } from '../src'
 import reporter from '../src/reporter'
 import { EnvError, EnvMissingError } from '../src/errors'
 
@@ -13,6 +14,10 @@ describe('default reporter', () => {
   afterEach(() => {
     logSpy?.mockRestore()
     exitSpy?.mockRestore()
+  })
+
+  test('default reporter should be exported from the top-level module', () => {
+    expect(defaultReporter).toEqual(reporter)
   })
 
   test('simple usage for reporting a missing variable error', () => {
