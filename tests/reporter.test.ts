@@ -20,10 +20,13 @@ describe('default reporter', () => {
   })
 
   test('simple usage for reporting a missing variable error', () => {
-    defaultReporter({
-      errors: { FOO: new EnvMissingError() },
-      env: {},
-    }, { logger })
+    defaultReporter(
+      {
+        errors: { FOO: new EnvMissingError() },
+        env: {},
+      },
+      { logger },
+    )
     expect(logger).toHaveBeenCalledTimes(1)
 
     const output = logger?.mock?.calls?.[0]?.[0]
@@ -37,10 +40,13 @@ describe('default reporter', () => {
   })
 
   test('simple usage for reporting an invalid variable error', () => {
-    defaultReporter({
-      errors: { FOO: new EnvError() },
-      env: { FOO: 123 },
-    }, { logger })
+    defaultReporter(
+      {
+        errors: { FOO: new EnvError() },
+        env: { FOO: 123 },
+      },
+      { logger },
+    )
     expect(logger).toHaveBeenCalledTimes(1)
 
     const output = logger?.mock?.calls?.[0]?.[0]
@@ -54,10 +60,13 @@ describe('default reporter', () => {
   })
 
   test('reporting an invalid variable error with a custom error message', () => {
-    defaultReporter({
-      errors: { FOO: new EnvError('custom msg') },
-      env: { FOO: 123 },
-    }, { logger })
+    defaultReporter(
+      {
+        errors: { FOO: new EnvError('custom msg') },
+        env: { FOO: 123 },
+      },
+      { logger },
+    )
     expect(logger).toHaveBeenCalledTimes(1)
 
     const output = logger?.mock?.calls?.[0]?.[0]
@@ -70,10 +79,13 @@ describe('default reporter', () => {
   })
 
   test('does nothing when there are no errors', () => {
-    defaultReporter({
-      errors: {},
-      env: { FOO: 'great success' },
-    }, { logger })
+    defaultReporter(
+      {
+        errors: {},
+        env: { FOO: 'great success' },
+      },
+      { logger },
+    )
     expect(logger).toHaveBeenCalledTimes(0)
     expect(exitSpy).toHaveBeenCalledTimes(0)
   })
