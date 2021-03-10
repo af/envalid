@@ -1,6 +1,6 @@
 import { EnvError, EnvMissingError } from './errors'
 import { CleanOptions, Spec, ValidatorSpec } from './types'
-import defaultReporter from './reporter'
+import { defaultReporter } from './reporter'
 
 export const testOnlySymbol = Symbol('envalid - test only')
 

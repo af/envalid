@@ -1,28 +1,35 @@
-import reporter from '../src/reporter'
+import { defaultReporter as mainReporterExport } from '../src'
+import { defaultReporter } from '../src/reporter'
 import { EnvError, EnvMissingError } from '../src/errors'
 
-let logSpy: jest.SpyInstance | null = null
+let logger: jest.MockedFunction<any>
 let exitSpy: jest.SpyInstance | null = null
 
 describe('default reporter', () => {
   beforeEach(() => {
-    logSpy = jest.spyOn(console, 'error').mockImplementation()
+    logger = jest.fn()
     exitSpy = jest.spyOn(process, 'exit').mockImplementation()
   })
 
   afterEach(() => {
-    logSpy?.mockRestore()
     exitSpy?.mockRestore()
   })
 
-  test('simple usage for reporting a missing variable error', () => {
-    reporter({
-      errors: { FOO: new EnvMissingError() },
-      env: {},
-    })
-    expect(logSpy).toHaveBeenCalledTimes(1)
+  test('default reporter should be exported from the top-level module', () => {
+    expect(mainReporterExport).toEqual(defaultReporter)
+  })
 
-    const output = logSpy?.mock?.calls?.[0]?.[0]
+  test('simple usage for reporting a missing variable error', () => {
+    defaultReporter(
+      {
+        errors: { FOO: new EnvMissingError() },
+        env: {},
+      },
+      { logger },
+    )
+    expect(logger).toHaveBeenCalledTimes(1)
+
+    const output = logger?.mock?.calls?.[0]?.[0]
     expect(output).toMatch(/Missing\S+ environment variables:/)
     expect(output).toMatch(/FOO\S+/)
     expect(output).toMatch('(required)')
@@ -33,13 +40,16 @@ describe('default reporter', () => {
   })
 
   test('simple usage for reporting an invalid variable error', () => {
-    reporter({
-      errors: { FOO: new EnvError() },
-      env: { FOO: 123 },
-    })
-    expect(logSpy).toHaveBeenCalledTimes(1)
+    defaultReporter(
+      {
+        errors: { FOO: new EnvError() },
+        env: { FOO: 123 },
+      },
+      { logger },
+    )
+    expect(logger).toHaveBeenCalledTimes(1)
 
-    const output = logSpy?.mock?.calls?.[0]?.[0]
+    const output = logger?.mock?.calls?.[0]?.[0]
     expect(output).toMatch(/Invalid\S+ environment variables:/)
     expect(output).toMatch(/FOO\S+/)
     expect(output).toMatch('(invalid format)')
@@ -50,13 +60,16 @@ describe('default reporter', () => {
   })
 
   test('reporting an invalid variable error with a custom error message', () => {
-    reporter({
-      errors: { FOO: new EnvError('custom msg') },
-      env: { FOO: 123 },
-    })
-    expect(logSpy).toHaveBeenCalledTimes(1)
+    defaultReporter(
+      {
+        errors: { FOO: new EnvError('custom msg') },
+        env: { FOO: 123 },
+      },
+      { logger },
+    )
+    expect(logger).toHaveBeenCalledTimes(1)
 
-    const output = logSpy?.mock?.calls?.[0]?.[0]
+    const output = logger?.mock?.calls?.[0]?.[0]
     expect(output).toMatch(/Invalid\S+ environment variables:/)
     expect(output).toMatch(/FOO\S+/)
     expect(output).toMatch('custom msg')
@@ -66,11 +79,14 @@ describe('default reporter', () => {
   })
 
   test('does nothing when there are no errors', () => {
-    reporter({
-      errors: {},
-      env: { FOO: 'great success' },
-    })
-    expect(logSpy).toHaveBeenCalledTimes(0)
+    defaultReporter(
+      {
+        errors: {},
+        env: { FOO: 'great success' },
+      },
+      { logger },
+    )
+    expect(logger).toHaveBeenCalledTimes(0)
     expect(exitSpy).toHaveBeenCalledTimes(0)
   })
 })

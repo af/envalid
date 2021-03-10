@@ -2,6 +2,15 @@
 import { EnvMissingError } from './errors'
 import { ReporterOptions } from './types'
 
+// The default reporter is supports a second argument, for consumers
+// who want to use it with only small customizations
+type ExtraOptions<T> = {
+  onError?: (errors: Partial<Record<keyof T, Error>>) => void
+  logger: (output: string) => void
+}
+
+const defaultLogger = console.error.bind(console)
+
 // Apply ANSI colors to the reporter output only if we detect that we're running in Node
 const isNode = !!(typeof process === 'object' && process?.versions?.node)
 const colorWith = (colorCode: string) => (str: string) =>
@@ -15,7 +24,10 @@ const colors = {
 
 const RULE = colors.white('================================')
 
-const defaultReporter = <T = any>({ errors = {} }: ReporterOptions<T>) => {
+export const defaultReporter = <T = any>(
+  { errors = {} }: ReporterOptions<T>,
+  { onError, logger }: ExtraOptions<T> = { logger: defaultLogger },
+) => {
   if (!Object.keys(errors).length) return
 
   const missingVarsOutput: string[] = []
@@ -47,13 +59,13 @@ const defaultReporter = <T = any>({ errors = {} }: ReporterOptions<T>) => {
     .filter(x => !!x)
     .join('\n')
 
-  console.error(output)
+  logger(output)
 
-  if (isNode) {
+  if (onError) {
+    onError(errors)
+  } else if (isNode) {
     process.exit(1)
   } else {
     throw new TypeError('Environment validation failed')
   }
 }
-
-export default defaultReporter
