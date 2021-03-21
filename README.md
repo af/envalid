@@ -55,8 +55,7 @@ By default, `cleanEnv()` will log an error message and exit (in Node) or throw (
 env vars are missing or invalid. You can override this behavior by writing your own reporter.
 
 ```js
-const envalid = require('envalid')
-const { str, email, json } = envalid
+import { cleanEnv, str, email, json } from 'envalid'
 
 const env = envalid.cleanEnv(process.env, {
   API_KEY:            str(),
@@ -124,7 +123,7 @@ a function as its only parameter, and should either return a cleaned value, or t
 input is unacceptable:
 
 ```js
-const { makeValidator, cleanEnv } = require('envalid')
+import { makeValidator, cleanEnv } from 'envalid'
 const twochars = makeValidator(x => {
     if (/^[A-Za-z]{2}$/.test(x)) return x.toUpperCase()
     else throw new Error('Expected two letters')
