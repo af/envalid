@@ -145,4 +145,28 @@ describe('proxy middleware', () => {
     // @ts-expect-error This invalid usage should trigger a type error
     expect(() => env.__esModule).not.toThrow()
   })
+
+  test('proxy allows `getter` on self', () => {
+    const env = cleanEnv(
+      { FOO: 'foo' },
+      {
+        FOO: str(),
+      },
+    )
+
+    // @ts-expect-error This invalid usage should trigger a type error
+    expect(() => env.getter).not.toThrow()
+  })
+
+  test('proxy allows `setter` on self', () => {
+    const env = cleanEnv(
+      { FOO: 'foo' },
+      {
+        FOO: str(),
+      },
+    )
+
+    // @ts-expect-error This invalid usage should trigger a type error
+    expect(() => env.setter).not.toThrow()
+  })
 })

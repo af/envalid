@@ -16,6 +16,9 @@ export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: unkno
     'then',
     // For usage with TypeScript esModuleInterop flag
     '__esModule',
+    // (see #141)
+    'getter',
+    'setter',
   ]
   const inspectSymbolStrings = ['Symbol(util.inspect.custom)', 'Symbol(nodejs.util.inspect.custom)']
 
