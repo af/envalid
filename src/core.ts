@@ -84,9 +84,9 @@ export function getSanitizedEnv<T>(
       }
 
       if (rawValue === undefined) {
-        if (!usingFalsyDefault) {
-          throw new EnvMissingError(formatSpecDescription(spec))
-        }
+        if (!usingFalsyDefault) throw new EnvMissingError(formatSpecDescription(spec))
+        // @ts-ignore (fixes #138) Need to figure out why explicitly undefined default/devDefault breaks inference
+        cleanedEnv[k] = undefined
       } else {
         cleanedEnv[k] = validateVar({ name: k as string, spec, rawValue })
       }
