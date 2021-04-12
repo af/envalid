@@ -57,7 +57,7 @@ env vars are missing or invalid. You can override this behavior by writing your 
 ```js
 import { cleanEnv, str, email, json } from 'envalid'
 
-const env = envalid.cleanEnv(process.env, {
+const env = cleanEnv(process.env, {
   API_KEY:            str(),
   ADMIN_EMAIL:        email({ default: 'admin@example.com' }),
   EMAIL_CONFIG_JSON:  json({ desc: 'Additional email parameters' }),
