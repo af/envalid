@@ -154,7 +154,7 @@ Additionally, envalid exposes `EnvError` and `EnvMissingError`, which can be che
 ```js
 const env = cleanEnv(process.env, myValidators, {
     reporter: ({ errors, env }) => {
-        errors.forEach(err => {
+        for (const [envVar, err] of Object.entries(errors)) {
             if (err instanceof envalid.EnvError) {
                 ...
             } else if (err instanceof envalid.EnvMissingError) {
@@ -162,7 +162,7 @@ const env = cleanEnv(process.env, myValidators, {
             } else {
                 ...
             }
-        });
+        }
     }
 })
 ```
