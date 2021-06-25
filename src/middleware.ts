@@ -5,6 +5,7 @@ export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: unkno
     'length',
     'inspect',
     'hasOwnProperty',
+    'toJSON',  // Allow JSON.stringify() on output. See #157
     Symbol.toStringTag,
     Symbol.iterator,
 

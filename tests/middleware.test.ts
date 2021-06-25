@@ -4,7 +4,7 @@ import { accessorMiddleware } from '../src/middleware'
 describe('customCleanEnv middleware type inference', () => {
   test('allows access to properties on the output object', () => {
     const raw = { FOO: 'bar' }
-    const cleaned = customCleanEnv(raw, { FOO: str() }, inputEnv => ({
+    const cleaned = customCleanEnv(raw, { FOO: str() }, (inputEnv) => ({
       ...inputEnv,
       FOO: inputEnv.FOO.toUpperCase(),
       ADDED: 123,
@@ -16,7 +16,7 @@ describe('customCleanEnv middleware type inference', () => {
   test('flags errors on input env', () => {
     const noop = (x: unknown) => x
     const raw = { FOO: 'bar' }
-    const cleaned = customCleanEnv(raw, { FOO: str() }, inputEnv => {
+    const cleaned = customCleanEnv(raw, { FOO: str() }, (inputEnv) => {
       // @ts-expect-error Inference should tell us this property is invalid
       noop(inputEnv.WRONG_NAME)
       return inputEnv
@@ -144,5 +144,17 @@ describe('proxy middleware', () => {
 
     // @ts-expect-error This invalid usage should trigger a type error
     expect(() => env.__esModule).not.toThrow()
+  })
+
+  test('proxy allows JSON.stringify to be called on output', () => {
+    const env = cleanEnv(
+      { FOO: 'foo' },
+      {
+        FOO: str(),
+      },
+    )
+
+    expect(() => JSON.stringify(env)).not.toThrow()
+    expect(JSON.stringify(env)).toEqual('{"FOO":"foo"}')
   })
 })
