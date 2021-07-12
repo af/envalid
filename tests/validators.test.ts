@@ -46,6 +46,8 @@ test('num()', () => {
   expect(withZero).toEqual({ FOO: 0 })
 
   expect(() => cleanEnv({ FOO: 'asdf' }, { FOO: num() }, makeSilent)).toThrow()
+
+  expect(() => cleanEnv({ FOO: '' }, { FOO: num() }, makeSilent)).toThrow()
 })
 
 test('email()', () => {
