@@ -56,7 +56,7 @@ export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
 
 export function num<T extends number = number>(spec?: Spec<T>) {
   return makeValidator((input: string) => {
-    const coerced = +input
+    const coerced = parseFloat(input)
     if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
     return coerced
   })(spec)
