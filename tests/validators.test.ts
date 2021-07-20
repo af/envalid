@@ -114,12 +114,12 @@ test('str()', () => {
 })
 
 test('custom types', () => {
-  const alwaysFoo = makeValidator(_x => 'foo')
+  const alwaysFoo = makeValidator((_x) => 'foo')
 
   const fooEnv = cleanEnv({ FOO: 'asdf' }, { FOO: alwaysFoo() })
   expect(fooEnv).toEqual({ FOO: 'foo' })
 
-  const hex10 = makeValidator(x => {
+  const hex10 = makeValidator((x) => {
     if (/^[a-f0-9]{10}$/.test(x)) return x
     throw new Error('need 10 hex chars')
   })

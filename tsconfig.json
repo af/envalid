@@ -1,8 +1,9 @@
 {
   "compilerOptions": {
+    "outDir": "./dist",
     "rootDir": "./src",
     "strict": true,
-    "module": "esnext",
+    "module": "commonjs",
     "moduleResolution": "node",
     "esModuleInterop": true,
     "importHelpers": true,
@@ -10,7 +11,8 @@
     "sourceMap": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
-    "noImplicitReturns": true
+    "noImplicitReturns": true,
+    "lib": ["es2019"]
   },
   "include": ["src"],
   "exclude": [

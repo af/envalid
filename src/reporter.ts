@@ -56,7 +56,7 @@ export const defaultReporter = <T = any>(
     colors.yellow('\n Exiting with error code 1'),
     RULE,
   ]
-    .filter(x => !!x)
+    .filter((x) => !!x)
     .join('\n')
 
   logger(output)

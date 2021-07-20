@@ -17,7 +17,8 @@ const isFQDN = (input: string) => {
 // "best effort" regex-based IP address check
 // If you want a more exhaustive check, create your own custom validator, perhaps wrapping this
 // implementation (the source of the ipv4 regex below): https://github.com/validatorjs/validator.js/blob/master/src/lib/isIP.js
-const ipv4Regex = /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
+const ipv4Regex =
+  /^(([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])\.){3}([0-9]|[1-9][0-9]|1[0-9]{2}|2[0-4][0-9]|25[0-5])$/
 const ipv6Regex = /([a-f0-9]+:+)+[a-f0-9]+/
 const isIP = (input: string) => {
   if (!input.length) return false
@@ -27,7 +28,7 @@ const isIP = (input: string) => {
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/ // intentionally non-exhaustive
 
 export const makeValidator = <T>(parseFn: (input: string) => T) => {
-  return function(spec?: Spec<T>): ValidatorSpec<T> {
+  return function (spec?: Spec<T>): ValidatorSpec<T> {
     return { ...spec, _parse: parseFn }
   }
 }
@@ -104,6 +105,7 @@ export function port<T extends number = number>(spec?: Spec<T>) {
 export function url<T extends string = string>(spec?: Spec<T>) {
   return makeValidator((x: string) => {
     try {
+      // @ts-expect-error TS doesn't acknowledge this API by default yet
       new URL(x)
       return x
     } catch (e) {

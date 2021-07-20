@@ -15,12 +15,10 @@
     "src"
   ],
   "scripts": {
-    "build": "tsdx build",
-    "coverage": "tsdx test --coverage",
-    "lint": "tsdx lint src tests",
-    "prepare": "tsdx build",
-    "start": "tsdx watch",
-    "test": "tsdx test"
+    "build": "tsc",
+    "coverage": "jest --coverage",
+    "lint": "tsc && prettier -list-different --write src tests",
+    "test": "jest"
   },
   "repository": {
     "type": "git",
@@ -35,14 +33,19 @@
     "environment variable",
     "validation"
   ],
+  "dependencies": {},
   "devDependencies": {
+    "@types/jest": "26.0.24",
+    "@types/node": "16.4.0",
     "husky": "4.3.6",
-    "tsdx": "^0.14.1",
-    "typescript": "^4.1.3"
+    "jest": "27.0.6",
+    "prettier": "2.3.2",
+    "ts-jest": "27.0.4",
+    "tslib": "2.3.0",
+    "typescript": "4.3.5"
   },
   "author": "Aaron Franks",
   "license": "MIT",
-  "dependencies": {},
   "prettier": {
     "printWidth": 100,
     "semi": false,
@@ -51,7 +54,7 @@
   },
   "husky": {
     "hooks": {
-      "pre-commit": "yarn lint --fix",
+      "pre-commit": "yarn lint",
       "pre-push": "yarn test"
     }
   }
