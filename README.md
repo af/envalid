@@ -211,6 +211,8 @@ For more context see [this issue](https://github.com/af/envalid/issues/32).
 
 * [fastify-envalid](https://github.com/alemagio/fastify-envalid) is a wrapper for using Envalid within [Fastify](https://www.fastify.io/)
 
+* [nestjs-envalid](https://github.com/cobraz/nestjs-envalid) is a wrapper for using Envalid with [NestJS](https://nestjs.com/)
+
 
 ## Motivation
 
