@@ -5,13 +5,16 @@ export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: unkno
     'length',
     'inspect',
     'hasOwnProperty',
-    'toJSON',  // Allow JSON.stringify() on output. See #157
+    'toJSON', // Allow JSON.stringify() on output. See #157
     Symbol.toStringTag,
     Symbol.iterator,
 
     // For jest
     'asymmetricMatch',
     'nodeType',
+
+    // For react-refresh, see #150
+    '$$typeof',
 
     // For libs that use `then` checks to see if objects are Promises (see #74):
     'then',
