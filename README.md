@@ -81,7 +81,7 @@ For an example you can play with, clone this repo and see the `example/` directo
 ```
 git clone https://github.com/af/envalid
 cd envalid
-yarn build
+yarn prepare
 node example/server.js
 ```
 
