@@ -1,9 +1,24 @@
-![Build status](https://github.com/af/envalid/workflows/continuous-integration/badge.svg)
+<p align="center">
+  <img
+    src="./.github/header.svg"
+    width="200"
+  />
+</p>
 
-# Envalid
+<p align="center">
+  <strong>
+    Envalid is a small library for validating and accessing<br />
+    environment variables in Node.js (v8.12 or later) programs
+  </strong>
+</p>
 
-Envalid is a small library for validating and accessing environment variables in
-Node.js (v8.12 or later) programs, aiming to:
+<p align="center">
+  <a href="https://github.com/af/envalid/actions/workflows/ci.yml">
+    <img src="https://github.com/af/envalid/workflows/continuous-integration/badge.svg" alt="Build Status" />
+  </a>
+</p>
+
+Envalid aims to:
 
 * ensure that your program only runs when all of its environment dependencies are met
 * give you executable documentation about the environment your program expects to run in
