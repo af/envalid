@@ -16,7 +16,7 @@ Version 7 is a major update, with several breaking changes. Please review the br
 below before upgrading:
 
 * Rewritten in TypeScript
-* Removed _all_ runtime dependencies
+* Removed _all_ runtime dependencies except for [tslib](https://github.com/Microsoft/tslib)
 * The mode-currently-known-as-`strict` is removed, and its behavior is enabled by default. This means:
   * The env object will *only* contain the env vars that were specified by your `validators`.
   * Any attempt to access an invalid/missing property on the env object will cause a thrown error.
