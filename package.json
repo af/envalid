@@ -1,6 +1,6 @@
 {
   "name": "envalid",
-  "version": "7.2.0",
+  "version": "7.2.1",
   "description": "Validation for your environment variables",
   "main": "dist/index.js",
   "module": "dist/envalid.esm.js",
