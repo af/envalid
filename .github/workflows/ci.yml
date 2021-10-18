@@ -2,7 +2,7 @@ name: continuous-integration
 
 on:
   push:
-    branches: [ main, v7 ]
+    branches: [ master, v7, force-conflict ]
   pull_request:
     branches: [ main ]
 
@@ -12,7 +12,7 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 10, 12, 14 ]
+        node-version: [ 10, 12, 14, 16 ]
 
     steps:
     - uses: actions/checkout@v2
