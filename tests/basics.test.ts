@@ -89,7 +89,7 @@ test('falsy devDefault', () => {
 
 test('devDefault and default together', () => {
   const spec = {
-    FOO: num({ devDefault: 3000, default: 80 }),
+    FOO: num({ devDefault: '3000', default: '80' }),
   }
 
   const env = cleanEnv({ NODE_ENV: 'test' }, spec)

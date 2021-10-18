@@ -1,17 +1,17 @@
-export interface Spec<T> {
+export interface Spec {
   /**
    * An Array that lists the admissable parsed values for the env var.
    */
-  choices?: ReadonlyArray<T>
+  choices?: ReadonlyArray<string>
   /**
    * A fallback value, which will be used if the env var wasn't specified. Providing a default effectively makes the env var optional.
    */
-  default?: T
+  default?: string
   /**
    * A fallback value to use only when NODE_ENV is not 'production'.
    * This is handy for env vars that are required for production environments, but optional for development and testing.
    */
-  devDefault?: T
+  devDefault?: string
   /**
    * A string that describes the env var.
    */
@@ -26,7 +26,7 @@ export interface Spec<T> {
   docs?: string
 }
 
-export interface ValidatorSpec<T> extends Spec<T> {
+export interface ValidatorSpec<T> extends Spec {
   _parse: (input: string) => T
 }
 

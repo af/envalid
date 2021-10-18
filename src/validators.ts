@@ -1,5 +1,6 @@
 import { Spec, ValidatorSpec } from './types'
 import { EnvError } from './errors'
+import { URL } from 'url'
 
 // Simplified adaptation of https://github.com/validatorjs/validator.js/blob/master/src/lib/isFQDN.js
 const isFQDN = (input: string) => {
@@ -28,7 +29,7 @@ const isIP = (input: string) => {
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/ // intentionally non-exhaustive
 
 export const makeValidator = <T>(parseFn: (input: string) => T) => {
-  return function (spec?: Spec<T>): ValidatorSpec<T> {
+  return function (spec?: Spec): ValidatorSpec<T> {
     return { ...spec, _parse: parseFn }
   }
 }
@@ -36,15 +37,13 @@ export const makeValidator = <T>(parseFn: (input: string) => T) => {
 // The reason for the function wrapper is to enable the <T extends boolean = boolean> type parameter
 // that enables better type inference. For more context, check out the following PR:
 // https://github.com/af/envalid/pull/118
-export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
-  return makeValidator((input: string | boolean) => {
+export function bool(spec?: Spec) {
+  return makeValidator<boolean>((input: string): boolean => {
     switch (input) {
-      case true:
       case 'true':
       case 't':
       case '1':
         return true
-      case false:
       case 'false':
       case 'f':
       case '0':
@@ -55,30 +54,30 @@ export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
   })(spec)
 }
 
-export function num<T extends number = number>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
+export function num(spec?: Spec) {
+  return makeValidator<number>((input: string): number => {
     const coerced = parseFloat(input)
     if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
     return coerced
   })(spec)
 }
 
-export function str<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
-    if (typeof input === 'string') return input
+export function str(spec?: Spec) {
+  return makeValidator<string>((input: string): string => {
+    if (input.trim() !== '') return input
     throw new EnvError(`Not a string: "${input}"`)
   })(spec)
 }
 
-export function email<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((x: string) => {
-    if (EMAIL_REGEX.test(x)) return x
-    throw new EnvError(`Invalid email address: "${x}"`)
+export function email(spec?: Spec) {
+  return makeValidator<string>((input: string): string => {
+    if (EMAIL_REGEX.test(input)) return input
+    throw new EnvError(`Invalid email address: "${input}"`)
   })(spec)
 }
 
-export function host<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
+export function host(spec?: Spec) {
+  return makeValidator<string>((input: string): string => {
     if (!isFQDN(input) && !isIP(input)) {
       throw new EnvError(`Invalid host (domain or ip): "${input}"`)
     }
@@ -86,8 +85,8 @@ export function host<T extends string = string>(spec?: Spec<T>) {
   })(spec)
 }
 
-export function port<T extends number = number>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
+export function port(spec?: Spec) {
+  return makeValidator<number>((input: string): number => {
     const coerced = +input
     if (
       Number.isNaN(coerced) ||
@@ -102,12 +101,10 @@ export function port<T extends number = number>(spec?: Spec<T>) {
   })(spec)
 }
 
-export function url<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((x: string) => {
+export function url(spec?: Spec) {
+  return makeValidator<URL>((x: string): URL => {
     try {
-      // @ts-expect-error TS doesn't acknowledge this API by default yet
-      new URL(x)
-      return x
+      return new URL(x)
     } catch (e) {
       throw new EnvError(`Invalid url: "${x}"`)
     }
@@ -120,12 +117,12 @@ export function url<T extends string = string>(spec?: Spec<T>) {
 // cleanEnv({
 //   MY_VAR: json<{ foo: number }>({ default: { foo: 123 } }),
 // })
-export function json<T = any>(spec?: Spec<T>) {
-  return makeValidator<T>((x: string) => {
+export function json(spec?: Spec) {
+  return makeValidator<unknown>((input: string): unknown => {
     try {
-      return JSON.parse(x)
+      return JSON.parse(input)
     } catch (e) {
-      throw new EnvError(`Invalid json: "${x}"`)
+      throw new EnvError(`Invalid json: "${input}"`)
     }
   })(spec)
 }

@@ -17,7 +17,7 @@ function validateVar<T>({
 }: {
   name: string
   rawValue: string | T
-  spec: Spec<T> & { _parse: (input: string) => T }
+  spec: Spec & { _parse: (input: string) => T }
 }) {
   if (typeof spec._parse !== 'function') {
     throw new EnvError(`Invalid spec for "${name}"`)
@@ -36,7 +36,7 @@ function validateVar<T>({
 }
 
 // Format a string error message for when a required env var is missing
-function formatSpecDescription<T>(spec: Spec<T>) {
+function formatSpecDescription(spec: Spec) {
   const egText = spec.example ? ` (eg. "${spec.example}")` : ''
   const docsText = spec.docs ? `. See ${spec.docs}` : ''
   return `${spec.desc}${egText}${docsText}`

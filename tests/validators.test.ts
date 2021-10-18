@@ -28,7 +28,7 @@ test('bool() works with various formats', () => {
   const f = cleanEnv({ FOO: 'f' }, { FOO: bool() })
   expect(f).toEqual({ FOO: false })
 
-  const defaultF = cleanEnv({}, { FOO: bool({ default: false }) })
+  const defaultF = cleanEnv({}, { FOO: bool({ default: 'false' }) })
   expect(defaultF).toEqual({ FOO: false })
 })
 
