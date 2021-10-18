@@ -2,9 +2,9 @@ name: continuous-integration
 
 on:
   push:
-    branches: [ master, v7 ]
+    branches: [ main, v7 ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
