@@ -4,7 +4,7 @@ on:
   push:
     branches: [ master, v7, force-conflict ]
   pull_request:
-    branches: [ master ]
+    branches: [ main ]
 
 jobs:
   build:
