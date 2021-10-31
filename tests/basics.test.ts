@@ -120,17 +120,23 @@ test('choices field', () => {
 test('choices should refine the type of the field to a union', () => {
   type NodeEnvType = 'production' | 'test' | 'development'
 
-  const spec = cleanEnv({ NODE_ENV: 'test' }, {
-    NODE_ENV: str({ choices: ['production', 'test', 'development'] }),
-  })
+  const env = cleanEnv(
+    { NODE_ENV: 'test' },
+    {
+      NODE_ENV: str({ choices: ['production', 'test', 'development'] }),
+      WITH_DEFAULT: str({ choices: ['production', 'test', 'development'], default: 'production' }),
+    },
+  )
 
   // type of the output should be the union type, not the more generic `string`
-  const nodeEnv: NodeEnvType = spec.NODE_ENV
+  const nodeEnv: NodeEnvType = env.NODE_ENV
+  const withDefault: NodeEnvType = env.WITH_DEFAULT
 
   // @ts-expect-error specifying a type that doesn't match the choices union type should cause an error
-  const shouldFail: 'test' | 'wrong' = spec.NODE_ENV
+  const shouldFail: 'test' | 'wrong' = env.NODE_ENV
 
   expect(nodeEnv).toEqual('test')
+  expect(withDefault).toEqual('production')
 })
 
 test('misconfigured spec', () => {

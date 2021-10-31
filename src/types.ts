@@ -1,3 +1,13 @@
+// Hacky conditional type to prevent default/devDefault from narrowing type T to a single value.
+// Ideally this could be replaced by something that would enforce the default value being a subset
+// of T, without affecting the definition of T itself
+type DefaultType<T> =
+  T extends string ? string :
+  T extends number ? number :
+  T extends boolean ? boolean :
+  T extends object ? object :
+  any
+
 export interface Spec<T> {
   /**
    * An Array that lists the admissable parsed values for the env var.
@@ -6,12 +16,12 @@ export interface Spec<T> {
   /**
    * A fallback value, which will be used if the env var wasn't specified. Providing a default effectively makes the env var optional.
    */
-  default?: T
+  default?: DefaultType<T>
   /**
    * A fallback value to use only when NODE_ENV is not 'production'.
    * This is handy for env vars that are required for production environments, but optional for development and testing.
    */
-  devDefault?: T
+  devDefault?: DefaultType<T>
   /**
    * A string that describes the env var.
    */

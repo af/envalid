@@ -96,6 +96,11 @@ test('json()', () => {
   expect(env).toEqual({ FOO: { x: 123 } })
 
   expect(() => cleanEnv({ FOO: 'abc' }, { FOO: json() }, makeSilent)).toThrow()
+
+  // default value should be passed through without running through JSON.parse()
+  expect(cleanEnv({}, {
+    FOO: json({ default: { x: 999 } })
+  })).toEqual({ FOO: { x: 999 } })
 })
 
 test('url()', () => {
