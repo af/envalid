@@ -43,12 +43,12 @@ export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
       case 'true':
       case 't':
       case '1':
-        return true
+        return true as T
       case false:
       case 'false':
       case 'f':
       case '0':
-        return false
+        return false as T
       default:
         throw new EnvError(`Invalid bool input: "${input}"`)
     }
@@ -59,20 +59,20 @@ export function num<T extends number = number>(spec?: Spec<T>) {
   return makeValidator((input: string) => {
     const coerced = parseFloat(input)
     if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
-    return coerced
+    return coerced as T
   })(spec)
 }
 
 export function str<T extends string = string>(spec?: Spec<T>) {
   return makeValidator((input: string) => {
-    if (typeof input === 'string') return input
+    if (typeof input === 'string') return input as T
     throw new EnvError(`Not a string: "${input}"`)
   })(spec)
 }
 
 export function email<T extends string = string>(spec?: Spec<T>) {
   return makeValidator((x: string) => {
-    if (EMAIL_REGEX.test(x)) return x
+    if (EMAIL_REGEX.test(x)) return x as T
     throw new EnvError(`Invalid email address: "${x}"`)
   })(spec)
 }
@@ -82,7 +82,7 @@ export function host<T extends string = string>(spec?: Spec<T>) {
     if (!isFQDN(input) && !isIP(input)) {
       throw new EnvError(`Invalid host (domain or ip): "${input}"`)
     }
-    return input
+    return input as T
   })(spec)
 }
 
@@ -98,7 +98,7 @@ export function port<T extends number = number>(spec?: Spec<T>) {
     ) {
       throw new EnvError(`Invalid port input: "${input}"`)
     }
-    return coerced
+    return coerced as T
   })(spec)
 }
 
@@ -107,7 +107,7 @@ export function url<T extends string = string>(spec?: Spec<T>) {
     try {
       // @ts-expect-error TS doesn't acknowledge this API by default yet
       new URL(x)
-      return x
+      return x as T
     } catch (e) {
       throw new EnvError(`Invalid url: "${x}"`)
     }
@@ -123,7 +123,7 @@ export function url<T extends string = string>(spec?: Spec<T>) {
 export function json<T = any>(spec?: Spec<T>) {
   return makeValidator<T>((x: string) => {
     try {
-      return JSON.parse(x)
+      return JSON.parse(x) as T
     } catch (e) {
       throw new EnvError(`Invalid json: "${x}"`)
     }

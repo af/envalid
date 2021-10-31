@@ -117,6 +117,24 @@ test('choices field', () => {
   expect(() => cleanEnv({ FOO: 'hi' }, { FOO: str({ choices: 123 }) }, makeSilent)).toThrow()
 })
 
+test('choices typed', () => {
+  type Spec = {
+    NODE_ENV: 'production' | 'test' | 'development'
+  }
+
+  const environment = {
+    NODE_ENV: 'test',
+  }
+
+  const spec: Spec = cleanEnv(environment, {
+    NODE_ENV: str({
+      choices: ['production', 'test', 'development'],
+    }),
+  })
+
+  expect(spec.NODE_ENV).toEqual('test')
+})
+
 test('misconfigured spec', () => {
   // Validation throws with different error if spec is invalid
   // @ts-expect-error This misuse should be a type error
