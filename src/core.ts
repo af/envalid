@@ -92,7 +92,7 @@ export function getSanitizedEnv<T>(
       }
     } catch (err) {
       if (options?.reporter === null) throw err
-      errors[k] = err
+      if (err instanceof Error) errors[k] = err
     }
   }
 
