@@ -200,6 +200,12 @@ const env = cleanEnv(process.env, {
 
 For more context see [this issue](https://github.com/af/envalid/issues/32).
 
+## FAQ
+
+### Can I call `structuredClone()` on envalid's validated output?
+
+Since by default envalid's output is wrapped in a Proxy, structuredClone [will not work](https://bugzilla.mozilla.org/show_bug.cgi?id=1269327#c1) on it. See [https://github.com/af/envalid/issues/177](#177)
+
 
 ## Related projects
 
