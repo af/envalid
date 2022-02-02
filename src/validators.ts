@@ -37,7 +37,7 @@ export const makeValidator = <T>(parseFn: (input: string) => T) => {
 // that enables better type inference. For more context, check out the following PR:
 // https://github.com/af/envalid/pull/118
 export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
-  return makeValidator((input: string | boolean) => {
+  return makeValidator<T>((input: string | boolean) => {
     switch (input) {
       case true:
       case 'true':
@@ -56,7 +56,7 @@ export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
 }
 
 export function num<T extends number = number>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
+  return makeValidator<T>((input: string) => {
     const coerced = parseFloat(input)
     if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
     return coerced as T
@@ -64,21 +64,21 @@ export function num<T extends number = number>(spec?: Spec<T>) {
 }
 
 export function str<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
+  return makeValidator<T>((input: string) => {
     if (typeof input === 'string') return input as T
     throw new EnvError(`Not a string: "${input}"`)
   })(spec)
 }
 
 export function email<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((x: string) => {
+  return makeValidator<T>((x: string) => {
     if (EMAIL_REGEX.test(x)) return x as T
     throw new EnvError(`Invalid email address: "${x}"`)
   })(spec)
 }
 
 export function host<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
+  return makeValidator<T>((input: string) => {
     if (!isFQDN(input) && !isIP(input)) {
       throw new EnvError(`Invalid host (domain or ip): "${input}"`)
     }
@@ -87,7 +87,7 @@ export function host<T extends string = string>(spec?: Spec<T>) {
 }
 
 export function port<T extends number = number>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
+  return makeValidator<T>((input: string) => {
     const coerced = +input
     if (
       Number.isNaN(coerced) ||
@@ -103,7 +103,7 @@ export function port<T extends number = number>(spec?: Spec<T>) {
 }
 
 export function url<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((x: string) => {
+  return makeValidator<T>((x: string) => {
     try {
       // @ts-expect-error TS doesn't acknowledge this API by default yet
       new URL(x)
