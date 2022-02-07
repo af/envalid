@@ -105,7 +105,6 @@ export function port<T extends number = number>(spec?: Spec<T>) {
 export function url<T extends string = string>(spec?: Spec<T>) {
   return makeValidator((x: string) => {
     try {
-      // @ts-expect-error TS doesn't acknowledge this API by default yet
       new URL(x)
       return x as T
     } catch (e) {
