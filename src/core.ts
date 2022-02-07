@@ -15,9 +15,9 @@ function validateVar<T>({
   name,
   rawValue,
 }: {
-  name: string
-  rawValue: string | T
-  spec: Spec<T> & { _parse: (input: string) => T }
+  name: string,
+  rawValue: string | T,
+  spec: ValidatorSpec<T>,
 }) {
   if (typeof spec._parse !== 'function') {
     throw new EnvError(`Invalid spec for "${name}"`)
@@ -63,20 +63,25 @@ export function getSanitizedEnv<T>(
 
   for (const k of varKeys) {
     const spec = specs[k]
+    const rawValue = readRawEnvValue(environment, k)
 
-    // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
-    const usingDevDefault =
-      rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
-    const devDefaultValue = usingDevDefault ? spec.devDefault : undefined
-    const rawValue =
-      readRawEnvValue(environment, k) ??
-      (devDefaultValue === undefined ? spec.default : devDefaultValue)
-
-    // Default values can be anything falsy (including an explicitly set undefined), without
-    // triggering validation errors:
-    const usingFalsyDefault =
-      (spec.hasOwnProperty('default') && spec.default === rawValue) ||
-      (usingDevDefault && devDefaultValue === rawValue)
+    // If no value was given and default/devDefault were provided, return the appropriate default
+    // value without passing it through validation
+    if (rawValue === undefined) {
+      // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
+      const usingDevDefault =
+        rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
+      if (usingDevDefault) {
+        // @ts-expect-error default values can break the rules slightly by being explicitly set to undefined
+        cleanedEnv[k] = spec.devDefault;
+        break;
+      }
+      if (spec.hasOwnProperty('default')) {
+        // @ts-expect-error default values can break the rules slightly by being explicitly set to undefined
+        cleanedEnv[k] = spec.default;
+        break;
+      }
+    }
 
     try {
       if (isTestOnlySymbol(rawValue)) {
@@ -84,9 +89,9 @@ export function getSanitizedEnv<T>(
       }
 
       if (rawValue === undefined) {
-        if (!usingFalsyDefault) throw new EnvMissingError(formatSpecDescription(spec))
         // @ts-ignore (fixes #138) Need to figure out why explicitly undefined default/devDefault breaks inference
         cleanedEnv[k] = undefined
+        throw new EnvMissingError(formatSpecDescription(spec))
       } else {
         cleanedEnv[k] = validateVar({ name: k as string, spec, rawValue })
       }
