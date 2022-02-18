@@ -15,9 +15,9 @@ function validateVar<T>({
   name,
   rawValue,
 }: {
-  name: string,
-  rawValue: string | T,
-  spec: ValidatorSpec<T>,
+  name: string
+  rawValue: string | T
+  spec: ValidatorSpec<T>
 }) {
   if (typeof spec._parse !== 'function') {
     throw new EnvError(`Invalid spec for "${name}"`)
@@ -73,13 +73,13 @@ export function getSanitizedEnv<T>(
         rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
       if (usingDevDefault) {
         // @ts-expect-error default values can break the rules slightly by being explicitly set to undefined
-        cleanedEnv[k] = spec.devDefault;
-        break;
+        cleanedEnv[k] = spec.devDefault
+        continue
       }
       if (spec.hasOwnProperty('default')) {
         // @ts-expect-error default values can break the rules slightly by being explicitly set to undefined
-        cleanedEnv[k] = spec.default;
-        break;
+        cleanedEnv[k] = spec.default
+        continue
       }
     }
 

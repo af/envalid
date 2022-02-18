@@ -99,6 +99,22 @@ test('devDefault and default together', () => {
   expect(prodEnv).toEqual({ FOO: 80 })
 })
 
+test('multiple devDefault', () => {
+  const env = cleanEnv(
+    { NODE_ENV: 'test' },
+    {
+      NODE_ENV: str({ choices: ['development', 'test', 'production'], devDefault: 'development' }),
+      RUNTIME_ENV: str({
+        choices: ['local', 'staging', 'production'],
+        devDefault: 'local',
+      }),
+      SUBDOMAIN: str({ devDefault: 'envalid' }),
+    },
+  )
+
+  expect(env.SUBDOMAIN).toBe('envalid')
+})
+
 test('choices field', () => {
   // Throws when the env var isn't in the given choices:
   const spec = {
