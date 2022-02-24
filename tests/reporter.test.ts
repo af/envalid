@@ -1,11 +1,14 @@
-import { defaultReporter as mainReporterExport } from '../src'
-import { defaultReporter } from '../src/reporter'
+import {
+  defaultReporter as mainReporterExport,
+  envalidLogger as mainEnvalidLogger,
+} from '../src'
+import { defaultReporter, envalidLogger } from '../src/reporter'
 import { EnvError, EnvMissingError } from '../src/errors'
 
-let logger: jest.MockedFunction<any>
-let exitSpy: jest.SpyInstance | null = null
-
 describe('default reporter', () => {
+  let logger: jest.MockedFunction<any>
+  let exitSpy: jest.SpyInstance | null = null
+
   beforeEach(() => {
     logger = jest.fn()
     exitSpy = jest.spyOn(process, 'exit').mockImplementation()
@@ -19,7 +22,7 @@ describe('default reporter', () => {
     expect(mainReporterExport).toEqual(defaultReporter)
   })
 
-  test('simple usage for reporting a missing variable error', () => {
+  test.only('simple usage for reporting a missing variable error', () => {
     defaultReporter(
       {
         errors: { FOO: new EnvMissingError() },
@@ -27,13 +30,17 @@ describe('default reporter', () => {
       },
       { logger },
     )
-    expect(logger).toHaveBeenCalledTimes(1)
 
-    const output = logger?.mock?.calls?.[0]?.[0]
-    expect(output).toMatch(/Missing\S+ environment variables:/)
-    expect(output).toMatch(/FOO\S+/)
-    expect(output).toMatch('(required)')
-    expect(output).not.toMatch(/Invalid\S+ environment variables:/)
+    expect(logger).toHaveBeenCalledTimes(2)
+
+    const output1 = logger?.mock?.calls?.[0]?.[0]
+    expect(output1).toMatch(/Missing\S+ environment variables:/)
+    expect(output1).toMatch(/FOO\S+/)
+    expect(output1).toMatch('(required)')
+    expect(output1).not.toMatch(/Invalid\S+ environment variables:/)
+
+    const output2 = logger?.mock?.calls?.[1]?.[0]
+    expect(output2).toMatch(/Exiting with error code 1/)
 
     expect(exitSpy).toHaveBeenCalledTimes(1)
     expect(exitSpy).toHaveBeenCalledWith(1)
@@ -47,13 +54,16 @@ describe('default reporter', () => {
       },
       { logger },
     )
-    expect(logger).toHaveBeenCalledTimes(1)
+    expect(logger).toHaveBeenCalledTimes(2)
 
-    const output = logger?.mock?.calls?.[0]?.[0]
-    expect(output).toMatch(/Invalid\S+ environment variables:/)
-    expect(output).toMatch(/FOO\S+/)
-    expect(output).toMatch('(invalid format)')
-    expect(output).not.toMatch(/Missing\S+ environment variables:/)
+    const output1 = logger?.mock?.calls?.[0]?.[0]
+    expect(output1).toMatch(/Invalid\S+ environment variables:/)
+    expect(output1).toMatch(/FOO\S+/)
+    expect(output1).toMatch('(invalid format)')
+    expect(output1).not.toMatch(/Missing\S+ environment variables:/)
+
+    const output2 = logger?.mock?.calls?.[1]?.[0]
+    expect(output2).toMatch(/Exiting with error code 1/)
 
     expect(exitSpy).toHaveBeenCalledTimes(1)
     expect(exitSpy).toHaveBeenCalledWith(1)
@@ -67,12 +77,15 @@ describe('default reporter', () => {
       },
       { logger },
     )
-    expect(logger).toHaveBeenCalledTimes(1)
+    expect(logger).toHaveBeenCalledTimes(2)
 
-    const output = logger?.mock?.calls?.[0]?.[0]
-    expect(output).toMatch(/Invalid\S+ environment variables:/)
-    expect(output).toMatch(/FOO\S+/)
-    expect(output).toMatch('custom msg')
+    const output1 = logger?.mock?.calls?.[0]?.[0]
+    expect(output1).toMatch(/Invalid\S+ environment variables:/)
+    expect(output1).toMatch(/FOO\S+/)
+    expect(output1).toMatch('custom msg')
+
+    const output2 = logger?.mock?.calls?.[1]?.[0]
+    expect(output2).toMatch(/Exiting with error code 1/)
 
     expect(exitSpy).toHaveBeenCalledTimes(1)
     expect(exitSpy).toHaveBeenCalledWith(1)
@@ -90,3 +103,30 @@ describe('default reporter', () => {
     expect(exitSpy).toHaveBeenCalledTimes(0)
   })
 })
+
+describe('envalidLogger', () => {
+  let logger: jest.MockedFunction<any>
+
+  beforeEach(() => {
+    logger = jest.fn()
+  })
+
+  test('default logger should be exported from the top-level module', () => {
+    expect(mainEnvalidLogger).toEqual(envalidLogger)
+  })
+
+  test('simple usage for logging an error', () => {
+    expect(logger).toHaveBeenCalledTimes(0)
+    envalidLogger(
+      { FOO: new EnvMissingError() },
+      logger,
+    )
+    expect(logger).toHaveBeenCalledTimes(1)
+
+    const output = logger?.mock?.calls?.[0]?.[0]
+    expect(output).toMatch(/Missing\S+ environment variables:/)
+    expect(output).toMatch(/FOO\S+/)
+    expect(output).toMatch('(required)')
+  })
+})
+
