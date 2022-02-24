@@ -1,6 +1,7 @@
 import { defaultReporter as mainReporterExport } from '../src'
 import { defaultReporter } from '../src/reporter'
 import { EnvError, EnvMissingError } from '../src/errors'
+import { ErrorMode } from '../src/types'
 
 let logger: jest.MockedFunction<any>
 let exitSpy: jest.SpyInstance | null = null
@@ -88,5 +89,25 @@ describe('default reporter', () => {
     )
     expect(logger).toHaveBeenCalledTimes(0)
     expect(exitSpy).toHaveBeenCalledTimes(0)
+  })
+
+  test.only('errorMode = throw makes the reporter throw an error', () => {
+    const action = () => defaultReporter(
+      {
+        errors: { FOO: new EnvMissingError() },
+        env: {},
+      },
+      { logger, errorMode: ErrorMode.THROW },
+    )
+
+    expect(action).toThrowError("Invalid environment variables.");
+    expect(exitSpy).toHaveBeenCalledTimes(0)
+    expect(logger).toHaveBeenCalledTimes(1)
+
+    const output = logger?.mock?.calls?.[0]?.[0]
+    expect(output).toMatch(/Missing\S+ environment variables:/)
+    expect(output).toMatch(/FOO\S+/)
+    expect(output).toMatch('(required)')
+    expect(output).not.toMatch(/Invalid\S+ environment variables:/)
   })
 })

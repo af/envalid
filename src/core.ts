@@ -102,6 +102,6 @@ export function getSanitizedEnv<T>(
   }
 
   const reporter = options?.reporter || defaultReporter
-  reporter({ errors, env: cleanedEnv })
+  reporter({ errors, env: cleanedEnv, errorMode: options.errorMode })
   return cleanedEnv
 }

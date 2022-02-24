@@ -53,8 +53,22 @@ export interface CleanedEnvAccessors {
   readonly isProd: boolean
 }
 
+export enum ErrorMode {
+  THROW = "throw",
+  EXIT = "exit"
+}
+
+// Custom error that can be differentiated from other generic 'Error' instances with
+// the 'instanceof' operator.
+export class EnvalidError extends Error {
+  constructor(message: string) {
+    super(message);
+  }
+}
+
 export interface ReporterOptions<T> {
   errors: Partial<Record<keyof T, Error>>
+  errorMode?: ErrorMode
   env: unknown
 }
 
@@ -64,4 +78,6 @@ export interface CleanOptions<T> {
    * See ./reporter.ts for the default implementation.
    */
   reporter?: ((opts: ReporterOptions<T>) => void) | null
+  errorMode?: ErrorMode
 }
+

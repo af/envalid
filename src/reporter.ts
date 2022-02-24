@@ -1,12 +1,13 @@
 /* eslint-disable no-console */
 import { EnvMissingError } from './errors'
-import { ReporterOptions } from './types'
+import { ReporterOptions, ErrorMode, EnvalidError } from './types'
 
 // The default reporter is supports a second argument, for consumers
 // who want to use it with only small customizations
 type ExtraOptions<T> = {
   onError?: (errors: Partial<Record<keyof T, Error>>) => void
   logger: (output: string) => void
+  errorMode?: ErrorMode
 }
 
 const defaultLogger = console.error.bind(console)
@@ -26,7 +27,7 @@ const RULE = colors.white('================================')
 
 export const defaultReporter = <T = any>(
   { errors = {} }: ReporterOptions<T>,
-  { onError, logger }: ExtraOptions<T> = { logger: defaultLogger },
+  { onError, logger, errorMode }: ExtraOptions<T> = { logger: defaultLogger },
 ) => {
   if (!Object.keys(errors).length) return
 
@@ -64,8 +65,13 @@ export const defaultReporter = <T = any>(
   if (onError) {
     onError(errors)
   } else if (isNode) {
-    process.exit(1)
+    switch(errorMode) {
+      case ErrorMode.EXIT: process.exit(1);
+      case ErrorMode.THROW: throw new EnvalidError("Invalid environment variables.");
+      default: process.exit(1);
+    }
   } else {
     throw new TypeError('Environment validation failed')
   }
 }
+
