@@ -2,10 +2,13 @@
 import { EnvMissingError } from './errors'
 import { ReporterOptions } from './types'
 
+type Errors<T> = Partial<Record<keyof T, Error>>;
+type Logger = (data: any, ...args: any[]) => void;
+
 // The default reporter is supports a second argument, for consumers
 // who want to use it with only small customizations
 type ExtraOptions<T> = {
-  onError?: (errors: Partial<Record<keyof T, Error>>) => void
+  onError?: (errors: Errors<T>) => void
   logger: (output: string) => void
 }
 
@@ -24,12 +27,10 @@ const colors = {
 
 const RULE = colors.white('================================')
 
-export const defaultReporter = <T = any>(
-  { errors = {} }: ReporterOptions<T>,
-  { onError, logger }: ExtraOptions<T> = { logger: defaultLogger },
+export const envalidLogger = <T = any>(
+  errors: Errors<T>,
+  logger: Logger = defaultLogger
 ) => {
-  if (!Object.keys(errors).length) return
-
   const missingVarsOutput: string[] = []
   const invalidVarsOutput: string[] = []
   for (const [k, err] of Object.entries(errors)) {
@@ -53,17 +54,26 @@ export const defaultReporter = <T = any>(
     RULE,
     invalidVarsOutput.sort().join('\n'),
     missingVarsOutput.sort().join('\n'),
-    colors.yellow('\n Exiting with error code 1'),
     RULE,
   ]
     .filter((x) => !!x)
     .join('\n')
 
   logger(output)
+}
+
+export const defaultReporter = <T = any>(
+  { errors = {} }: ReporterOptions<T>,
+  { onError, logger }: ExtraOptions<T> = { logger: defaultLogger },
+) => {
+  if (!Object.keys(errors).length) return
+
+  envalidLogger(errors, logger);
 
   if (onError) {
     onError(errors)
   } else if (isNode) {
+    logger(colors.yellow('\n Exiting with error code 1'));
     process.exit(1)
   } else {
     throw new TypeError('Environment validation failed')
