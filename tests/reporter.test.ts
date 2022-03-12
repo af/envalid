@@ -1,8 +1,8 @@
 import {
   defaultReporter as mainReporterExport,
-  envalidLogger as mainEnvalidLogger,
+  envalidErrorFormatter as mainEnvalidErrorFormatter,
 } from '../src'
-import { defaultReporter, envalidLogger } from '../src/reporter'
+import { defaultReporter, envalidErrorFormatter } from '../src/reporter'
 import { EnvError, EnvMissingError } from '../src/errors'
 
 describe('default reporter', () => {
@@ -22,7 +22,7 @@ describe('default reporter', () => {
     expect(mainReporterExport).toEqual(defaultReporter)
   })
 
-  test.only('simple usage for reporting a missing variable error', () => {
+  test('simple usage for reporting a missing variable error', () => {
     defaultReporter(
       {
         errors: { FOO: new EnvMissingError() },
@@ -104,20 +104,20 @@ describe('default reporter', () => {
   })
 })
 
-describe('envalidLogger', () => {
+describe('envalidErrorFormatter', () => {
   let logger: jest.MockedFunction<any>
 
   beforeEach(() => {
     logger = jest.fn()
   })
 
-  test('default logger should be exported from the top-level module', () => {
-    expect(mainEnvalidLogger).toEqual(envalidLogger)
+  test('default formatter should be exported from the top-level module', () => {
+    expect(mainEnvalidErrorFormatter).toEqual(envalidErrorFormatter)
   })
 
-  test('simple usage for logging an error', () => {
+  test('simple usage for formatting a single error', () => {
     expect(logger).toHaveBeenCalledTimes(0)
-    envalidLogger(
+    envalidErrorFormatter(
       { FOO: new EnvMissingError() },
       logger,
     )

@@ -27,7 +27,11 @@ const colors = {
 
 const RULE = colors.white('================================')
 
-export const envalidLogger = <T = any>(
+// Takes the provided errors, formats them all to an output string, and passes that string output to the
+// provided "logger" function.
+//
+// This is exposed in the public API so third-party reporters can leverage this logic if desired
+export const envalidErrorFormatter = <T = any>(
   errors: Errors<T>,
   logger: Logger = defaultLogger
 ) => {
@@ -68,7 +72,7 @@ export const defaultReporter = <T = any>(
 ) => {
   if (!Object.keys(errors).length) return
 
-  envalidLogger(errors, logger);
+  envalidErrorFormatter(errors, logger);
 
   if (onError) {
     onError(errors)
