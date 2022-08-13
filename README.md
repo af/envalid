@@ -219,6 +219,8 @@ Since by default envalid's output is wrapped in a Proxy, structuredClone [will n
 
 * [nestjs-envalid](https://github.com/cobraz/nestjs-envalid) is a wrapper for using Envalid with [NestJS](https://nestjs.com/)
 
+* [nuxt-envalid](https://github.com/manuelhenke/nuxt-envalid) is a wrapper for using Envalid with [NuxtJS](https://nuxtjs.org/)
+
 
 ## Motivation
 
