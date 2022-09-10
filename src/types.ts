@@ -1,12 +1,15 @@
 // Hacky conditional type to prevent default/devDefault from narrowing type T to a single value.
 // Ideally this could be replaced by something that would enforce the default value being a subset
 // of T, without affecting the definition of T itself
-type DefaultType<T> =
-  T extends string ? string :
-  T extends number ? number :
-  T extends boolean ? boolean :
-  T extends object ? object :
-  any
+type DefaultType<T> = T extends string
+  ? string
+  : T extends number
+  ? number
+  : T extends boolean
+  ? boolean
+  : T extends object
+  ? object
+  : any
 
 export interface Spec<T> {
   /**

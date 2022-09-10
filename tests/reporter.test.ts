@@ -117,10 +117,7 @@ describe('envalidErrorFormatter', () => {
 
   test('simple usage for formatting a single error', () => {
     expect(logger).toHaveBeenCalledTimes(0)
-    envalidErrorFormatter(
-      { FOO: new EnvMissingError() },
-      logger,
-    )
+    envalidErrorFormatter({ FOO: new EnvMissingError() }, logger)
     expect(logger).toHaveBeenCalledTimes(1)
 
     const output = logger?.mock?.calls?.[0]?.[0]
@@ -129,4 +126,3 @@ describe('envalidErrorFormatter', () => {
     expect(output).toMatch('(required)')
   })
 })
-

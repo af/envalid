@@ -2,8 +2,8 @@
 import { EnvMissingError } from './errors'
 import { ReporterOptions } from './types'
 
-type Errors<T> = Partial<Record<keyof T, Error>>;
-type Logger = (data: any, ...args: any[]) => void;
+type Errors<T> = Partial<Record<keyof T, Error>>
+type Logger = (data: any, ...args: any[]) => void
 
 // The default reporter is supports a second argument, for consumers
 // who want to use it with only small customizations
@@ -33,7 +33,7 @@ const RULE = colors.white('================================')
 // This is exposed in the public API so third-party reporters can leverage this logic if desired
 export const envalidErrorFormatter = <T = any>(
   errors: Errors<T>,
-  logger: Logger = defaultLogger
+  logger: Logger = defaultLogger,
 ) => {
   const missingVarsOutput: string[] = []
   const invalidVarsOutput: string[] = []
@@ -72,12 +72,12 @@ export const defaultReporter = <T = any>(
 ) => {
   if (!Object.keys(errors).length) return
 
-  envalidErrorFormatter(errors, logger);
+  envalidErrorFormatter(errors, logger)
 
   if (onError) {
     onError(errors)
   } else if (isNode) {
-    logger(colors.yellow('\n Exiting with error code 1'));
+    logger(colors.yellow('\n Exiting with error code 1'))
     process.exit(1)
   } else {
     throw new TypeError('Environment validation failed')

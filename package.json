@@ -17,7 +17,7 @@
     "start": "tsc --watch",
     "prepare": "tsc",
     "coverage": "jest --coverage",
-    "lint": "tsc && prettier -list-different --write src tests",
+    "lint": "tsc && prettier --list-different --write src tests",
     "test": "jest"
   },
   "repository": {
