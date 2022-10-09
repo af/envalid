@@ -1,6 +1,6 @@
 <p align="center">
   <img
-    src="./.github/header.svg"
+    src="https://raw.githubusercontent.com/cobraz/envalid/add-center-header/.github/header.svg"
     width="200"
   />
 </p>
@@ -18,7 +18,8 @@
   </a>
 </p>
 
-Envalid aims to:
+Envalid is a small library for validating and accessing environment variables in
+Node.js (v8.12 or later) programs, aiming to:
 
 * ensure that your program only runs when all of its environment dependencies are met
 * give you executable documentation about the environment your program expects to run in
