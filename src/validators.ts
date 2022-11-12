@@ -1,4 +1,4 @@
-import { Spec, ValidatorSpec } from './types'
+import { Spec, ValidatorSpec, SuperValidator, MarkupValidator, ExactValidator } from './types'
 import { EnvError } from './errors'
 
 // Simplified adaptation of https://github.com/validatorjs/validator.js/blob/master/src/lib/isFQDN.js
@@ -27,104 +27,152 @@ const isIP = (input: string) => {
 
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/ // intentionally non-exhaustive
 
-export const makeValidator = <T>(parseFn: (input: string) => T) => {
-  return function (spec?: Spec<T>): ValidatorSpec<T> {
-    return { ...spec, _parse: parseFn }
+const internalMakeValidator = <T>(parseFn: (input: string) => T) => {
+  return (spec?: Spec<unknown>) => ({ ...spec, _parse: parseFn } as ValidatorSpec<T>)
+}
+
+/**
+ * Creates a validator which can output subtypes of `BaseT`. E.g.:
+ *
+ * ```ts
+ * const int = makeBaseValidator<number>((input: string) => {
+ *   // Implementation details
+ * })
+ * const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
+ * // Narrows down output type to 1 | 2 | 3 | 4
+ * ```
+ *
+ * @param parseFn - A function to parse and validate input.
+ * @returns A validator which output type is narrowed-down to a subtype of `BaseT`
+ */
+export const makeBaseValidator = <BaseT>(
+  parseFn: (input: string) => BaseT,
+): SuperValidator<BaseT> => {
+  return internalMakeValidator(parseFn) as SuperValidator<BaseT>
+}
+
+/**
+ * Creates a validator which output type is exactly T:
+ *
+ * ```ts
+ * const int = makeExactValidator<number>((input: string) => {
+ *   // Implementation details
+ * })
+ * const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
+ * // Output type 'number'
+ * ```
+ *
+ * @param parseFn - A function to parse and validate input.
+ * @returns A validator which output type is exactly `T`
+ */
+export const makeExactValidator = <T>(parseFn: (input: string) => T): ExactValidator<T> => {
+  return internalMakeValidator(parseFn) as ExactValidator<T>
+}
+
+/**
+ * Creates a validator which output type is entirely parametric.
+ * It default the output type to any if no type inference can be made.
+ *
+ * ```ts
+ * const queryParams = makeMarkupValidator((input: string) => {
+ *   // Implementation details
+ * })
+ * const OPTIONS = queryParams({ default: { option1: true, option2: false } })
+ * // Output type '{ option1: boolean, option2: boolean }'
+ * ```
+ *
+ * @param parseFn - A function to parse and validate input.
+ * @returns A validator which output type is exactly `T`
+ */
+export const makeMarkupValidator = (parseFn: (input: string) => unknown): MarkupValidator => {
+  return internalMakeValidator(parseFn) as MarkupValidator
+}
+
+/**
+ * Alias for `makeBaseValidator`.
+ */
+export const makeValidator = makeBaseValidator
+
+// We use exact validator here because narrowing down to either 'true' or 'false'
+// makes no sense.
+export const bool = makeExactValidator<boolean>((input: string | boolean) => {
+  switch (input) {
+    case true:
+    case 'true':
+    case 't':
+    case '1':
+      return true
+    case false:
+    case 'false':
+    case 'f':
+    case '0':
+      return false
+    default:
+      throw new EnvError(`Invalid bool input: "${input}"`)
   }
-}
+})
 
-// The reason for the function wrapper is to enable the <T extends boolean = boolean> type parameter
-// that enables better type inference. For more context, check out the following PR:
-// https://github.com/af/envalid/pull/118
-export function bool<T extends boolean = boolean>(spec?: Spec<T>) {
-  return makeValidator((input: string | boolean) => {
-    switch (input) {
-      case true:
-      case 'true':
-      case 't':
-      case '1':
-        return true as T
-      case false:
-      case 'false':
-      case 'f':
-      case '0':
-        return false as T
-      default:
-        throw new EnvError(`Invalid bool input: "${input}"`)
-    }
-  })(spec)
-}
+export const num = makeBaseValidator<number>((input: string) => {
+  const coerced = parseFloat(input)
+  if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
+  return coerced
+})
 
-export function num<T extends number = number>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
-    const coerced = parseFloat(input)
-    if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
-    return coerced as T
-  })(spec)
-}
+export const str = makeBaseValidator<string>((input: string) => {
+  if (typeof input === 'string') return input
+  throw new EnvError(`Not a string: "${input}"`)
+})
 
-export function str<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
-    if (typeof input === 'string') return input as T
-    throw new EnvError(`Not a string: "${input}"`)
-  })(spec)
-}
+export const email = makeBaseValidator<string>((x: string) => {
+  if (EMAIL_REGEX.test(x)) return x
+  throw new EnvError(`Invalid email address: "${x}"`)
+})
 
-export function email<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((x: string) => {
-    if (EMAIL_REGEX.test(x)) return x as T
-    throw new EnvError(`Invalid email address: "${x}"`)
-  })(spec)
-}
+export const host = makeBaseValidator<string>((input: string) => {
+  if (!isFQDN(input) && !isIP(input)) {
+    throw new EnvError(`Invalid host (domain or ip): "${input}"`)
+  }
+  return input
+})
 
-export function host<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
-    if (!isFQDN(input) && !isIP(input)) {
-      throw new EnvError(`Invalid host (domain or ip): "${input}"`)
-    }
-    return input as T
-  })(spec)
-}
+export const port = makeBaseValidator<number>((input: string) => {
+  const coerced = +input
+  if (
+    Number.isNaN(coerced) ||
+    `${coerced}` !== `${input}` ||
+    coerced % 1 !== 0 ||
+    coerced < 1 ||
+    coerced > 65535
+  ) {
+    throw new EnvError(`Invalid port input: "${input}"`)
+  }
+  return coerced
+})
 
-export function port<T extends number = number>(spec?: Spec<T>) {
-  return makeValidator((input: string) => {
-    const coerced = +input
-    if (
-      Number.isNaN(coerced) ||
-      `${coerced}` !== `${input}` ||
-      coerced % 1 !== 0 ||
-      coerced < 1 ||
-      coerced > 65535
-    ) {
-      throw new EnvError(`Invalid port input: "${input}"`)
-    }
-    return coerced as T
-  })(spec)
-}
+export const url = makeBaseValidator<string>((x: string) => {
+  try {
+    new URL(x)
+    return x
+  } catch (e) {
+    throw new EnvError(`Invalid url: "${x}"`)
+  }
+})
 
-export function url<T extends string = string>(spec?: Spec<T>) {
-  return makeValidator((x: string) => {
-    try {
-      new URL(x)
-      return x as T
-    } catch (e) {
-      throw new EnvError(`Invalid url: "${x}"`)
-    }
-  })(spec)
-}
-
-// It's recommended that you provide an explicit type parameter for json validation
-// if you're using TypeScript. Otherwise the output will be typed as `any`. For example:
-//
-// cleanEnv({
-//   MY_VAR: json<{ foo: number }>({ default: { foo: 123 } }),
-// })
-export function json<T = any>(spec?: Spec<T>) {
-  return makeValidator<T>((x: string) => {
-    try {
-      return JSON.parse(x) as T
-    } catch (e) {
-      throw new EnvError(`Invalid json: "${x}"`)
-    }
-  })(spec)
-}
+/**
+ * Unless passing a default property, it's recommended that you provide an explicit type parameter
+ * for json validation if you're using TypeScript. Otherwise the output will be typed as `any`.
+ * For example:
+ *
+ * ```ts
+ * cleanEnv({
+ *   MY_VAR: json<{ foo: number }>(),
+ * })
+ * ```
+ */
+export const json = makeMarkupValidator((x: string) => {
+  try {
+    return JSON.parse(x)
+  } catch (e) {
+    throw new EnvError(`Invalid json: "${x}"`)
+  }
+})

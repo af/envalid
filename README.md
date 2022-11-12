@@ -134,6 +134,8 @@ Each validation function accepts an (optional) object with the following attribu
 
 ## Custom validators
 
+### Basic usage
+
 You can easily create your own validator functions with `envalid.makeValidator()`. It takes
 a function as its only parameter, and should either return a cleaned value, or throw if the
 input is unacceptable:
@@ -150,6 +152,16 @@ const env = cleanEnv(process.env, {
 });
 ```
 
+### TypeScript users
+
+You can use either one of `makeBaseValidator`, `makeExactValidator` and `makeMarkupValidator`
+depending on your use case:
+
+- `makeBaseValidator<BaseT>` when you want the output to be narrowed-down to a subtype of `BaseT` (e.g. `str`).
+- `makeExactValidator<T>` when you want the output to be widened to `T` (e.g. `bool`).
+- `makeMarkupValidator` for input which can produce arbitrary output types (e.g. `json`).
+
+Note that `makeValidator` is an alias for `makeBaseValidator` which should cover most of use-cases.
 
 ## Error Reporting
 

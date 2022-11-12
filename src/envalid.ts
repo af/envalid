@@ -1,4 +1,4 @@
-import { CleanedEnvAccessors, CleanOptions, ValidatorSpec } from './types'
+import { CleanedEnv, CleanOptions, FromSpecsRecord } from './types'
 import { getSanitizedEnv, testOnlySymbol } from './core'
 import { applyDefaultMiddleware } from './middleware'
 
@@ -10,13 +10,13 @@ import { applyDefaultMiddleware } from './middleware'
  * @param specs An object that specifies the format of required vars.
  * @param options An object that specifies options for cleanEnv.
  */
-export function cleanEnv<T>(
+export function cleanEnv<S>(
   environment: unknown,
-  specs: { [K in keyof T]: ValidatorSpec<T[K]> },
-  options: CleanOptions<T> = {},
-): Readonly<T & CleanedEnvAccessors> {
+  specs: S,
+  options: CleanOptions<S> = {},
+): CleanedEnv<S> {
   const cleaned = getSanitizedEnv(environment, specs, options)
-  return Object.freeze(applyDefaultMiddleware(cleaned, environment))
+  return Object.freeze(applyDefaultMiddleware(cleaned, environment)) as CleanedEnv<S>
 }
 
 /**
@@ -29,11 +29,11 @@ export function cleanEnv<T>(
  * @param applyMiddleware A function that applies transformations to the cleaned env object
  * @param options An object that specifies options for cleanEnv.
  */
-export function customCleanEnv<T, MW>(
+export function customCleanEnv<S, MW>(
   environment: unknown,
-  specs: { [K in keyof T]: ValidatorSpec<T[K]> },
-  applyMiddleware: (cleaned: T, rawEnv: unknown) => MW,
-  options: CleanOptions<T> = {},
+  specs: S,
+  applyMiddleware: (cleaned: FromSpecsRecord<S>, rawEnv: unknown) => MW,
+  options: CleanOptions<S> = {},
 ): Readonly<MW> {
   const cleaned = getSanitizedEnv(environment, specs, options)
   return Object.freeze(applyMiddleware(cleaned, environment))
