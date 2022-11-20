@@ -57,13 +57,13 @@ export function getSanitizedEnv<S>(
   options: CleanOptions<FromSpecsRecord<S>> = {},
 ): FromSpecsRecord<S> {
   let cleanedEnv = {} as Record<keyof S, unknown>
-  const castSpecs = specs as unknown as Record<keyof S, ValidatorSpec<unknown>>
+  const castedSpecs = specs as unknown as Record<keyof S, ValidatorSpec<unknown>>
   const errors = {} as Record<keyof S, Error>
-  const varKeys = Object.keys(castSpecs) as Array<keyof S>
+  const varKeys = Object.keys(castedSpecs) as Array<keyof S>
   const rawNodeEnv = readRawEnvValue(environment, 'NODE_ENV')
 
   for (const k of varKeys) {
-    const spec = castSpecs[k]
+    const spec = castedSpecs[k]
     const rawValue = readRawEnvValue(environment, k)
 
     // If no value was given and default/devDefault were provided, return the appropriate default
