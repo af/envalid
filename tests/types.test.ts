@@ -7,7 +7,7 @@ import {
   OptionalValidatorSpec,
   makeMarkupValidator,
   json,
-  makeBaseValidator,
+  makeValidator,
 } from '../src'
 import { expectTypeOf } from 'expect-type'
 
@@ -34,7 +34,7 @@ describe('validators types', () => {
   })
 
   test('number-based validators', () => {
-    const validator = makeBaseValidator<number>(() => 1)
+    const validator = makeValidator<number>(() => 1)
     // Specifying default or devDefault value should cause validator spec type param to widen
     expectTypeOf(
       validator({
@@ -85,7 +85,7 @@ describe('validators types', () => {
     expectTypeOf(validator<2>({ devDefault: 2 })).toEqualTypeOf<RequiredValidatorSpec<2>>()
   })
   test('string-based validators', () => {
-    const validator = makeBaseValidator<string>(() => '')
+    const validator = makeValidator<string>(() => '')
     // Specifying default or devDefault value should cause validator spec type param to widen
     expectTypeOf(
       validator({

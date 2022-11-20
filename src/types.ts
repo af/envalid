@@ -60,8 +60,8 @@ export interface ExactValidator<T> {
   (spec: OptionalSpec<T>): OptionalValidatorSpec<T>
 }
 
-// Such validator only works for subtypes of BaseT (hence, specialized).
-export interface SuperValidator<BaseT> {
+// Such validator only works for subtypes of BaseT.
+export interface BaseValidator<BaseT> {
   // These overrides enable nuanced type inferences for optimal DX
   // This will prevent specifying "default" alone from narrowing down output type
   (spec: RequiredChoicelessSpecWithType<BaseT>): RequiredValidatorSpec<BaseT>

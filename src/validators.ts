@@ -1,4 +1,4 @@
-import { Spec, ValidatorSpec, SuperValidator, MarkupValidator, ExactValidator } from './types'
+import { Spec, ValidatorSpec, BaseValidator, MarkupValidator, ExactValidator } from './types'
 import { EnvError } from './errors'
 
 // Simplified adaptation of https://github.com/validatorjs/validator.js/blob/master/src/lib/isFQDN.js
@@ -35,7 +35,7 @@ const internalMakeValidator = <T>(parseFn: (input: string) => T) => {
  * Creates a validator which can output subtypes of `BaseT`. E.g.:
  *
  * ```ts
- * const int = makeBaseValidator<number>((input: string) => {
+ * const int = makeValidator<number>((input: string) => {
  *   // Implementation details
  * })
  * const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
@@ -45,10 +45,10 @@ const internalMakeValidator = <T>(parseFn: (input: string) => T) => {
  * @param parseFn - A function to parse and validate input.
  * @returns A validator which output type is narrowed-down to a subtype of `BaseT`
  */
-export const makeBaseValidator = <BaseT>(
+export const makeValidator = <BaseT>(
   parseFn: (input: string) => BaseT,
-): SuperValidator<BaseT> => {
-  return internalMakeValidator(parseFn) as SuperValidator<BaseT>
+): BaseValidator<BaseT> => {
+  return internalMakeValidator(parseFn) as BaseValidator<BaseT>
 }
 
 /**
@@ -88,11 +88,6 @@ export const makeMarkupValidator = (parseFn: (input: string) => unknown): Markup
   return internalMakeValidator(parseFn) as MarkupValidator
 }
 
-/**
- * Alias for `makeBaseValidator`.
- */
-export const makeValidator = makeBaseValidator
-
 // We use exact validator here because narrowing down to either 'true' or 'false'
 // makes no sense.
 export const bool = makeExactValidator<boolean>((input: string | boolean) => {
@@ -112,30 +107,30 @@ export const bool = makeExactValidator<boolean>((input: string | boolean) => {
   }
 })
 
-export const num = makeBaseValidator<number>((input: string) => {
+export const num = makeValidator<number>((input: string) => {
   const coerced = parseFloat(input)
   if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
   return coerced
 })
 
-export const str = makeBaseValidator<string>((input: string) => {
+export const str = makeValidator<string>((input: string) => {
   if (typeof input === 'string') return input
   throw new EnvError(`Not a string: "${input}"`)
 })
 
-export const email = makeBaseValidator<string>((x: string) => {
+export const email = makeValidator<string>((x: string) => {
   if (EMAIL_REGEX.test(x)) return x
   throw new EnvError(`Invalid email address: "${x}"`)
 })
 
-export const host = makeBaseValidator<string>((input: string) => {
+export const host = makeValidator<string>((input: string) => {
   if (!isFQDN(input) && !isIP(input)) {
     throw new EnvError(`Invalid host (domain or ip): "${input}"`)
   }
   return input
 })
 
-export const port = makeBaseValidator<number>((input: string) => {
+export const port = makeValidator<number>((input: string) => {
   const coerced = +input
   if (
     Number.isNaN(coerced) ||
@@ -149,7 +144,7 @@ export const port = makeBaseValidator<number>((input: string) => {
   return coerced
 })
 
-export const url = makeBaseValidator<string>((x: string) => {
+export const url = makeValidator<string>((x: string) => {
   try {
     new URL(x)
     return x
