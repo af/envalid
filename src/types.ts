@@ -62,8 +62,9 @@ export interface ExactValidator<T> {
 
 // Such validator only works for subtypes of BaseT.
 export interface BaseValidator<BaseT> {
-  // These overrides enable nuanced type inferences for optimal DX
-  // This will prevent specifying "default" alone from narrowing down output type
+  // These function overloads enable nuanced type inferences for optimal DX
+  // This will prevent specifying "default" alone from narrowing down output type.
+  // https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads
   (spec: RequiredChoicelessSpecWithType<BaseT>): RequiredValidatorSpec<BaseT>
   <T extends BaseT>(spec?: RequiredSpec<T>): RequiredValidatorSpec<T>
   <T extends BaseT>(spec: OptionalSpec<T>): OptionalValidatorSpec<T>
