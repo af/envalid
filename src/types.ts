@@ -98,8 +98,8 @@ export interface StructuredValidator {
   <T>(spec: ChoicelessRequiredSpec<T>): RequiredValidatorSpec<T>
 }
 
-export type FromSpecsRecord<S> = {
-  [K in keyof S]: S[K] extends ValidatorSpec<infer U> ? U : never
+export type SpecsOutput<S> = {
+  [K in keyof S]: unknown
 }
 
 export type CleanedEnv<S> = S extends Record<string, ValidatorSpec<unknown>>

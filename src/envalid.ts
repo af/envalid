@@ -1,4 +1,4 @@
-import { CleanedEnv, CleanOptions, FromSpecsRecord } from './types'
+import { CleanedEnv, CleanOptions, SpecsOutput } from './types'
 import { getSanitizedEnv, testOnlySymbol } from './core'
 import { applyDefaultMiddleware } from './middleware'
 
@@ -32,7 +32,7 @@ export function cleanEnv<S>(
 export function customCleanEnv<S, MW>(
   environment: unknown,
   specs: S,
-  applyMiddleware: (cleaned: FromSpecsRecord<S>, rawEnv: unknown) => MW,
+  applyMiddleware: (cleaned: SpecsOutput<S>, rawEnv: unknown) => MW,
   options: CleanOptions<S> = {},
 ): Readonly<MW> {
   const cleaned = getSanitizedEnv(environment, specs, options)

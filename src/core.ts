@@ -1,5 +1,5 @@
 import { EnvError, EnvMissingError } from './errors'
-import { CleanOptions, FromSpecsRecord, Spec, ValidatorSpec } from './types'
+import { CleanOptions, SpecsOutput, Spec, ValidatorSpec } from './types'
 import { defaultReporter } from './reporter'
 
 export const testOnlySymbol = Symbol('envalid - test only')
@@ -54,9 +54,9 @@ const isTestOnlySymbol = (value: any): value is symbol => value === testOnlySymb
 export function getSanitizedEnv<S>(
   environment: unknown,
   specs: S,
-  options: CleanOptions<FromSpecsRecord<S>> = {},
-): FromSpecsRecord<S> {
-  let cleanedEnv = {} as Record<keyof S, unknown>
+  options: CleanOptions<SpecsOutput<S>> = {},
+): SpecsOutput<S> {
+  let cleanedEnv = {} as SpecsOutput<S>
   const castedSpecs = specs as unknown as Record<keyof S, ValidatorSpec<unknown>>
   const errors = {} as Record<keyof S, Error>
   const varKeys = Object.keys(castedSpecs) as Array<keyof S>
@@ -101,5 +101,5 @@ export function getSanitizedEnv<S>(
 
   const reporter = options?.reporter || defaultReporter
   reporter({ errors, env: cleanedEnv })
-  return cleanedEnv as FromSpecsRecord<S>
+  return cleanedEnv
 }
