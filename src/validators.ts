@@ -1,4 +1,4 @@
-import { Spec, ValidatorSpec, BaseValidator, MarkupValidator, ExactValidator } from './types'
+import { Spec, ValidatorSpec, BaseValidator, StructuredValidator, ExactValidator } from './types'
 import { EnvError } from './errors'
 
 // Simplified adaptation of https://github.com/validatorjs/validator.js/blob/master/src/lib/isFQDN.js
@@ -74,7 +74,7 @@ export const makeExactValidator = <T>(parseFn: (input: string) => T): ExactValid
  * It default the output type to any if no type inference can be made.
  *
  * ```ts
- * const queryParams = makeMarkupValidator((input: string) => {
+ * const queryParams = makeStructuredValidator((input: string) => {
  *   // Implementation details
  * })
  * const OPTIONS = queryParams({ default: { option1: true, option2: false } })
@@ -84,8 +84,8 @@ export const makeExactValidator = <T>(parseFn: (input: string) => T): ExactValid
  * @param parseFn - A function to parse and validate input.
  * @returns A validator which output type is exactly `T`
  */
-export const makeMarkupValidator = (parseFn: (input: string) => unknown): MarkupValidator => {
-  return internalMakeValidator(parseFn) as MarkupValidator
+export const makeStructuredValidator = (parseFn: (input: string) => unknown): StructuredValidator => {
+  return internalMakeValidator(parseFn) as StructuredValidator
 }
 
 // We use exact validator here because narrowing down to either 'true' or 'false'
@@ -164,7 +164,7 @@ export const url = makeValidator<string>((x: string) => {
  * })
  * ```
  */
-export const json = makeMarkupValidator((x: string) => {
+export const json = makeStructuredValidator((x: string) => {
   try {
     return JSON.parse(x)
   } catch (e) {

@@ -5,7 +5,7 @@ import {
   num,
   RequiredValidatorSpec,
   OptionalValidatorSpec,
-  makeMarkupValidator,
+  makeStructuredValidator,
   json,
   makeValidator,
 } from '../src'
@@ -149,7 +149,7 @@ describe('validators types', () => {
     ).toEqualTypeOf<RequiredValidatorSpec<'foo' | 'bar'>>()
   })
   test('structured data validator', () => {
-    const validator = makeMarkupValidator(() => ({}))
+    const validator = makeStructuredValidator(() => ({}))
     expectTypeOf(validator()).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: {} as any })).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<any>>()

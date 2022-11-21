@@ -153,7 +153,7 @@ const env = cleanEnv(process.env, {
 ```
 ### TypeScript users
 
-You can use either one of `makeValidator`, `makeExactValidator` and `makeMarkupValidator`
+You can use either one of `makeValidator`, `makeExactValidator` and `makeStructuredValidator`
 depending on your use case.
 
 #### `makeValidator<BaseT>`
@@ -189,12 +189,12 @@ const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
 As you can see in this instance, _the output type is exactly `number`, the parameter type of
 `makeExactValidator`_. Also note that here, `int` is not parametrizable.
 
-#### `makeMarkupValidator`
+#### `makeStructuredValidator`
 
 This validator is meant for inputs which can produce arbitrary output types (e.g. `json`).
 The typing logic behaves differently here:
 
-- `makeMarkupValidator` has no type parameter.
+- `makeStructuredValidator` has no type parameter.
 - When no types can be inferred from context, output type defaults to any.
 - Otherwise, infers type from `default` or `devDefault`.
 - Also allows validator parametrized types.
@@ -202,7 +202,7 @@ The typing logic behaves differently here:
 Below is an example of a validator for query parameters (e.g. `option1=foo&option2=bar`)
 
 ```ts
-const queryParams = makeMarkupValidator((input: string) => {
+const queryParams = makeStructuredValidator((input: string) => {
   const params = new URLSearchParams(input)
   return Object.fromEntries(params.entries())
 })

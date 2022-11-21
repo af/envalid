@@ -70,12 +70,12 @@ export interface BaseValidator<BaseT> {
   <T extends BaseT>(spec: OptionalSpec<T>): OptionalValidatorSpec<T>
 }
 
-// Such validator inputs a markup language such as JSON.
+// Such validator inputs a structured input format such as JSON.
 // Because it can output complex types, including objects:
 // - it has no supertype
 // - it fallbacks to 'any' when no type information can be inferred
 //   from the spec object.
-export interface MarkupValidator {
+export interface StructuredValidator {
   // Defaults to any when no argument (prevents 'unknown')
   (): RequiredValidatorSpec<any>
   // Allow overriding output type with type parameter
