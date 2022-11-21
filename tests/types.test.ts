@@ -150,12 +150,12 @@ describe('validators types', () => {
   })
   test('structured data validator', () => {
     const validator = makeStructuredValidator(() => ({}))
+    const tt = validator({ default: {} });
     expectTypeOf(validator()).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: {} as any })).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<any>>()
-    expectTypeOf(validator({ default: undefined, choices: [{ foo: 'bar' }] })).toEqualTypeOf<
-      OptionalValidatorSpec<{ foo: 'bar' }>
-    >()
+    //@ts-expect-error - Choices not available for structured data
+    validator({ choices: [{ foo: 'bar' }] })
     expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ devDefault: { foo: 'bar' } })).toEqualTypeOf<
       RequiredValidatorSpec<{ foo: string }>
@@ -186,33 +186,6 @@ describe('validators types', () => {
     expectTypeOf(validator<{ hello: string }>()).toEqualTypeOf<
       RequiredValidatorSpec<{
         hello: string
-      }>
-    >()
-    expectTypeOf(
-      validator({
-        choices: [
-          { hello: 'world', option: false },
-          { hello: 'world', option: true },
-        ],
-      }),
-    ).toEqualTypeOf<
-      RequiredValidatorSpec<{
-        hello: string
-        option: boolean
-      }>
-    >()
-    expectTypeOf(
-      validator({
-        choices: [
-          { hello: 'world', option: false },
-          { hello: 'world', option: true },
-        ],
-        default: { hello: 'world', option: false },
-      }),
-    ).toEqualTypeOf<
-      RequiredValidatorSpec<{
-        hello: string
-        option: boolean
       }>
     >()
   })

@@ -27,13 +27,22 @@ export interface Spec<T> {
 }
 
 export type OptionalSpec<T> = Omit<Spec<T>, 'default'> & { default: undefined }
-export type OptionalChoiceless = Omit<OptionalSpec<unknown>, 'choices'>
+export type OptionalTypelessSpec = Omit<OptionalSpec<unknown>, 'choices'>
 
 export type RequiredSpec<T> = (Spec<T> & { default: NonNullable<T> }) | Omit<Spec<T>, 'default'>
 export type RequiredTypelessSpec = Omit<Spec<unknown>, 'choices' | 'default'> & {
   devDefault?: undefined
 }
-export type RequiredChoicelessSpecWithType<T> = Omit<Spec<T>, 'choices'> &
+
+export type ChoicelessOptionalSpec<T> = Omit<Spec<T>, 'default' | 'choices'> & {
+  default: undefined
+}
+
+export type ChoicelessRequiredSpec<T> =
+  | (Omit<Spec<T>, 'choices'> & { default: NonNullable<T> })
+  | Omit<Spec<T>, 'default' | 'choices'>
+
+export type ChoicelessRequiredSpecWithType<T> = ChoicelessRequiredSpec<T> &
   (
     | {
         default: NonNullable<T>
@@ -65,7 +74,7 @@ export interface BaseValidator<BaseT> {
   // These function overloads enable nuanced type inferences for optimal DX
   // This will prevent specifying "default" alone from narrowing down output type.
   // https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads
-  (spec: RequiredChoicelessSpecWithType<BaseT>): RequiredValidatorSpec<BaseT>
+  (spec: ChoicelessRequiredSpecWithType<BaseT>): RequiredValidatorSpec<BaseT>
   <T extends BaseT>(spec?: RequiredSpec<T>): RequiredValidatorSpec<T>
   <T extends BaseT>(spec: OptionalSpec<T>): OptionalValidatorSpec<T>
 }
@@ -75,6 +84,7 @@ export interface BaseValidator<BaseT> {
 // - it has no supertype
 // - it fallbacks to 'any' when no type information can be inferred
 //   from the spec object.
+// - One can't pass "choices" since choices uses reference equality.
 export interface StructuredValidator {
   // Defaults to any when no argument (prevents 'unknown')
   (): RequiredValidatorSpec<any>
@@ -83,9 +93,9 @@ export interface StructuredValidator {
   // Make sure we grab 'any' when no type inference can be made
   // otherwise it would resolve to 'unknown'
   (spec: RequiredTypelessSpec): RequiredValidatorSpec<any>
-  (spec: OptionalChoiceless): OptionalValidatorSpec<any>
-  <T>(spec: OptionalSpec<T>): OptionalValidatorSpec<T>
-  <T>(spec: RequiredSpec<T>): RequiredValidatorSpec<T>
+  (spec: OptionalTypelessSpec): OptionalValidatorSpec<any>
+  <T>(spec: ChoicelessOptionalSpec<T>): OptionalValidatorSpec<T>
+  <T>(spec: ChoicelessRequiredSpec<T>): RequiredValidatorSpec<T>
 }
 
 export type FromSpecsRecord<S> = {

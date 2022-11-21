@@ -198,6 +198,7 @@ The typing logic behaves differently here:
 - When no types can be inferred from context, output type defaults to any.
 - Otherwise, infers type from `default` or `devDefault`.
 - Also allows validator parametrized types.
+- Finally, the generated validator disallow `choices` parameter.
 
 Below is an example of a validator for query parameters (e.g. `option1=foo&option2=bar`)
 
