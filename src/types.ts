@@ -26,23 +26,23 @@ export interface Spec<T> {
   devDefault?: NonNullable<T> | undefined
 }
 
-export type OptionalSpec<T> = Omit<Spec<T>, 'default'> & { default: undefined }
-export type OptionalTypelessSpec = Omit<OptionalSpec<unknown>, 'choices'>
+type OptionalSpec<T> = Omit<Spec<T>, 'default'> & { default: undefined }
+type OptionalTypelessSpec = Omit<OptionalSpec<unknown>, 'choices'>
 
-export type RequiredSpec<T> = (Spec<T> & { default: NonNullable<T> }) | Omit<Spec<T>, 'default'>
-export type RequiredTypelessSpec = Omit<Spec<unknown>, 'choices' | 'default'> & {
+type RequiredSpec<T> = (Spec<T> & { default: NonNullable<T> }) | Omit<Spec<T>, 'default'>
+type RequiredTypelessSpec = Omit<Spec<unknown>, 'choices' | 'default'> & {
   devDefault?: undefined
 }
 
-export type ChoicelessOptionalSpec<T> = Omit<Spec<T>, 'default' | 'choices'> & {
+type ChoicelessOptionalSpec<T> = Omit<Spec<T>, 'default' | 'choices'> & {
   default: undefined
 }
 
-export type ChoicelessRequiredSpec<T> =
+type ChoicelessRequiredSpec<T> =
   | (Omit<Spec<T>, 'choices'> & { default: NonNullable<T> })
   | Omit<Spec<T>, 'default' | 'choices'>
 
-export type ChoicelessRequiredSpecWithType<T> = ChoicelessRequiredSpec<T> &
+type ChoicelessRequiredSpecWithType<T> = ChoicelessRequiredSpec<T> &
   (
     | {
         default: NonNullable<T>
