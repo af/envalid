@@ -149,7 +149,6 @@ describe('validators types', () => {
   })
   test('structured data validator', () => {
     const validator = makeStructuredValidator(() => ({}))
-    const tt = validator({ default: {} })
     expectTypeOf(validator()).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: {} as any })).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<any>>()
