@@ -5,11 +5,10 @@ import {
   num,
   RequiredValidatorSpec,
   OptionalValidatorSpec,
-  makeStructuredValidator,
   json,
-  makeValidator,
 } from '../src'
 import { expectTypeOf } from 'expect-type'
+import { makeStructuredValidator, makeValidator } from '../src/makers'
 
 describe('validators types', () => {
   test('boolean validator', () => {
@@ -150,7 +149,7 @@ describe('validators types', () => {
   })
   test('structured data validator', () => {
     const validator = makeStructuredValidator(() => ({}))
-    const tt = validator({ default: {} });
+    const tt = validator({ default: {} })
     expectTypeOf(validator()).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: {} as any })).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<any>>()

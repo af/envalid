@@ -1,5 +1,5 @@
-import { Spec, ValidatorSpec, BaseValidator, StructuredValidator, ExactValidator } from './types'
 import { EnvError } from './errors'
+import { makeExactValidator, makeStructuredValidator, makeValidator } from './makers'
 
 // Simplified adaptation of https://github.com/validatorjs/validator.js/blob/master/src/lib/isFQDN.js
 const isFQDN = (input: string) => {
@@ -27,66 +27,6 @@ const isIP = (input: string) => {
 
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/ // intentionally non-exhaustive
 
-const internalMakeValidator = <T>(parseFn: (input: string) => T) => {
-  return (spec?: Spec<unknown>) => ({ ...spec, _parse: parseFn } as ValidatorSpec<T>)
-}
-
-/**
- * Creates a validator which can output subtypes of `BaseT`. E.g.:
- *
- * ```ts
- * const int = makeValidator<number>((input: string) => {
- *   // Implementation details
- * })
- * const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
- * // Narrows down output type to 1 | 2 | 3 | 4
- * ```
- *
- * @param parseFn - A function to parse and validate input.
- * @returns A validator which output type is narrowed-down to a subtype of `BaseT`
- */
-export const makeValidator = <BaseT>(
-  parseFn: (input: string) => BaseT,
-): BaseValidator<BaseT> => {
-  return internalMakeValidator(parseFn) as BaseValidator<BaseT>
-}
-
-/**
- * Creates a validator which output type is exactly T:
- *
- * ```ts
- * const int = makeExactValidator<number>((input: string) => {
- *   // Implementation details
- * })
- * const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
- * // Output type 'number'
- * ```
- *
- * @param parseFn - A function to parse and validate input.
- * @returns A validator which output type is exactly `T`
- */
-export const makeExactValidator = <T>(parseFn: (input: string) => T): ExactValidator<T> => {
-  return internalMakeValidator(parseFn) as ExactValidator<T>
-}
-
-/**
- * Creates a validator which output type is entirely parametric.
- * It default the output type to any if no type inference can be made.
- *
- * ```ts
- * const queryParams = makeStructuredValidator((input: string) => {
- *   // Implementation details
- * })
- * const OPTIONS = queryParams({ default: { option1: true, option2: false } })
- * // Output type '{ option1: boolean, option2: boolean }'
- * ```
- *
- * @param parseFn - A function to parse and validate input.
- * @returns A validator which output type is exactly `T`
- */
-export const makeStructuredValidator = (parseFn: (input: string) => unknown): StructuredValidator => {
-  return internalMakeValidator(parseFn) as StructuredValidator
-}
 
 // We use exact validator here because narrowing down to either 'true' or 'false'
 // makes no sense.

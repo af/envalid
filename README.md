@@ -189,34 +189,6 @@ const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
 As you can see in this instance, _the output type is exactly `number`, the parameter type of
 `makeExactValidator`_. Also note that here, `int` is not parametrizable.
 
-#### `makeStructuredValidator`
-
-This validator is meant for inputs which can produce arbitrary output types (e.g. `json`).
-The typing logic behaves differently here:
-
-- `makeStructuredValidator` has no type parameter.
-- When no types can be inferred from context, output type defaults to any.
-- Otherwise, infers type from `default` or `devDefault`.
-- Also allows validator parametrized types.
-- Finally, the generated validator disallow `choices` parameter.
-
-Below is an example of a validator for query parameters (e.g. `option1=foo&option2=bar`)
-
-```ts
-const queryParams = makeStructuredValidator((input: string) => {
-  const params = new URLSearchParams(input)
-  return Object.fromEntries(params.entries())
-})
-const OPTIONS1 = queryParams()
-// Output type 'any'
-const OPTIONS2 = queryParams({ default: { option1: 'foo', option2: 'bar' } })
-// Output type '{ option1: string, option2: string }'
-const OPTIONS3 = queryParams<{ option1?: string; option2?: string }>({
-  default: { option1: 'foo', option2: 'bar' },
-})
-// Output type '{ option1?: string, option2?: string }'
-```
-
 ## Error Reporting
 
 By default, if any required environment variables are missing or have invalid
