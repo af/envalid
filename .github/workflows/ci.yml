@@ -2,9 +2,9 @@ name: continuous-integration
 
 on:
   push:
-    branches: [ main ]
+    branches: [main]
   pull_request:
-    branches: [ main ]
+    branches: [main]
 
 jobs:
   build:
@@ -12,22 +12,22 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [ 12, 14, 16, 18 ]
+        node-version: [14, 16, 18]
 
     steps:
-    - uses: actions/checkout@v3
+      - uses: actions/checkout@v3
 
-    - name: Use Node.js ${{ matrix.node-version }}
-      uses: actions/setup-node@v3
-      with:
-        node-version: ${{ matrix.node-version }}
-        cache: yarn
+      - name: Use Node.js ${{ matrix.node-version }}
+        uses: actions/setup-node@v3
+        with:
+          node-version: ${{ matrix.node-version }}
+          cache: yarn
 
-    - name: Install dependencies
-      run: yarn --frozen-lockfile
+      - name: Install dependencies
+        run: yarn --frozen-lockfile
 
-    - name: ESLint
-      run: yarn lint
+      - name: ESLint
+        run: yarn lint
 
-    - name: Unit tests
-      run: yarn test
+      - name: Unit tests
+        run: yarn test
