@@ -1,5 +1,5 @@
 import { EnvError, EnvMissingError } from './errors'
-import { CleanOptions, Spec, ValidatorSpec } from './types'
+import { CleanOptions, SpecsOutput, Spec, ValidatorSpec } from './types'
 import { defaultReporter } from './reporter'
 
 export const testOnlySymbol = Symbol('envalid - test only')
@@ -51,18 +51,19 @@ const isTestOnlySymbol = (value: any): value is symbol => value === testOnlySymb
 /**
  * Perform the central validation/sanitization logic on the full environment object
  */
-export function getSanitizedEnv<T>(
+export function getSanitizedEnv<S>(
   environment: unknown,
-  specs: { [K in keyof T]: ValidatorSpec<T[K]> },
-  options: CleanOptions<T> = {},
-): T {
-  let cleanedEnv = {} as T
-  const errors: Partial<Record<keyof T, Error>> = {}
-  const varKeys = Object.keys(specs) as Array<keyof T>
+  specs: S,
+  options: CleanOptions<SpecsOutput<S>> = {},
+): SpecsOutput<S> {
+  let cleanedEnv = {} as SpecsOutput<S>
+  const castedSpecs = specs as unknown as Record<keyof S, ValidatorSpec<unknown>>
+  const errors = {} as Record<keyof S, Error>
+  const varKeys = Object.keys(castedSpecs) as Array<keyof S>
   const rawNodeEnv = readRawEnvValue(environment, 'NODE_ENV')
 
   for (const k of varKeys) {
-    const spec = specs[k]
+    const spec = castedSpecs[k]
     const rawValue = readRawEnvValue(environment, k)
 
     // If no value was given and default/devDefault were provided, return the appropriate default
@@ -72,12 +73,10 @@ export function getSanitizedEnv<T>(
       const usingDevDefault =
         rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
       if (usingDevDefault) {
-        // @ts-expect-error default values can break the rules slightly by being explicitly set to undefined
         cleanedEnv[k] = spec.devDefault
         continue
       }
-      if (spec.hasOwnProperty('default')) {
-        // @ts-expect-error default values can break the rules slightly by being explicitly set to undefined
+      if ('default' in spec) {
         cleanedEnv[k] = spec.default
         continue
       }
@@ -89,7 +88,6 @@ export function getSanitizedEnv<T>(
       }
 
       if (rawValue === undefined) {
-        // @ts-ignore (fixes #138) Need to figure out why explicitly undefined default/devDefault breaks inference
         cleanedEnv[k] = undefined
         throw new EnvMissingError(formatSpecDescription(spec))
       } else {

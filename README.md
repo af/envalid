@@ -134,6 +134,8 @@ Each validation function accepts an (optional) object with the following attribu
 
 ## Custom validators
 
+### Basic usage
+
 You can easily create your own validator functions with `envalid.makeValidator()`. It takes
 a function as its only parameter, and should either return a cleaned value, or throw if the
 input is unacceptable:
@@ -149,7 +151,43 @@ const env = cleanEnv(process.env, {
     INITIALS: twochars()
 });
 ```
+### TypeScript users
 
+You can use either one of `makeValidator`, `makeExactValidator` and `makeStructuredValidator`
+depending on your use case.
+
+#### `makeValidator<BaseT>`
+
+This validator has the output narrowed-down to a subtype of `BaseT` (e.g. `str`).
+Example of a custom integer validator:
+
+```ts
+const int = makeValidator<number>((input: string) => {
+  const coerced = parseInt(input, 10)
+  if (Number.isNaN(coerced)) throw new EnvError(`Invalid integer input: "${input}"`)
+  return coerced
+})
+const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
+// Narrows down output type to '1 | 2 | 3 | 4' witch is a subtype of 'number'
+```
+
+#### `makeExactValidator<T>`
+
+This validator has the output widened to `T` (e.g. `bool`). To understand the difference
+with `makeValidator`, let's use it in the same scenario:
+
+```ts
+const int = makeExactValidator<number>((input: string) => {
+  const coerced = parseInt(input, 10)
+  if (Number.isNaN(coerced)) throw new EnvError(`Invalid integer input: "${input}"`)
+  return coerced
+})
+const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
+// Output type is 'number'
+```
+
+As you can see in this instance, _the output type is exactly `number`, the parameter type of
+`makeExactValidator`_. Also note that here, `int` is not parametrizable.
 
 ## Error Reporting
 

@@ -1,5 +1,6 @@
 import { cleanEnv, str, num, testOnly } from '../src'
 import { assertPassthrough } from './utils'
+import { expectTypeOf } from 'expect-type'
 
 const makeSilent = { reporter: null }
 
@@ -157,8 +158,9 @@ test('choices should refine the type of the field to a union', () => {
 
 test('misconfigured spec', () => {
   // Validation throws with different error if spec is invalid
-  // @ts-expect-error This misuse should be a type error
-  expect(() => cleanEnv({ FOO: 'asdf' }, { FOO: {} }, makeSilent)).toThrow()
+  expect(() => {
+    expectTypeOf(cleanEnv({ FOO: 'asdf' }, { FOO: {} }, makeSilent)).toBeNever()
+  }).toThrow()
 })
 
 describe('NODE_ENV built-in support', () => {
