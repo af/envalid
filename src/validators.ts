@@ -27,7 +27,6 @@ const isIP = (input: string) => {
 
 const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/ // intentionally non-exhaustive
 
-
 // We use exact validator here because narrowing down to either 'true' or 'false'
 // makes no sense.
 export const bool = makeExactValidator<boolean>((input: string | boolean) => {
