@@ -78,6 +78,12 @@ describe('validators types', () => {
     expectTypeOf(validator()).toEqualTypeOf<RequiredValidatorSpec<number>>()
     expectTypeOf(validator<1>()).toEqualTypeOf<RequiredValidatorSpec<1>>()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<number>>()
+    expectTypeOf(validator({ default: undefined, desc: '' })).toEqualTypeOf<
+      OptionalValidatorSpec<number>
+    >()
+    expectTypeOf(validator({ default: undefined, devDefault: undefined })).toEqualTypeOf<
+      OptionalValidatorSpec<number>
+    >()
     expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<
       RequiredValidatorSpec<number>
     >()
@@ -127,7 +133,12 @@ describe('validators types', () => {
     expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<
       RequiredValidatorSpec<string>
     >()
-
+    expectTypeOf(validator({ default: undefined, desc: '' })).toEqualTypeOf<
+      OptionalValidatorSpec<string>
+    >()
+    expectTypeOf(validator({ default: undefined, devDefault: undefined })).toEqualTypeOf<
+      OptionalValidatorSpec<string>
+    >()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<string>>()
     expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<
       RequiredValidatorSpec<string>
@@ -152,6 +163,12 @@ describe('validators types', () => {
     expectTypeOf(validator()).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: {} as any })).toEqualTypeOf<RequiredValidatorSpec<any>>()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<any>>()
+    expectTypeOf(validator({ default: undefined, desc: '' })).toEqualTypeOf<
+      OptionalValidatorSpec<any>
+    >()
+    expectTypeOf(validator({ default: undefined, devDefault: undefined })).toEqualTypeOf<
+      OptionalValidatorSpec<any>
+    >()
     //@ts-expect-error - Choices not available for structured data
     validator({ choices: [{ foo: 'bar' }] })
     expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<RequiredValidatorSpec<any>>()
