@@ -74,6 +74,11 @@ export function getSanitizedEnv<S>(
         rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
       if (usingDevDefault) {
         cleanedEnv[k] = spec.devDefault
+
+        if (isTestOnlySymbol(spec.devDefault) && rawNodeEnv != 'test') {
+          throw new EnvMissingError(formatSpecDescription(spec))
+        }
+
         continue
       }
       if ('default' in spec) {
@@ -83,10 +88,6 @@ export function getSanitizedEnv<S>(
     }
 
     try {
-      if (isTestOnlySymbol(rawValue)) {
-        throw new EnvMissingError(formatSpecDescription(spec))
-      }
-
       if (rawValue === undefined) {
         cleanedEnv[k] = undefined
         throw new EnvMissingError(formatSpecDescription(spec))
