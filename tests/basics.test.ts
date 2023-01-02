@@ -240,9 +240,9 @@ test('testOnly', () => {
   expect(env).toEqual({ FOO: 'sup' })
 
   process.env.NODE_ENV = 'production'
-  expect(() => cleanEnv({}, makeSpec(), makeSilent)).toThrow()
+  expect(() => cleanEnv({ NODE_ENV: 'production' }, makeSpec(), makeSilent)).toThrow()
 
   process.env.NODE_ENV = 'development'
-  expect(() => cleanEnv({}, makeSpec(), makeSilent)).toThrow()
+  expect(() => cleanEnv({ NODE_ENV: 'development' }, makeSpec(), makeSilent)).toThrow()
   process.env.NODE_ENV = processEnv
 })
