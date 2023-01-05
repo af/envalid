@@ -221,6 +221,8 @@ test('cleanEnv', () => {
     BOOL_OPT: undefined,
     BOOL_DEFAULT: undefined,
     BOOL_DEV_DEFAULT: undefined,
+    // Required for `devDefault` to not process.exit(1)
+    NODE_ENV: "development",
     NUM: '34',
     NUM_DEFAULT_CHOICES: '3',
     JSON_ANY: JSON.stringify(true),
