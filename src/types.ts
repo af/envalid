@@ -26,13 +26,13 @@ export interface Spec<T> {
   devDefault?: NonNullable<T> | undefined
 }
 
-type OptionalFlag<T> =
+type OptionalAttrs<T> =
   | { default: undefined }
   | { devDefault: undefined }
   | { default: undefined; devDefault: undefined }
   | { default: NonNullable<T>; devDefault: undefined }
   | { default: undefined; devDefault: NonNullable<T> }
-type RequiredFlag<T> =
+type RequiredAttrs<T> =
   | { default: NonNullable<T> }
   | { devDefault: NonNullable<T> }
   | { devDefault: NonNullable<T>; default: NonNullable<T> }
@@ -40,14 +40,14 @@ type RequiredFlag<T> =
 
 type DefaultKeys = 'default' | 'devDefault'
 
-type OptionalSpec<T> = Spec<T> & OptionalFlag<T>
+type OptionalSpec<T> = Spec<T> & OptionalAttrs<T>
 type OptionalTypelessSpec = Omit<OptionalSpec<unknown>, 'choices'>
 
-type RequiredSpec<T> = Spec<T> & RequiredFlag<T>
+type RequiredSpec<T> = Spec<T> & RequiredAttrs<T>
 type RequiredTypelessSpec = Omit<RequiredSpec<unknown>, 'choices' | DefaultKeys>
 
-type ChoicelessOptionalSpec<T> = Omit<Spec<T>, 'choices' | DefaultKeys> & OptionalFlag<T>
-type ChoicelessRequiredSpec<T> = Omit<Spec<T>, 'choices' | DefaultKeys> & RequiredFlag<T>
+type ChoicelessOptionalSpec<T> = Omit<Spec<T>, 'choices' | DefaultKeys> & OptionalAttrs<T>
+type ChoicelessRequiredSpec<T> = Omit<Spec<T>, 'choices' | DefaultKeys> & RequiredAttrs<T>
 
 type WithParser<T> = {
   _parse: (input: string) => T
