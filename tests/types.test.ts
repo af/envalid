@@ -6,6 +6,7 @@ import {
   RequiredValidatorSpec,
   OptionalValidatorSpec,
   json,
+  CleanedEnvAccessors,
 } from '../src'
 import { expectTypeOf } from 'expect-type'
 import { makeStructuredValidator, makeValidator } from '../src/makers'
@@ -27,7 +28,7 @@ describe('validators types', () => {
     ).toEqualTypeOf<RequiredValidatorSpec<boolean>>()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<boolean>>()
     expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<
-      RequiredValidatorSpec<boolean>
+      OptionalValidatorSpec<boolean>
     >()
     expectTypeOf(validator({ devDefault: false })).toEqualTypeOf<RequiredValidatorSpec<boolean>>()
   })
@@ -85,7 +86,7 @@ describe('validators types', () => {
       OptionalValidatorSpec<number>
     >()
     expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<
-      RequiredValidatorSpec<number>
+      OptionalValidatorSpec<number>
     >()
     expectTypeOf(validator<2>({ devDefault: 2 })).toEqualTypeOf<RequiredValidatorSpec<2>>()
   })
@@ -102,6 +103,11 @@ describe('validators types', () => {
         devDefault: 'foo',
       }),
     ).toEqualTypeOf<RequiredValidatorSpec<string>>()
+    expectTypeOf(
+      validator({
+        devDefault: undefined,
+      }),
+    ).toEqualTypeOf<OptionalValidatorSpec<string>>()
     // But this inference can be overridden by specifying a type parameter
     expectTypeOf(
       validator<'foo'>({
@@ -131,7 +137,7 @@ describe('validators types', () => {
     expectTypeOf(validator<'foo'>()).toEqualTypeOf<RequiredValidatorSpec<'foo'>>()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<string>>()
     expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<
-      RequiredValidatorSpec<string>
+      OptionalValidatorSpec<string>
     >()
     expectTypeOf(validator({ default: undefined, desc: '' })).toEqualTypeOf<
       OptionalValidatorSpec<string>
@@ -140,9 +146,6 @@ describe('validators types', () => {
       OptionalValidatorSpec<string>
     >()
     expectTypeOf(validator({ default: undefined })).toEqualTypeOf<OptionalValidatorSpec<string>>()
-    expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<
-      RequiredValidatorSpec<string>
-    >()
 
     expectTypeOf(validator({ devDefault: 'foo' })).toEqualTypeOf<RequiredValidatorSpec<string>>()
     expectTypeOf(validator<'foo'>({ devDefault: 'foo' })).toEqualTypeOf<
@@ -171,7 +174,7 @@ describe('validators types', () => {
     >()
     //@ts-expect-error - Choices not available for structured data
     validator({ choices: [{ foo: 'bar' }] })
-    expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<RequiredValidatorSpec<any>>()
+    expectTypeOf(validator({ devDefault: undefined })).toEqualTypeOf<OptionalValidatorSpec<any>>()
     expectTypeOf(validator({ devDefault: { foo: 'bar' } })).toEqualTypeOf<
       RequiredValidatorSpec<{ foo: string }>
     >()
@@ -210,12 +213,16 @@ test('cleanEnv', () => {
   const env = {
     STR: 'FOO',
     STR_OPT: undefined,
+    STR_DEV_DEFAULT_UDEF: undefined,
     STR_CHOICES: 'foo',
     STR_REQ: 'BAR',
     STR_DEFAULT_CHOICES: 'bar',
     BOOL: 'false',
     BOOL_OPT: undefined,
     BOOL_DEFAULT: undefined,
+    BOOL_DEV_DEFAULT: undefined,
+    // Required for `devDefault` to not process.exit(1)
+    NODE_ENV: "development",
     NUM: '34',
     NUM_DEFAULT_CHOICES: '3',
     JSON_ANY: JSON.stringify(true),
@@ -227,11 +234,13 @@ test('cleanEnv', () => {
   const specs = {
     STR: str(),
     STR_OPT: str({ default: undefined }),
+    STR_DEV_DEFAULT_UDEF: str({ devDefault: undefined }),
     STR_CHOICES: str({ choices: ['foo', 'bar'] }),
     STR_REQ: str({ default: 'foo' }),
     STR_DEFAULT_CHOICES: str({ default: 'foo', choices: ['foo', 'bar'] }),
     BOOL: bool(),
     BOOL_OPT: bool({ default: undefined }),
+    BOOL_DEV_DEFAULT: bool({ devDefault: undefined }),
     BOOL_DEFAULT: bool({
       default: false,
     }),
@@ -243,36 +252,42 @@ test('cleanEnv', () => {
     JSON_DEV_DEFAULT: json({ devDefault: { foo: 'bar' } }),
     JSON_DEFAULT_OPT: json<{ foo: 'bar' }>({ default: undefined }),
   }
-  interface TestedCleanedEnv {
-    readonly STR: string
-    readonly STR_OPT?: string
-    readonly STR_CHOICES: 'foo' | 'bar'
-    readonly STR_REQ: string
-    readonly STR_DEFAULT_CHOICES: 'foo' | 'bar'
-    readonly BOOL: boolean
-    readonly BOOL_OPT?: boolean
-    readonly BOOL_DEFAULT: boolean
-    readonly NUM: number
-    readonly NUM_DEFAULT_CHOICES: 1 | 2 | 3
-    readonly JSON_ANY: any
-    readonly JSON_REQ_ANY: any
-    readonly JSON_DEFAULT: { foo: string }
-    readonly JSON_DEV_DEFAULT: { foo: string }
-    readonly JSON_DEFAULT_OPT?: { foo: string }
-  }
+  type TestedCleanedEnv = Readonly<
+    {
+      STR: string
+      STR_OPT: string | undefined
+      STR_DEV_DEFAULT_UDEF: string | undefined
+      STR_CHOICES: 'foo' | 'bar'
+      STR_REQ: string
+      STR_DEFAULT_CHOICES: 'foo' | 'bar'
+      BOOL: boolean
+      BOOL_OPT: boolean | undefined
+      BOOL_DEFAULT: boolean
+      BOOL_DEV_DEFAULT: boolean | undefined
+      NUM: number
+      NUM_DEFAULT_CHOICES: 1 | 2 | 3
+      JSON_ANY: any
+      JSON_REQ_ANY: any
+      JSON_DEFAULT: { foo: string }
+      JSON_DEV_DEFAULT: { foo: string }
+      JSON_DEFAULT_OPT: { foo: 'bar' } | undefined
+    } & CleanedEnvAccessors
+  >
 
-  expectTypeOf(cleanEnv(env, specs)).toMatchTypeOf<TestedCleanedEnv>()
+  expectTypeOf(cleanEnv(env, specs)).toEqualTypeOf<TestedCleanedEnv>()
 
   // Should also work when specs inlined
   expectTypeOf(
     cleanEnv(env, {
       STR: str(),
       STR_OPT: str({ default: undefined }),
+      STR_DEV_DEFAULT_UDEF: str({ devDefault: undefined }),
       STR_CHOICES: str({ choices: ['foo', 'bar'] }),
       STR_REQ: str({ default: 'foo' }),
       STR_DEFAULT_CHOICES: str({ default: 'foo', choices: ['foo', 'bar'] }),
       BOOL: bool(),
       BOOL_OPT: bool({ default: undefined }),
+      BOOL_DEV_DEFAULT: bool({ devDefault: undefined }),
       BOOL_DEFAULT: bool({
         default: false,
       }),
@@ -284,5 +299,5 @@ test('cleanEnv', () => {
       JSON_DEV_DEFAULT: json({ devDefault: { foo: 'bar' } }),
       JSON_DEFAULT_OPT: json<{ foo: 'bar' }>({ default: undefined }),
     }),
-  ).toMatchTypeOf<TestedCleanedEnv>()
+  ).toEqualTypeOf<TestedCleanedEnv>()
 })

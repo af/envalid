@@ -26,31 +26,28 @@ export interface Spec<T> {
   devDefault?: NonNullable<T> | undefined
 }
 
-type OptionalSpec<T> = Omit<Spec<T>, 'default'> & { default: undefined }
+type OptionalAttrs<T> =
+  | { default: undefined }
+  | { devDefault: undefined }
+  | { default: undefined; devDefault: undefined }
+  | { default: NonNullable<T>; devDefault: undefined }
+  | { default: undefined; devDefault: NonNullable<T> }
+type RequiredAttrs<T> =
+  | { default: NonNullable<T> }
+  | { devDefault: NonNullable<T> }
+  | { devDefault: NonNullable<T>; default: NonNullable<T> }
+  | {}
+
+type DefaultKeys = 'default' | 'devDefault'
+
+type OptionalSpec<T> = Spec<T> & OptionalAttrs<T>
 type OptionalTypelessSpec = Omit<OptionalSpec<unknown>, 'choices'>
 
-type RequiredSpec<T> = (Spec<T> & { default: NonNullable<T> }) | Omit<Spec<T>, 'default'>
-type RequiredTypelessSpec = Omit<Spec<unknown>, 'choices' | 'default'> & {
-  devDefault?: undefined
-}
+type RequiredSpec<T> = Spec<T> & RequiredAttrs<T>
+type RequiredTypelessSpec = Omit<RequiredSpec<unknown>, 'choices' | DefaultKeys>
 
-type ChoicelessOptionalSpec<T> = Omit<Spec<T>, 'default' | 'choices'> & {
-  default: undefined
-}
-
-type ChoicelessRequiredSpec<T> =
-  | (Omit<Spec<T>, 'choices'> & { default: NonNullable<T> })
-  | Omit<Spec<T>, 'default' | 'choices'>
-
-type ChoicelessRequiredSpecWithType<T> = ChoicelessRequiredSpec<T> &
-  (
-    | {
-        default: NonNullable<T>
-      }
-    | {
-        devDefault: NonNullable<T>
-      }
-  )
+type ChoicelessOptionalSpec<T> = Omit<Spec<T>, 'choices' | DefaultKeys> & OptionalAttrs<T>
+type ChoicelessRequiredSpec<T> = Omit<Spec<T>, 'choices' | DefaultKeys> & RequiredAttrs<T>
 
 type WithParser<T> = {
   _parse: (input: string) => T
@@ -65,8 +62,8 @@ export type ValidatorSpec<T> = RequiredValidatorSpec<T> | OptionalValidatorSpec<
 // Such validator works for exactly one type. You can't parametrize
 // the output type at invocation site (e.g.: boolean).
 export interface ExactValidator<T> {
-  (spec?: RequiredSpec<T>): RequiredValidatorSpec<T>
   (spec: OptionalSpec<T>): OptionalValidatorSpec<T>
+  (spec?: RequiredSpec<T>): RequiredValidatorSpec<T>
 }
 
 // Such validator only works for subtypes of BaseT.
@@ -75,7 +72,7 @@ export interface BaseValidator<BaseT> {
   // This will prevent specifying "default" alone from narrowing down output type.
   // https://www.typescriptlang.org/docs/handbook/2/functions.html#function-overloads
   <T extends BaseT>(spec: OptionalSpec<T>): OptionalValidatorSpec<T>
-  (spec: ChoicelessRequiredSpecWithType<BaseT>): RequiredValidatorSpec<BaseT>
+  (spec: ChoicelessRequiredSpec<BaseT>): RequiredValidatorSpec<BaseT>
   <T extends BaseT>(spec?: RequiredSpec<T>): RequiredValidatorSpec<T>
 }
 
