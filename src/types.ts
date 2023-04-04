@@ -136,3 +136,12 @@ export interface CleanOptions<T> {
    */
   reporter?: ((opts: ReporterOptions<T>) => void) | null
 }
+
+export interface StrictProxyMiddlewareOptions {
+  /**
+   * A list of extra inspectable properties to add to the middleware.
+   * 
+   * This is useful if you want to add support for framework-specific values.
+   */
+  extraInspectables?: string[];
+}
