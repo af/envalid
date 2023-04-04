@@ -161,11 +161,8 @@ describe('proxy middleware', () => {
 
 describe('strictProxyMiddleware', () => {
   test('proxy allows extra inspectables applied through options', () => {
-    const env = customCleanEnv(
-      { FOO: 'bar' },
-      { FOO: str() },
-      (cleaned, raw) =>
-        strictProxyMiddleware(cleaned, raw, { extraInspectables: ['hello'] })
+    const env = customCleanEnv({ FOO: 'bar' }, { FOO: str() }, (cleaned, raw) =>
+      strictProxyMiddleware(cleaned, raw, { extraInspectables: ['hello'] }),
     )
 
     // @ts-expect-error This invalid usage should trigger a type error

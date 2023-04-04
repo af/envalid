@@ -140,8 +140,8 @@ export interface CleanOptions<T> {
 export interface StrictProxyMiddlewareOptions {
   /**
    * A list of extra inspectable properties to add to the middleware.
-   * 
+   *
    * This is useful if you want to add support for framework-specific values.
    */
-  extraInspectables?: string[];
+  extraInspectables?: string[]
 }
