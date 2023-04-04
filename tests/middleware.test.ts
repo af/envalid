@@ -1,5 +1,5 @@
 import { cleanEnv, customCleanEnv, str } from '../src'
-import { accessorMiddleware } from '../src/middleware'
+import { accessorMiddleware, strictProxyMiddleware } from '../src/middleware'
 
 describe('customCleanEnv middleware type inference', () => {
   test('allows access to properties on the output object', () => {
@@ -156,5 +156,19 @@ describe('proxy middleware', () => {
 
     expect(() => JSON.stringify(env)).not.toThrow()
     expect(JSON.stringify(env)).toEqual('{"FOO":"foo"}')
+  })
+})
+
+describe('strictProxyMiddleware', () => {
+  test('proxy allows extra inspectables applied through options', () => {
+    const env = customCleanEnv(
+      { FOO: 'bar' },
+      { FOO: str() },
+      (cleaned, raw) =>
+        strictProxyMiddleware(cleaned, raw, { extraInspectables: ['hello'] })
+    )
+
+    // @ts-expect-error This invalid usage should trigger a type error
+    expect(() => env.hello).not.toThrow()
   })
 })
