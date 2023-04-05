@@ -1,6 +1,11 @@
-import { CleanedEnvAccessors } from './types'
+import { CleanedEnvAccessors, StrictProxyMiddlewareOptions } from './types'
 
-export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: unknown) => {
+export const strictProxyMiddleware = <T extends object>(
+  envObj: T,
+  rawEnv: unknown,
+  options: StrictProxyMiddlewareOptions = {},
+) => {
+  const { extraInspectables = [] } = options
   const inspectables = [
     'length',
     'inspect',
@@ -29,7 +34,11 @@ export const strictProxyMiddleware = <T extends object>(envObj: T, rawEnv: unkno
       // proxy that throws crashes the entire process. This permits access on
       // the necessary properties for `console.log(envObj)`, `envObj.length`,
       // `envObj.hasOwnProperty('string')` to work.
-      if (inspectables.includes(name) || inspectSymbolStrings.includes(name.toString())) {
+      if (
+        inspectables.includes(name) ||
+        inspectSymbolStrings.includes(name.toString()) ||
+        extraInspectables.includes(name)
+      ) {
         // @ts-expect-error TS doesn't like symbol types as indexers
         return target[name]
       }
