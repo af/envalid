@@ -1,6 +1,6 @@
 <p align="center">
   <img
-    src="https://raw.githubusercontent.com/cobraz/envalid/add-center-header/.github/logo.svg"
+    src="https://raw.githubusercontent.com/af/envalid/main/.github/logo.svg"
     width="160"
   />
 </p>
