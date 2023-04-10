@@ -245,7 +245,7 @@ Since by default envalid's output is wrapped in a Proxy, structuredClone [will n
 
 - [fastify-envalid](https://github.com/alemagio/fastify-envalid) is a wrapper for using Envalid within [Fastify](https://www.fastify.io/)
 
-- [nestjs-envalid](https://github.com/cobraz/nestjs-envalid) is a wrapper for using Envalid with [NestJS](https://nestjs.com/)
+- [nestjs-envalid](https://github.com/simenandre/nestjs-envalid) is a wrapper for using Envalid with [NestJS](https://nestjs.com/)
 
 - [nuxt-envalid](https://github.com/manuelhenke/nuxt-envalid) is a wrapper for using Envalid with [NuxtJS](https://nuxtjs.org/)
 
