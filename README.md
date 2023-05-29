@@ -2,6 +2,7 @@
   <img
     src="https://raw.githubusercontent.com/af/envalid/main/.github/logo.svg"
     width="160"
+    alt="Envalid text logo with drop shadow"
   />
 </p>
 
@@ -14,19 +15,19 @@
 
 <p align="center">
   <a href="https://github.com/af/envalid/actions/workflows/ci.yml">
-    <img src="https://github.com/af/envalid/workflows/continuous-integration/badge.svg" alt="Build Status" />
+    <img src="https://github.com/af/envalid/workflows/continuous-integration/badge.svg" alt="Current GitHub Build Status Badge" />
   </a>
 </p>
 
 Envalid is a small library for validating and accessing environment variables in
 Node.js programs, aiming to:
 
-- ensure that your program only runs when all of its environment dependencies are met
-- give you executable documentation about the environment your program expects to run in
-- give you an immutable API for your environment variables, so they don't change
+- Ensure that your program only runs when all of its environment dependencies are met
+- Give you executable documentation about the environment your program expects to run in
+- Give you an immutable API for your environment variables, so they don't change
   from under you while the program is running
 
-## Why envalid?
+## Why Envalid?
 
 - Type-safe: written completely in TypeScript, with great support for inference
 - Light: no dependencies besides [tslib](https://github.com/Microsoft/tslib)
@@ -82,9 +83,9 @@ node example/server.js
 
 Node's `process.env` only stores strings, but sometimes you want to retrieve other types
 (booleans, numbers), or validate that an env var is in a specific format (JSON,
-url, email address). To these ends, the following validation functions are available:
+URL, email address). To these ends, the following validation functions are available:
 
-- `str()` - Passes string values through, will ensure an value is present unless a
+- `str()` - Passes string values through, will ensure a value is present unless a
   `default` value is given. Note that an empty string is considered a valid value -
   if this is undesirable you can easily create your own validator (see below)
 - `bool()` - Parses env var strings `"1", "0", "true", "false", "t", "f"` into booleans
@@ -92,12 +93,12 @@ url, email address). To these ends, the following validation functions are avail
 - `email()` - Ensures an env var is an email address
 - `host()` - Ensures an env var is either a domain name or an ip address (v4 or v6)
 - `port()` - Ensures an env var is a TCP port (1-65535)
-- `url()` - Ensures an env var is a url with a protocol and hostname
+- `url()` - Ensures an env var is a URL with a protocol and hostname
 - `json()` - Parses an env var with `JSON.parse`
 
 Each validation function accepts an (optional) object with the following attributes:
 
-- `choices` - An Array that lists the admissable parsed values for the env var.
+- `choices` - An Array that lists the admissible parsed values for the env var.
 - `default` - A fallback value, which will be present in the output if the env var wasn't specified.
   Providing a default effectively makes the env var optional. Note that `default`
   values are not passed through validation logic, they are default _output_ values.
@@ -106,7 +107,7 @@ Each validation function accepts an (optional) object with the following attribu
   for development and testing.
 - `desc` - A string that describes the env var.
 - `example` - An example value for the env var.
-- `docs` - A url that leads to more detailed documentation about the env var.
+- `docs` - A URL that leads to more detailed documentation about the env var.
 
 ## Custom validators
 
@@ -135,7 +136,7 @@ depending on your use case.
 
 #### `makeValidator<BaseT>`
 
-This validator has the output narrowed-down to a subtype of `BaseT` (e.g. `str`).
+This validator has the output narrowed down to a subtype of `BaseT` (e.g. `str`).
 Example of a custom integer validator:
 
 ```ts
@@ -145,7 +146,7 @@ const int = makeValidator<number>((input: string) => {
   return coerced
 })
 const MAX_RETRIES = int({ choices: [1, 2, 3, 4] })
-// Narrows down output type to '1 | 2 | 3 | 4' witch is a subtype of 'number'
+// Narrows down output type to '1 | 2 | 3 | 4' which is a subtype of 'number'
 ```
 
 #### `makeExactValidator<T>`
@@ -169,7 +170,7 @@ As you can see in this instance, _the output type is exactly `number`, the param
 ## Error Reporting
 
 By default, if any required environment variables are missing or have invalid
-values, envalid will log a message and call `process.exit(1)`. You can override
+values, Envalid will log a message and call `process.exit(1)`. You can override
 this behavior by passing in your own function as `options.reporter`. For example:
 
 ```js
@@ -180,7 +181,7 @@ const env = cleanEnv(process.env, myValidators, {
 })
 ```
 
-Additionally, envalid exposes `EnvError` and `EnvMissingError`, which can be checked in case specific error handling is desired:
+Additionally, Envalid exposes `EnvError` and `EnvMissingError`, which can be checked in case specific error handling is desired:
 
 ```js
 const env = cleanEnv(process.env, myValidators, {
@@ -209,7 +210,7 @@ validations. You can use this custom escape hatch to transform the output howeve
 `customCleanEnv()` uses the same API as `cleanEnv()`, but with an additional `applyMiddleware`
 argument required in the third position:
 
-- `applyMiddleware` - A functions that can modify the env object after it's
+- `applyMiddleware` - A function that can modify the env object after it's
   validated and cleaned. Envalid ships (and exports) its own default
   middleware (see src/middleware.ts), which you can mix and match with your own
   custom logic to get the behavior you desire.
@@ -218,8 +219,7 @@ argument required in the third position:
 
 ### testOnly
 
-A helper function called `testOnly` is available, in case you need an default env var value only when
-`NODE_ENV=test`. It should be used along with `devDefault`, for example:
+The `testOnly` helper function is available for setting a default value for an env var only when `NODE_ENV=test`. It is recommended to use this function along with `devDefault`. For example:
 
 ```js
 const env = cleanEnv(process.env, {
@@ -231,14 +231,14 @@ For more context see [this issue](https://github.com/af/envalid/issues/32).
 
 ## FAQ
 
-### Can I call `structuredClone()` on envalid's validated output?
+### Can I call `structuredClone()` on Envalid's validated output?
 
-Since by default envalid's output is wrapped in a Proxy, structuredClone [will not work](https://bugzilla.mozilla.org/show_bug.cgi?id=1269327#c1) on it. See [#177](https://github.com/af/envalid/issues/177).
+Since by default Envalid's output is wrapped in a Proxy, structuredClone [will not work](https://bugzilla.mozilla.org/show_bug.cgi?id=1269327#c1) on it. See [#177](https://github.com/af/envalid/issues/177).
 
 ## Related projects
 
 - [dotenv](https://www.npmjs.com/package/dotenv) is a very handy tool for loading env vars from
-  `.env` files. It was previously used as a dependency of Envalid's. To use them together, simply
+  `.env` files. It was previously used as a dependency of Envalid. To use them together, simply
   call `require('dotenv').config()` before you pass `process.env` to your `envalid.cleanEnv()`.
 
 - [react-native-config](https://www.npmjs.com/package/react-native-config) can be useful for React Native projects for reading env vars from a `.env` file
