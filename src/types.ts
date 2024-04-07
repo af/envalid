@@ -99,17 +99,18 @@ export type SpecsOutput<S> = {
   [K in keyof S]: unknown
 }
 
-export type CleanedEnv<S> = S extends Record<string, ValidatorSpec<unknown>>
-  ? Readonly<
-      {
-        [K in keyof S]: S[K] extends OptionalValidatorSpec<infer U>
-          ? U | undefined
-          : S[K] extends RequiredValidatorSpec<infer U>
-          ? U
-          : never
-      } & CleanedEnvAccessors
-    >
-  : never
+export type CleanedEnv<S> =
+  S extends Record<string, ValidatorSpec<unknown>>
+    ? Readonly<
+        {
+          [K in keyof S]: S[K] extends OptionalValidatorSpec<infer U>
+            ? U | undefined
+            : S[K] extends RequiredValidatorSpec<infer U>
+              ? U
+              : never
+        } & CleanedEnvAccessors
+      >
+    : never
 
 export interface CleanedEnvAccessors {
   /** true if NODE_ENV === 'development' */
