@@ -69,9 +69,8 @@ export function getSanitizedEnv<S>(
     // If no value was given and default/devDefault were provided, return the appropriate default
     // value without passing it through validation
     if (rawValue === undefined) {
-      // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
       const usingDevDefault =
-        rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
+         rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
       if (usingDevDefault) {
         cleanedEnv[k] = spec.devDefault
 
