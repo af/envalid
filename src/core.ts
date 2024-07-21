@@ -100,6 +100,19 @@ export function getSanitizedEnv<S>(
     }
   }
 
+  for (const k of varKeys) {
+    if (errors[k] == undefined) {
+      const spec = castedSpecs[k]
+      if (
+        cleanedEnv[k] == undefined &&
+        spec.requiredWhen !== undefined &&
+        spec.requiredWhen(cleanedEnv)
+      ) {
+        errors[k] = new EnvMissingError(formatSpecDescription(spec))
+      }
+    }
+  }
+
   const reporter = options?.reporter || defaultReporter
   reporter({ errors, env: cleanedEnv })
   return cleanedEnv
