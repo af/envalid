@@ -28,6 +28,16 @@ test('bool() works with various formats', () => {
   const f = cleanEnv({ FOO: 'f' }, { FOO: bool() })
   expect(f).toEqual({ FOO: false })
 
+  const yes = cleanEnv({ FOO: 'yes'}, { FOO: bool() })
+  expect(yes).toEqual({ FOO: true })
+  const no = cleanEnv({ FOO: 'no' }, { FOO: bool() })
+  expect(no).toEqual({ FOO: false })
+
+  const on = cleanEnv({ FOO: 'on'}, { FOO: bool() })
+  expect(on).toEqual({ FOO: true })
+  const off = cleanEnv({ FOO: 'off' }, { FOO: bool() })
+  expect(off).toEqual({ FOO: false })
+
   const defaultF = cleanEnv({}, { FOO: bool({ default: false }) })
   expect(defaultF).toEqual({ FOO: false })
 })
