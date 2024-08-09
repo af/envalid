@@ -34,11 +34,15 @@ export const bool = makeExactValidator<boolean>((input: string | boolean) => {
     case true:
     case 'true':
     case 't':
+    case 'yes':
+    case 'on':
     case '1':
       return true
     case false:
     case 'false':
     case 'f':
+    case 'no':
+    case 'off':
     case '0':
       return false
     default:
