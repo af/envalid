@@ -66,34 +66,35 @@ export function getSanitizedEnv<S>(
     const spec = castedSpecs[k]
     const rawValue = readRawEnvValue(environment, k)
 
-    // If no value was given and default/devDefault were provided, return the appropriate default
-    // value without passing it through validation
-    if (rawValue === undefined) {
-      // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
-      const usingDevDefault =
-        rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
-      if (usingDevDefault) {
-        cleanedEnv[k] = spec.devDefault
+    try {
+      // If no value was given and default/devDefault were provided, return the appropriate default
+      // value without passing it through validation
+      if (rawValue === undefined) {
+        // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
+        const usingDevDefault =
+          rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
 
-        if (isTestOnlySymbol(spec.devDefault) && rawNodeEnv != 'test') {
-          throw new EnvMissingError(formatSpecDescription(spec))
+        if (usingDevDefault) {
+          cleanedEnv[k] = spec.devDefault
+
+          if (isTestOnlySymbol(spec.devDefault) && rawNodeEnv != 'test') {
+            throw new EnvMissingError(formatSpecDescription(spec))
+          }
+
+          continue
         }
 
-        continue
-      }
-      if ('default' in spec) {
-        cleanedEnv[k] = spec.default
-        continue
-      }
-    }
+        if ('default' in spec) {
+          cleanedEnv[k] = spec.default
+          continue
+        }
 
-    try {
-      if (rawValue === undefined) {
+        // Throw error when no default value is provided
         cleanedEnv[k] = undefined
         throw new EnvMissingError(formatSpecDescription(spec))
-      } else {
-        cleanedEnv[k] = validateVar({ name: k as string, spec, rawValue })
       }
+
+      cleanedEnv[k] = validateVar({ name: k as string, spec, rawValue })
     } catch (err) {
       if (options?.reporter === null) throw err
       if (err instanceof Error) errors[k] = err
