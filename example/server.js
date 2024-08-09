@@ -16,24 +16,13 @@
 //    NODE_ENV=development node example/server.js
 
 const http = require('http')
-const https = require('https')
 const env = require('./env')
 
-var options = {
-  key: fs.readFileSync('test/fixtures/keys/agent2-key.pem'),
-  cert: fs.readFileSync('test/fixtures/keys/agent2-cert.cert')
-};
-
-const serverBody = (req, res) => {
+const server = http.createServer((req, res) => {
   res.statusCode = 200
   res.setHeader('Content-Type', 'text/plain')
   res.end(env.MESSAGE)
-}
-
-const server = (env.USE_TLS)? http.createServer(serverBody): https.createServer({
-  key: fs.readFileSync(env.TLS_KEY_PATH),
-  cert: fs.readFileSync(env.TLS_CERT_PATH)
-},serverBody);
+})
 
 server.listen(env.PORT, env.HOST, () => {
   const serverType = env.isProduction ? 'production' : 'dev'
