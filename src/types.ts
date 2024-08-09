@@ -24,6 +24,8 @@ export interface Spec<T> {
    * This is handy for env vars that are required for production environments, but optional for development and testing.
    */
   devDefault?: NonNullable<T> | undefined
+
+  requiredWhen?: (cleanedEnv: any) => boolean | undefined
 }
 
 type OptionalAttrs<T> =
