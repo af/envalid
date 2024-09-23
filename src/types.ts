@@ -25,7 +25,11 @@ export interface Spec<T> {
    */
   devDefault?: NonNullable<T> | undefined
 
-  requiredWhen?: (cleanedEnv: any) => boolean | undefined
+  /**
+   * A function (env -> boolean) that allows an env var to be required only when certain
+   * conditions are met with the rest of the env object. Use With default: undefined.
+   */
+  requiredWhen?: (cleanedEnv: Record<string, unknown>) => boolean | undefined
 }
 
 type OptionalAttrs<T> =
@@ -103,16 +107,16 @@ export type SpecsOutput<S> = {
 
 export type CleanedEnv<S> =
   S extends Record<string, ValidatorSpec<unknown>>
-    ? Readonly<
-        {
-          [K in keyof S]: S[K] extends OptionalValidatorSpec<infer U>
-            ? U | undefined
-            : S[K] extends RequiredValidatorSpec<infer U>
-              ? U
-              : never
-        } & CleanedEnvAccessors
-      >
-    : never
+  ? Readonly<
+    {
+      [K in keyof S]: S[K] extends OptionalValidatorSpec<infer U>
+      ? U | undefined
+      : S[K] extends RequiredValidatorSpec<infer U>
+      ? U
+      : never
+    } & CleanedEnvAccessors
+  >
+  : never
 
 export interface CleanedEnvAccessors {
   /** true if NODE_ENV === 'development' */

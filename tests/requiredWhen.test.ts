@@ -1,14 +1,11 @@
-// let defaultReporter: jest.Mock = jest.fn().mockImplementation(() => {})
-// jest.mock('../src/reporter.ts', () => {
-//   return {
-//     defaultReporter: defaultReporter,
-//   }
-// })
-import { bool, cleanEnv, defaultReporter, EnvMissingError, Spec, num, EnvError } from '../src'
+import { bool, cleanEnv, defaultReporter, EnvMissingError, num, EnvError } from '../src'
+import { formatSpecDescription } from '../src/core'
+
 jest.mock('../src/reporter')
-const mockedDefaultReporter: jest.Mock = <jest.Mock<typeof defaultReporter>> defaultReporter;
-mockedDefaultReporter.mockImplementation((a) => {console.log(a)})
-describe('required when', () => {
+const mockedDefaultReporter: jest.Mock = <jest.Mock<typeof defaultReporter>>defaultReporter;
+mockedDefaultReporter.mockImplementation(() => { })
+
+describe('requiredWhen', () => {
   beforeEach(() => {
     mockedDefaultReporter.mockClear()
   })
@@ -35,7 +32,7 @@ describe('required when', () => {
     })
   })
 
-  test("required but not provided", () => {
+  test('required but not provided', () => {
     cleanEnv(
       {
         autoExtractId: "false",
@@ -67,7 +64,7 @@ describe('required when', () => {
     })
   })
 
-  test("required and provided", () => {
+  test('required and provided', () => {
     cleanEnv(
       {
         autoExtractId: "false",
@@ -90,8 +87,8 @@ describe('required when', () => {
       errors: {},
     })
   })
-  
-  test("required but failed to parse", () => {
+
+  test('required but failed to parse', () => {
     cleanEnv(
       {
         autoExtractId: "false",
@@ -117,8 +114,3 @@ describe('required when', () => {
     })
   })
 })
-function formatSpecDescription<T>(spec: Spec<T>) {
-  const egText = spec.example ? ` (eg. "${spec.example}")` : ''
-  const docsText = spec.docs ? `. See ${spec.docs}` : ''
-  return `${spec.desc}${egText}${docsText}`
-}

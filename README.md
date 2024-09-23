@@ -108,7 +108,7 @@ Each validation function accepts an (optional) object with the following attribu
 - `desc` - A string that describes the env var.
 - `example` - An example value for the env var.
 - `docs` - A URL that leads to more detailed documentation about the env var.
-- `requiredWhen` - A boolean function that specify when the env var is required. Use With default: undefined (optional value).
+- `requiredWhen` - A function (env -> boolean) specifying when this env var is required. Use With default: undefined (optional value).
 
 ## Custom validators
 

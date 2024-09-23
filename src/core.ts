@@ -36,7 +36,7 @@ function validateVar<T>({
 }
 
 // Format a string error message for when a required env var is missing
-function formatSpecDescription<T>(spec: Spec<T>) {
+export function formatSpecDescription<T>(spec: Spec<T>) {
   const egText = spec.example ? ` (eg. "${spec.example}")` : ''
   const docsText = spec.docs ? `. See ${spec.docs}` : ''
   return `${spec.desc}${egText}${docsText}`
@@ -100,6 +100,8 @@ export function getSanitizedEnv<S>(
     }
   }
 
+  // This block is for supporting requiredWhen. If that field was provided for a var's spec and 
+  // its condition evaluates to a truthy value, ensure that env var is present.
   for (const k of varKeys) {
     if (errors[k] == undefined) {
       const spec = castedSpecs[k]
