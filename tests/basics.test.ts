@@ -1,4 +1,4 @@
-import { cleanEnv, str, num, testOnly } from '../src'
+import { cleanEnv, str, num, testOnly, ReporterOptions } from '../src'
 import { assertPassthrough } from './utils'
 import { expectTypeOf } from 'expect-type'
 
@@ -226,23 +226,46 @@ describe('NODE_ENV built-in support', () => {
 
 test('testOnly', () => {
   const processEnv = process.env.NODE_ENV
-  const makeSpec = () => ({
-    FOO: str({ devDefault: testOnly('sup') }),
+
+  const reporter = jest.fn(({ errors = {} }: ReporterOptions<any>) => {
+    if (Object.keys(errors).length) {
+      throw new Error()
+    }
   })
 
   // Create an env spec that has our testOnly value applied as the devDefault,
   // and then restore the original NODE_ENV
   process.env.NODE_ENV = 'test'
-  const testSpec = makeSpec()
-  process.env.NODE_ENV = processEnv
-
-  const env = cleanEnv({ NODE_ENV: 'test' }, testSpec)
+  const env = cleanEnv(
+    { NODE_ENV: 'test' },
+    { FOO: str({ devDefault: testOnly('sup') }) },
+    { reporter },
+  )
   expect(env).toEqual({ FOO: 'sup' })
+  expect(reporter).toHaveBeenCalledTimes(1)
+  jest.clearAllMocks()
 
   process.env.NODE_ENV = 'production'
-  expect(() => cleanEnv({ NODE_ENV: 'production' }, makeSpec(), makeSilent)).toThrow()
+  expect(() =>
+    cleanEnv(
+      { NODE_ENV: 'production' },
+      { FOO: str({ devDefault: testOnly('sup') }) },
+      { reporter },
+    ),
+  ).toThrow()
+  expect(reporter).toHaveBeenCalledTimes(1)
+  jest.clearAllMocks()
 
   process.env.NODE_ENV = 'development'
-  expect(() => cleanEnv({ NODE_ENV: 'development' }, makeSpec(), makeSilent)).toThrow()
+  expect(() =>
+    cleanEnv(
+      { NODE_ENV: 'development' },
+      { FOO: str({ devDefault: testOnly('sup') }) },
+      { reporter },
+    ),
+  ).toThrow()
+  expect(reporter).toHaveBeenCalledTimes(1)
+  jest.clearAllMocks()
+
   process.env.NODE_ENV = processEnv
 })
