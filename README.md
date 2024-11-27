@@ -66,7 +66,10 @@ env.ADMIN_EMAIL // -> 'admin@example.com'
 // Envalid checks for NODE_ENV automatically, and provides the following
 // shortcut (boolean) properties for checking its value:
 env.isProduction // true if NODE_ENV === 'production'
+env.isProd // true if NODE_ENV === 'production'
+env.isStaging // true if NODE_ENV === 'staging'
 env.isTest // true if NODE_ENV === 'test'
+env.isDevelopment // true if NODE_ENV === 'development'
 env.isDev // true if NODE_ENV === 'development'
 ```
 
