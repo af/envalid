@@ -168,10 +168,11 @@ describe('NODE_ENV built-in support', () => {
   // (this was changed in v7). You need to create your own NODE_ENV validation if you want this to
   // happen.
   //
-  // The isProduction/isTest/isDev properties are still supported out of the box for
-  // 'production'/'test'/'development', respectively
+  // The isProduction/isStaging/isTest/isDev properties are still supported out of the box for
+  // 'production'/'staging'/'test'/'development', respectively
   test('no longer validates NODE_ENV by default', () => {
     expect(cleanEnv({ NODE_ENV: 'production' }, {})).toEqual({})
+    expect(cleanEnv({ NODE_ENV: 'staging' }, {})).toEqual({})
     expect(cleanEnv({ NODE_ENV: 'development' }, {})).toEqual({})
     expect(cleanEnv({ NODE_ENV: 'test' }, {})).toEqual({})
 
@@ -193,6 +194,8 @@ describe('NODE_ENV built-in support', () => {
   test('accessor helpers via middleware work as expected', () => {
     expect(cleanEnv({ NODE_ENV: 'production' }, {}).isProduction).toEqual(true)
     expect(cleanEnv({ NODE_ENV: 'production' }, {}).isProd).toEqual(true)
+    expect(cleanEnv({ NODE_ENV: 'staging' }, {}).isStaging).toEqual(true)
+    expect(cleanEnv({ NODE_ENV: 'staging' }, {}).isStage).toEqual(true)
     expect(cleanEnv({ NODE_ENV: 'test' }, {}).isTest).toEqual(true)
     expect(cleanEnv({ NODE_ENV: 'development' }, {}).isDev).toEqual(true)
     expect(cleanEnv({ NODE_ENV: 'development' }, {}).isDevelopment).toEqual(true)
@@ -200,6 +203,8 @@ describe('NODE_ENV built-in support', () => {
     // assume production if NODE_ENV is not specified:
     expect(cleanEnv({}, {}).isProduction).toEqual(true)
     expect(cleanEnv({}, {}).isProd).toEqual(true)
+    expect(cleanEnv({}, {}).isStage).toEqual(false)
+    expect(cleanEnv({}, {}).isStaging).toEqual(false)
     expect(cleanEnv({}, {}).isDev).toEqual(false)
     expect(cleanEnv({}, {}).isDevelopment).toEqual(false)
     expect(cleanEnv({}, {}).isTest).toEqual(false)
@@ -208,6 +213,8 @@ describe('NODE_ENV built-in support', () => {
     const unsetEnv = cleanEnv({ NODE_ENV: '' }, {})
     expect(unsetEnv.isProduction).toEqual(true)
     expect(unsetEnv.isProd).toEqual(true)
+    expect(unsetEnv.isStaging).toEqual(false)
+    expect(unsetEnv.isStage).toEqual(false)
     expect(unsetEnv.isDev).toEqual(false)
     expect(unsetEnv.isDevelopment).toEqual(false)
   })
@@ -219,6 +226,8 @@ describe('NODE_ENV built-in support', () => {
     expect(cleanEnv({}, customSpec)).toEqual({ NODE_ENV: 'FOO' })
     expect(cleanEnv({}, customSpec).isProduction).toEqual(false)
     expect(cleanEnv({}, customSpec).isProd).toEqual(false)
+    expect(cleanEnv({}, customSpec).isStaging).toEqual(false)
+    expect(cleanEnv({}, customSpec).isStage).toEqual(false)
     expect(cleanEnv({}, customSpec).isDev).toEqual(false)
     expect(cleanEnv({}, customSpec).isDevelopment).toEqual(false)
   })
@@ -241,6 +250,9 @@ test('testOnly', () => {
 
   process.env.NODE_ENV = 'production'
   expect(() => cleanEnv({ NODE_ENV: 'production' }, makeSpec(), makeSilent)).toThrow()
+
+  process.env.NODE_ENV = 'staging'
+  expect(() => cleanEnv({ NODE_ENV: 'staging' }, makeSpec(), makeSilent)).toThrow()
 
   process.env.NODE_ENV = 'development'
   expect(() => cleanEnv({ NODE_ENV: 'development' }, makeSpec(), makeSilent)).toThrow()
