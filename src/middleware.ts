@@ -64,7 +64,7 @@ export const strictProxyMiddleware = <T extends object>(
 }
 
 export const accessorMiddleware = <T>(envObj: T, rawEnv: unknown) => {
-  // Attach is{Prod/Dev/Test} properties for more readable NODE_ENV checks
+  // Attach is{Prod/Stage/Dev/Test} properties for more readable NODE_ENV checks
   // Note that isDev and isProd are just aliases to isDevelopment and isProduction
 
   // @ts-ignore attempt to read NODE_ENV even if it's not in the spec
@@ -76,6 +76,8 @@ export const accessorMiddleware = <T>(envObj: T, rawEnv: unknown) => {
   Object.defineProperties(envObj, {
     isDevelopment: { value: computedNodeEnv === 'development' },
     isDev: { value: computedNodeEnv === 'development' },
+    isStaging: { value: computedNodeEnv === 'staging' },
+    isStage: { value: computedNodeEnv === 'staging' },
     isProduction: { value: isProd },
     isProd: { value: isProd },
     isTest: { value: computedNodeEnv === 'test' },

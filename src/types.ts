@@ -126,6 +126,10 @@ export interface CleanedEnvAccessors {
   /** true if NODE_ENV === 'test' */
   readonly isTest: boolean
 
+  /** true if NODE_ENV === 'staging' */
+  readonly isStaging: boolean
+  readonly isStage: boolean
+
   /** true if NODE_ENV === 'production' */
   readonly isProduction: boolean
   readonly isProd: boolean
