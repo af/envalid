@@ -18,7 +18,8 @@
     "start": "tsc --watch",
     "prepare": "tsc",
     "coverage": "jest --coverage",
-    "lint": "tsc && biome lint --diagnostic-level=error src",
+    "tsc": "tsc --noEmit",
+    "lint": "biome lint --diagnostic-level=error src",
     "test": "jest"
   },
   "repository": {
@@ -52,7 +53,7 @@
   "license": "MIT",
   "husky": {
     "hooks": {
-      "pre-commit": "yarn lint",
+      "pre-commit": "yarn lint && yarn tsc",
       "pre-push": "yarn test"
     }
   }

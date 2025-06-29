@@ -26,7 +26,10 @@ jobs:
       - name: Install dependencies
         run: yarn --frozen-lockfile
 
-      - name: ESLint
+      - name: Typescript check
+        run: yarn tsc
+
+      - name: Biome lint check
         run: yarn lint
 
       - name: Unit tests

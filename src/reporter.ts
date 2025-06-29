@@ -1,4 +1,3 @@
-/* eslint-disable no-console */
 import { EnvMissingError } from './errors'
 import type { ReporterOptions } from './types'
 
