@@ -1,3 +1,4 @@
+import { describe, test, expect, vi, beforeEach, afterEach, type MockedFunction } from 'vitest'
 import {
   defaultReporter as mainReporterExport,
   envalidErrorFormatter as mainEnvalidErrorFormatter,
@@ -6,12 +7,12 @@ import { defaultReporter, envalidErrorFormatter } from '../src/reporter'
 import { EnvError, EnvMissingError } from '../src/errors'
 
 describe('default reporter', () => {
-  let logger: jest.MockedFunction<any>
-  let exitSpy: jest.SpyInstance | null = null
+  let logger: MockedFunction<any>
+  let exitSpy: any = null
 
   beforeEach(() => {
-    logger = jest.fn()
-    exitSpy = jest.spyOn(process, 'exit').mockImplementation()
+    logger = vi.fn()
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => { }) as any)
   })
 
   afterEach(() => {
@@ -105,10 +106,10 @@ describe('default reporter', () => {
 })
 
 describe('envalidErrorFormatter', () => {
-  let logger: jest.MockedFunction<any>
+  let logger: MockedFunction<any>
 
   beforeEach(() => {
-    logger = jest.fn()
+    logger = vi.fn()
   })
 
   test('default formatter should be exported from the top-level module', () => {

@@ -1,3 +1,4 @@
+import { describe, test, expect } from 'vitest'
 import { cleanEnv, customCleanEnv, str } from '../src'
 import { accessorMiddleware, strictProxyMiddleware } from '../src/middleware'
 
