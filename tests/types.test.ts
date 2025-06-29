@@ -3,10 +3,10 @@ import {
   str,
   bool,
   num,
-  RequiredValidatorSpec,
-  OptionalValidatorSpec,
+  type RequiredValidatorSpec,
+  type OptionalValidatorSpec,
   json,
-  CleanedEnvAccessors,
+  type CleanedEnvAccessors,
 } from '../src'
 import { expectTypeOf } from 'expect-type'
 import { makeStructuredValidator, makeValidator } from '../src/makers'

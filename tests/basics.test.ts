@@ -1,4 +1,4 @@
-import { cleanEnv, str, num, testOnly, ReporterOptions } from '../src'
+import { cleanEnv, str, num, testOnly, type ReporterOptions } from '../src'
 import { assertPassthrough } from './utils'
 import { expectTypeOf } from 'expect-type'
 

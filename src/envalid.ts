@@ -1,4 +1,4 @@
-import { CleanedEnv, CleanOptions } from './types'
+import type { CleanedEnv, CleanOptions } from './types'
 import { getSanitizedEnv, testOnlySymbol } from './core'
 import { applyDefaultMiddleware } from './middleware'
 
