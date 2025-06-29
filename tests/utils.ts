@@ -1,4 +1,5 @@
-import { cleanEnv, type ValidatorSpec } from '../src'
+import { expect } from 'vitest'
+import { cleanEnv, ValidatorSpec } from '../src'
 
 // Ensure that a given environment spec passes through all values from the given
 // env object

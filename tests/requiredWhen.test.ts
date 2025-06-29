@@ -1,8 +1,9 @@
+import { describe, test, expect, vi, beforeEach } from 'vitest'
 import { bool, cleanEnv, defaultReporter, EnvMissingError, num, EnvError } from '../src'
 import { formatSpecDescription } from '../src/core'
 
-jest.mock('../src/reporter')
-const mockedDefaultReporter: jest.Mock = <jest.Mock<typeof defaultReporter>>defaultReporter;
+vi.mock('../src/reporter')
+const mockedDefaultReporter: vi.Mock = <vi.Mock<typeof defaultReporter>>defaultReporter;
 mockedDefaultReporter.mockImplementation(() => { })
 
 describe('requiredWhen', () => {

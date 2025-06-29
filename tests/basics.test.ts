@@ -1,3 +1,4 @@
+import { describe, test, expect, vi } from 'vitest'
 import { cleanEnv, str, num, testOnly, type ReporterOptions } from '../src'
 import { assertPassthrough } from './utils'
 import { expectTypeOf } from 'expect-type'
@@ -227,7 +228,7 @@ describe('NODE_ENV built-in support', () => {
 test('testOnly', () => {
   const processEnv = process.env.NODE_ENV
 
-  const reporter = jest.fn(({ errors = {} }: ReporterOptions<any>) => {
+  const reporter = vi.fn(({ errors = {} }: ReporterOptions<any>) => {
     if (Object.keys(errors).length) {
       throw new Error()
     }
@@ -243,7 +244,7 @@ test('testOnly', () => {
   )
   expect(env).toEqual({ FOO: 'sup' })
   expect(reporter).toHaveBeenCalledTimes(1)
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 
   process.env.NODE_ENV = 'production'
   expect(() =>
@@ -254,7 +255,7 @@ test('testOnly', () => {
     ),
   ).toThrow()
   expect(reporter).toHaveBeenCalledTimes(1)
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 
   process.env.NODE_ENV = 'development'
   expect(() =>
@@ -265,7 +266,7 @@ test('testOnly', () => {
     ),
   ).toThrow()
   expect(reporter).toHaveBeenCalledTimes(1)
-  jest.clearAllMocks()
+  vi.clearAllMocks()
 
   process.env.NODE_ENV = processEnv
 })
