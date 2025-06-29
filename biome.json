@@ -1,5 +1,10 @@
 {
   "$schema": "./node_modules/@biomejs/biome/configuration_schema.json",
+  "files": {
+    "includes": [
+      "src/**/*.ts"
+    ]
+  },
   "formatter": {
     "enabled": true,
     "formatWithErrors": false,
@@ -21,7 +26,8 @@
         "noSvgWithoutTitle": "off"
       },
       "suspicious": {
-        "noArrayIndexKey": "warn"
+        "noArrayIndexKey": "warn",
+        "noDoubleEquals": "off"
       },
       "style": {
         "useImportType": "warn"

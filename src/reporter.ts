@@ -1,6 +1,6 @@
 /* eslint-disable no-console */
 import { EnvMissingError } from './errors'
-import { ReporterOptions } from './types'
+import type { ReporterOptions } from './types'
 
 type Errors<T> = Partial<Record<keyof T, Error>>
 type Logger = (data: any, ...args: any[]) => void

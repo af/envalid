@@ -1,4 +1,4 @@
-import { CleanedEnvAccessors, StrictProxyMiddlewareOptions } from './types'
+import type { CleanedEnvAccessors, StrictProxyMiddlewareOptions } from './types'
 
 export const strictProxyMiddleware = <T extends object>(
   envObj: T,
@@ -43,7 +43,7 @@ export const strictProxyMiddleware = <T extends object>(
         return target[name]
       }
 
-      const varExists = target.hasOwnProperty(name)
+      const varExists = Object.hasOwn(target, name)
       if (!varExists) {
         if (typeof rawEnv === 'object' && rawEnv?.hasOwnProperty?.(name)) {
           throw new ReferenceError(

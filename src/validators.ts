@@ -5,7 +5,7 @@ import { makeExactValidator, makeStructuredValidator, makeValidator } from './ma
 const isFQDN = (input: string) => {
   if (!input.length) return false
   const parts = input.split('.')
-  for (let part, i = 0; i < parts.length; i++) {
+  for (let part: string, i = 0; i < parts.length; i++) {
     part = parts[i]
     if (!/^[a-z\u00a1-\uffff0-9-]+$/i.test(part)) return false
     if (/[\uff01-\uff5e]/.test(part)) return false // disallow full-width chars

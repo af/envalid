@@ -106,8 +106,8 @@ describe('proxy middleware', () => {
       },
     )
 
-    expect(env.hasOwnProperty('FOO')).toEqual(true)
-    expect(env.hasOwnProperty('BAR')).toEqual(false)
+    expect(Object.hasOwn(env, 'FOO')).toEqual(true)
+    expect(Object.hasOwn(env, 'BAR')).toEqual(false)
   })
 
   test('proxy does not error out on .length checks (#70)', () => {

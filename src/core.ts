@@ -1,5 +1,5 @@
 import { EnvError, EnvMissingError } from './errors'
-import { CleanOptions, SpecsOutput, Spec, ValidatorSpec } from './types'
+import type { CleanOptions, SpecsOutput, Spec, ValidatorSpec } from './types'
 import { defaultReporter } from './reporter'
 
 export const testOnlySymbol = Symbol('envalid - test only')
@@ -56,7 +56,7 @@ export function getSanitizedEnv<S>(
   specs: S,
   options: CleanOptions<SpecsOutput<S>> = {},
 ): SpecsOutput<S> {
-  let cleanedEnv = {} as SpecsOutput<S>
+  const cleanedEnv = {} as SpecsOutput<S>
   const castedSpecs = specs as unknown as Record<keyof S, ValidatorSpec<unknown>>
   const errors = {} as Record<keyof S, Error>
   const varKeys = Object.keys(castedSpecs) as Array<keyof S>
@@ -72,7 +72,7 @@ export function getSanitizedEnv<S>(
       if (rawValue === undefined) {
         // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
         const usingDevDefault =
-          rawNodeEnv && rawNodeEnv !== 'production' && spec.hasOwnProperty('devDefault')
+          rawNodeEnv && rawNodeEnv !== 'production' && Object.hasOwn(spec, 'devDefault')
 
         if (usingDevDefault) {
           cleanedEnv[k] = spec.devDefault
