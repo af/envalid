@@ -42,9 +42,9 @@
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.2",
     "@biomejs/biome": "2.0.6",
-    "@types/node": "24.0.7",
+    "@types/node": "24.0.13",
     "@vitest/coverage-v8": "3.2.4",
-    "expect-type": "1.2.1",
+    "expect-type": "1.2.2",
     "husky": "9.1.7",
     "typescript": "5.2.2",
     "vitest": "3.2.4"
