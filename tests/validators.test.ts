@@ -76,6 +76,10 @@ test('host()', () => {
   assertPassthrough({ FOO: 'localhost' }, spec)
   assertPassthrough({ FOO: '192.168.0.1' }, spec)
   assertPassthrough({ FOO: '2001:0db8:85a3:0000:0000:8a2e:0370:7334' }, spec)
+  assertPassthrough({ FOO: '::' }, spec) // Unspecifed IPv6 address RFC4291
+  assertPassthrough({ FOO: '::1' }, spec) // Loopback IPv6 address RFC4291
+  assertPassthrough({ FOO: 'fe80::a%en1' }, spec) // Scoped IPv6 address RFC6874
+  assertPassthrough({ FOO: '64:ff9b::1.1.1.1' }, spec) // NAT64 IPv4/IPv6 translation RFC6052
 
   expect(() => cleanEnv({ FOO: '' }, spec, makeSilent)).toThrow()
   expect(() => cleanEnv({ FOO: 'example.com.' }, spec, makeSilent)).toThrow()
