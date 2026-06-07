@@ -105,6 +105,11 @@ Each validation function accepts an (optional) object with the following attribu
 - `devDefault` - A fallback value to use _only_ when `NODE_ENV` is explicitly set and _not_ `'production'`.
   This is handy for env vars that are required for production environments, but optional
   for development and testing.
+- `testDefault` - A fallback value to use _only_ when `NODE_ENV=test`. When provided, it takes
+  priority over both `devDefault` and `default` in test environments. Unlike the `testOnly()`
+  helper (which is wrapped around a `devDefault` and therefore can't coexist with a separate
+  dev value), `testDefault` can be combined with `default` and `devDefault` to provide
+  distinct values for production, development, and test.
 - `desc` - A string that describes the env var.
 - `example` - An example value for the env var.
 - `docs` - A URL that leads to more detailed documentation about the env var.
@@ -220,11 +225,23 @@ argument required in the third position:
 
 ### testOnly
 
-The `testOnly` helper function is available for setting a default value for an env var only when `NODE_ENV=test`. It is recommended to use this function along with `devDefault`. For example:
+The `testOnly` helper function is available for setting a default value for an env var only when `NODE_ENV=test`. It is used by wrapping a `devDefault` value:
 
 ```js
 const env = cleanEnv(process.env, {
   SOME_VAR: envalid.str({ devDefault: testOnly('myTestValue') }),
+})
+```
+
+Because `testOnly` is applied via `devDefault`, you cannot use it to express both a development default _and_ a separate test default. For that, prefer the `testDefault` spec attribute, which can be combined freely with `default` and `devDefault`:
+
+```js
+const env = cleanEnv(process.env, {
+  SOME_VAR: envalid.str({
+    default: 'productionValue',
+    devDefault: 'devValue',
+    testDefault: 'myTestValue',
+  }),
 })
 ```
 

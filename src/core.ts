@@ -67,9 +67,15 @@ export function getSanitizedEnv<S>(
     const rawValue = readRawEnvValue(environment, k)
 
     try {
-      // If no value was given and default/devDefault were provided, return the appropriate default
-      // value without passing it through validation
+      // If no value was given and default/devDefault/testDefault were provided, return the
+      // appropriate default value without passing it through validation
       if (rawValue === undefined) {
+        // Use testDefault only when NODE_ENV is 'test'. Takes priority over devDefault and default.
+        if (rawNodeEnv === 'test' && Object.hasOwn(spec, 'testDefault')) {
+          cleanedEnv[k] = spec.testDefault
+          continue
+        }
+
         // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
         const usingDevDefault =
           rawNodeEnv && rawNodeEnv !== 'production' && Object.hasOwn(spec, 'devDefault')

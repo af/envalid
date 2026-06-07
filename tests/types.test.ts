@@ -32,6 +32,10 @@ describe('validators types', () => {
       OptionalValidatorSpec<boolean>
     >()
     expectTypeOf(validator({ devDefault: false })).toEqualTypeOf<RequiredValidatorSpec<boolean>>()
+    expectTypeOf(validator({ testDefault: undefined })).toEqualTypeOf<
+      OptionalValidatorSpec<boolean>
+    >()
+    expectTypeOf(validator({ testDefault: false })).toEqualTypeOf<RequiredValidatorSpec<boolean>>()
   })
 
   test('number-based validators', () => {
@@ -90,6 +94,12 @@ describe('validators types', () => {
       OptionalValidatorSpec<number>
     >()
     expectTypeOf(validator<2>({ devDefault: 2 })).toEqualTypeOf<RequiredValidatorSpec<2>>()
+    expectTypeOf(validator({ testDefault: 0 })).toEqualTypeOf<RequiredValidatorSpec<number>>()
+    expectTypeOf(validator({ testDefault: undefined })).toEqualTypeOf<
+      OptionalValidatorSpec<number>
+    >()
+    // @ts-expect-error - 3 is not assignable to 1 | 2
+    validator({ choices: [1, 2], testDefault: 3 })
   })
   test('string-based validators', () => {
     const validator = makeValidator<string>(() => '')
@@ -161,6 +171,20 @@ describe('validators types', () => {
     expectTypeOf(
       validator<'foo' | 'bar'>({ choices: ['foo', 'bar'], devDefault: 'bar' }),
     ).toEqualTypeOf<RequiredValidatorSpec<'foo' | 'bar'>>()
+    expectTypeOf(validator({ testDefault: 'foo' })).toEqualTypeOf<RequiredValidatorSpec<string>>()
+    expectTypeOf(validator({ testDefault: undefined })).toEqualTypeOf<
+      OptionalValidatorSpec<string>
+    >()
+    expectTypeOf(
+      validator({ default: 'foo', devDefault: 'foo', testDefault: 'foo' }),
+    ).toEqualTypeOf<RequiredValidatorSpec<string>>()
+    expectTypeOf(
+      validator<'foo' | 'bar' | 'baz'>({
+        default: 'foo',
+        devDefault: 'bar',
+        testDefault: 'baz',
+      }),
+    ).toEqualTypeOf<RequiredValidatorSpec<'foo' | 'bar' | 'baz'>>()
   })
   test('structured data validator', () => {
     const validator = makeStructuredValidator(() => ({}))
@@ -215,6 +239,8 @@ test('cleanEnv', () => {
     STR: 'FOO',
     STR_OPT: undefined,
     STR_DEV_DEFAULT_UDEF: undefined,
+    STR_TEST_DEFAULT: 'value',
+    STR_TEST_DEFAULT_UDEF: 'value',
     STR_CHOICES: 'foo',
     STR_REQ: 'BAR',
     STR_DEFAULT_CHOICES: 'bar',
@@ -239,6 +265,8 @@ test('cleanEnv', () => {
     STR_CHOICES: str({ choices: ['foo', 'bar'] }),
     STR_REQ: str({ default: 'foo' }),
     STR_DEFAULT_CHOICES: str({ default: 'foo', choices: ['foo', 'bar'] }),
+    STR_TEST_DEFAULT: str({ testDefault: 'foo' }),
+    STR_TEST_DEFAULT_UDEF: str({ testDefault: undefined }),
     BOOL: bool(),
     BOOL_OPT: bool({ default: undefined }),
     BOOL_DEV_DEFAULT: bool({ devDefault: undefined }),
@@ -261,6 +289,8 @@ test('cleanEnv', () => {
       STR_CHOICES: 'foo' | 'bar'
       STR_REQ: string
       STR_DEFAULT_CHOICES: 'foo' | 'bar'
+      STR_TEST_DEFAULT: string
+      STR_TEST_DEFAULT_UDEF: string | undefined
       BOOL: boolean
       BOOL_OPT: boolean | undefined
       BOOL_DEFAULT: boolean
@@ -286,6 +316,8 @@ test('cleanEnv', () => {
       STR_CHOICES: str({ choices: ['foo', 'bar'] }),
       STR_REQ: str({ default: 'foo' }),
       STR_DEFAULT_CHOICES: str({ default: 'foo', choices: ['foo', 'bar'] }),
+      STR_TEST_DEFAULT: str({ testDefault: 'foo' }),
+      STR_TEST_DEFAULT_UDEF: str({ testDefault: undefined }),
       BOOL: bool(),
       BOOL_OPT: bool({ default: undefined }),
       BOOL_DEV_DEFAULT: bool({ devDefault: undefined }),
