@@ -36,9 +36,6 @@
     "environment variable",
     "validation"
   ],
-  "dependencies": {
-    "tslib": "2.8.1"
-  },
   "devDependencies": {
     "@arethetypeswrong/cli": "0.18.2",
     "@biomejs/biome": "2.4.4",
