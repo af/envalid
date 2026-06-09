@@ -38,32 +38,29 @@ export interface Spec<T> {
   requiredWhen?: (cleanedEnv: Record<string, unknown>) => boolean | undefined
 }
 
+// All the default-providing attributes, each independently optional and allowed
+// to be either a concrete value or explicitly `undefined`.
+type DefaultAttrs<T> = {
+  default?: NonNullable<T> | undefined
+  devDefault?: NonNullable<T> | undefined
+  testDefault?: NonNullable<T> | undefined
+}
+
+// The output is optional (T | undefined) when *any* provided default attribute is
+// explicitly set to `undefined`, since that env var can then resolve to undefined.
 type OptionalAttrs<T> =
-  | { default: undefined }
-  | { devDefault: undefined }
-  | { testDefault: undefined }
-  | { default: undefined; devDefault: undefined }
-  | { default: undefined; testDefault: undefined }
-  | { devDefault: undefined; testDefault: undefined }
-  | { default: undefined; devDefault: undefined; testDefault: undefined }
-  | { default: NonNullable<T>; devDefault: undefined }
-  | { default: NonNullable<T>; testDefault: undefined }
-  | { devDefault: NonNullable<T>; testDefault: undefined }
-  | { default: undefined; devDefault: NonNullable<T> }
-  | { default: undefined; testDefault: NonNullable<T> }
-  | { devDefault: undefined; testDefault: NonNullable<T> }
-  | { default: NonNullable<T>; devDefault: NonNullable<T>; testDefault: undefined }
-  | { default: NonNullable<T>; devDefault: undefined; testDefault: NonNullable<T> }
-  | { default: undefined; devDefault: NonNullable<T>; testDefault: NonNullable<T> }
-type RequiredAttrs<T> =
-  | { default: NonNullable<T> }
-  | { devDefault: NonNullable<T> }
-  | { testDefault: NonNullable<T> }
-  | { devDefault: NonNullable<T>; default: NonNullable<T> }
-  | { testDefault: NonNullable<T>; default: NonNullable<T> }
-  | { testDefault: NonNullable<T>; devDefault: NonNullable<T> }
-  | { testDefault: NonNullable<T>; devDefault: NonNullable<T>; default: NonNullable<T> }
-  | {}
+  | (DefaultAttrs<T> & { default: undefined })
+  | (DefaultAttrs<T> & { devDefault: undefined })
+  | (DefaultAttrs<T> & { testDefault: undefined })
+
+// Otherwise the output is required: every provided default is a concrete value (or
+// none are provided at all). The Optional overload is matched first, so specs with an
+// explicit `undefined` resolve to OptionalAttrs before reaching here.
+type RequiredAttrs<T> = {
+  default?: NonNullable<T>
+  devDefault?: NonNullable<T>
+  testDefault?: NonNullable<T>
+}
 
 type DefaultKeys = 'default' | 'devDefault' | 'testDefault'
 

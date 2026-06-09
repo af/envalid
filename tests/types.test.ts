@@ -232,6 +232,46 @@ describe('validators types', () => {
       }>
     >()
   })
+
+  // Exhaustively pin the Optional-vs-Required resolution for every combination of the
+  // three default-providing attributes (default/devDefault/testDefault), each being
+  // absent, an explicit `undefined`, or a concrete value. The invariant: the output is
+  // Optional iff *any* provided attribute is explicitly `undefined`, otherwise Required.
+  test('default attribute combinations', () => {
+    type Opt = OptionalValidatorSpec<string>
+    type Req = RequiredValidatorSpec<string>
+
+    // No explicit `undefined` anywhere -> Required
+    expectTypeOf(str()).toEqualTypeOf<Req>()
+    expectTypeOf(str({ default: 'x' })).toEqualTypeOf<Req>()
+    expectTypeOf(str({ devDefault: 'x' })).toEqualTypeOf<Req>()
+    expectTypeOf(str({ testDefault: 'x' })).toEqualTypeOf<Req>()
+    expectTypeOf(str({ default: 'x', devDefault: 'x' })).toEqualTypeOf<Req>()
+    expectTypeOf(str({ default: 'x', testDefault: 'x' })).toEqualTypeOf<Req>()
+    expectTypeOf(str({ devDefault: 'x', testDefault: 'x' })).toEqualTypeOf<Req>()
+    expectTypeOf(str({ default: 'x', devDefault: 'x', testDefault: 'x' })).toEqualTypeOf<Req>()
+
+    // At least one explicit `undefined` -> Optional
+    expectTypeOf(str({ default: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ devDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ testDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: undefined, devDefault: 'x' })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: 'x', devDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: undefined, testDefault: 'x' })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: 'x', testDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ devDefault: undefined, testDefault: 'x' })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ devDefault: 'x', testDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: undefined, devDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: undefined, testDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ devDefault: undefined, testDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: undefined, devDefault: 'x', testDefault: 'x' })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: 'x', devDefault: undefined, testDefault: 'x' })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: 'x', devDefault: 'x', testDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: undefined, devDefault: undefined, testDefault: 'x' })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: undefined, devDefault: 'x', testDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: 'x', devDefault: undefined, testDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(str({ default: undefined, devDefault: undefined, testDefault: undefined })).toEqualTypeOf<Opt>()
+  })
 })
 
 test('cleanEnv', () => {
