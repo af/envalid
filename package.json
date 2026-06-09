@@ -37,14 +37,14 @@
     "validation"
   ],
   "devDependencies": {
-    "@arethetypeswrong/cli": "0.18.2",
-    "@biomejs/biome": "2.4.4",
-    "@types/node": "25.3.2",
-    "@vitest/coverage-v8": "4.0.18",
+    "@arethetypeswrong/cli": "0.18.3",
+    "@biomejs/biome": "2.4.16",
+    "@types/node": "25.9.2",
+    "@vitest/coverage-v8": "4.1.8",
     "expect-type": "1.3.0",
     "husky": "9.1.7",
     "typescript": "5.2.2",
-    "vitest": "4.0.18"
+    "vitest": "4.1.8"
   },
   "author": "Aaron Franks",
   "license": "MIT",
