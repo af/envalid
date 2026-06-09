@@ -89,6 +89,79 @@ test('falsy devDefault', () => {
   expect(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent)).toThrow()
 })
 
+test('testDefault', () => {
+  const spec = {
+    FOO: str({ testDefault: 'hi' }),
+  }
+
+  // testDefault is used when NODE_ENV is 'test'
+  const env = cleanEnv({ NODE_ENV: 'test' }, spec)
+  expect(env).toEqual({ FOO: 'hi' })
+
+  // testDefault is not used in production (and the field has no other default, so it throws)
+  expect(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent)).toThrow()
+
+  // testDefault is not used in development either
+  expect(() => cleanEnv({ NODE_ENV: 'development' }, spec, makeSilent)).toThrow()
+})
+
+test('testDefault set to undefined', () => {
+  const env = cleanEnv(
+    { NODE_ENV: 'test' },
+    {
+      FOO: str({ testDefault: undefined }),
+    },
+  )
+  expect(env).toEqual({ FOO: undefined })
+})
+
+test('falsy testDefault', () => {
+  const spec = {
+    FOO: str({ testDefault: '' }),
+  }
+
+  const env = cleanEnv({ NODE_ENV: 'test' }, spec)
+  expect(env).toEqual({ FOO: '' })
+
+  expect(() => cleanEnv({ NODE_ENV: 'production' }, spec, makeSilent)).toThrow()
+})
+
+test('testDefault takes priority over devDefault and default in test', () => {
+  const spec = {
+    FOO: str({ default: 'prod', devDefault: 'dev', testDefault: 'test' }),
+  }
+
+  expect(cleanEnv({ NODE_ENV: 'test' }, spec)).toEqual({ FOO: 'test' })
+  expect(cleanEnv({ NODE_ENV: 'development' }, spec)).toEqual({ FOO: 'dev' })
+  expect(cleanEnv({ NODE_ENV: 'production' }, spec)).toEqual({ FOO: 'prod' })
+})
+
+test('testDefault falls back to devDefault/default outside of test', () => {
+  // testDefault alongside default: outside test, uses default
+  expect(
+    cleanEnv(
+      { NODE_ENV: 'production' },
+      { FOO: str({ default: 'prod', testDefault: 'test' }) },
+    ),
+  ).toEqual({ FOO: 'prod' })
+
+  // testDefault alongside devDefault: in development, uses devDefault
+  expect(
+    cleanEnv(
+      { NODE_ENV: 'development' },
+      { FOO: str({ devDefault: 'dev', testDefault: 'test' }) },
+    ),
+  ).toEqual({ FOO: 'dev' })
+})
+
+test('testDefault overrides default in test even when devDefault absent', () => {
+  const env = cleanEnv(
+    { NODE_ENV: 'test' },
+    { FOO: str({ default: 'prod', testDefault: 'test' }) },
+  )
+  expect(env).toEqual({ FOO: 'test' })
+})
+
 test('devDefault and default together', () => {
   const spec = {
     FOO: num({ devDefault: 3000, default: 80 }),

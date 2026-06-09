@@ -24,6 +24,12 @@ export interface Spec<T> {
    * This is handy for env vars that are required for production environments, but optional for development and testing.
    */
   devDefault?: NonNullable<T> | undefined
+  /**
+   * A fallback value to use only when NODE_ENV is 'test'. Takes priority over `devDefault` and `default`.
+   * Unlike the `testOnly()` helper (which wraps a `devDefault` value), `testDefault` can be combined
+   * with both `default` and `devDefault` to specify distinct values for production, development, and test.
+   */
+  testDefault?: NonNullable<T> | undefined
 
   /**
    * A function (env -> boolean) that allows an env var to be required only when certain
@@ -35,16 +41,31 @@ export interface Spec<T> {
 type OptionalAttrs<T> =
   | { default: undefined }
   | { devDefault: undefined }
+  | { testDefault: undefined }
   | { default: undefined; devDefault: undefined }
+  | { default: undefined; testDefault: undefined }
+  | { devDefault: undefined; testDefault: undefined }
+  | { default: undefined; devDefault: undefined; testDefault: undefined }
   | { default: NonNullable<T>; devDefault: undefined }
+  | { default: NonNullable<T>; testDefault: undefined }
+  | { devDefault: NonNullable<T>; testDefault: undefined }
   | { default: undefined; devDefault: NonNullable<T> }
+  | { default: undefined; testDefault: NonNullable<T> }
+  | { devDefault: undefined; testDefault: NonNullable<T> }
+  | { default: NonNullable<T>; devDefault: NonNullable<T>; testDefault: undefined }
+  | { default: NonNullable<T>; devDefault: undefined; testDefault: NonNullable<T> }
+  | { default: undefined; devDefault: NonNullable<T>; testDefault: NonNullable<T> }
 type RequiredAttrs<T> =
   | { default: NonNullable<T> }
   | { devDefault: NonNullable<T> }
+  | { testDefault: NonNullable<T> }
   | { devDefault: NonNullable<T>; default: NonNullable<T> }
+  | { testDefault: NonNullable<T>; default: NonNullable<T> }
+  | { testDefault: NonNullable<T>; devDefault: NonNullable<T> }
+  | { testDefault: NonNullable<T>; devDefault: NonNullable<T>; default: NonNullable<T> }
   | {}
 
-type DefaultKeys = 'default' | 'devDefault'
+type DefaultKeys = 'default' | 'devDefault' | 'testDefault'
 
 type OptionalSpec<T> = Spec<T> & OptionalAttrs<T>
 type OptionalTypelessSpec = Omit<OptionalSpec<unknown>, 'choices'>
