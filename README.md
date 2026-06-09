@@ -30,7 +30,7 @@ Node.js programs, aiming to:
 ## Why Envalid?
 
 - Type-safe: written completely in TypeScript, with great support for inference
-- Light: no dependencies besides [tslib](https://github.com/Microsoft/tslib)
+- Light: no dependencies!
 - Modular: customize behavior with custom validators, middleware, and reporters
 
 ## API
@@ -75,7 +75,7 @@ For an example you can play with, clone this repo and see the `example/` directo
 ```
 git clone https://github.com/af/envalid
 cd envalid
-yarn prepare
+bun install
 node example/server.js
 ```
 
