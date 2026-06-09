@@ -12,25 +12,27 @@ jobs:
 
     strategy:
       matrix:
-        node-version: [20, 22]
+        node-version: [20, 22, 24]
 
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
+
+      - name: Setup Bun
+        uses: oven-sh/setup-bun@v2
 
       - name: Use Node.js ${{ matrix.node-version }}
-        uses: actions/setup-node@v3
+        uses: actions/setup-node@v4
         with:
           node-version: ${{ matrix.node-version }}
-          cache: yarn
 
       - name: Install dependencies
-        run: yarn --frozen-lockfile
+        run: bun install --frozen-lockfile
 
       - name: Typescript check
-        run: yarn tsc
+        run: bun run tsc
 
       - name: Biome lint check
-        run: yarn lint
+        run: bun run lint
 
       - name: Unit tests
-        run: yarn test:ci
+        run: bun run test:ci
