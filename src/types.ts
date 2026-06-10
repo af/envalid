@@ -26,8 +26,6 @@ export interface Spec<T> {
   devDefault?: NonNullable<T> | undefined
   /**
    * A fallback value to use only when NODE_ENV is 'test'. Takes priority over `devDefault` and `default`.
-   * Unlike the `testOnly()` helper (which wraps a `devDefault` value), `testDefault` can be combined
-   * with both `default` and `devDefault` to specify distinct values for production, development, and test.
    */
   testDefault?: NonNullable<T> | undefined
 
@@ -125,16 +123,16 @@ export type SpecsOutput<S> = {
 
 export type CleanedEnv<S> =
   S extends Record<string, ValidatorSpec<unknown>>
-  ? Readonly<
-    {
-      [K in keyof S]: S[K] extends OptionalValidatorSpec<infer U>
-      ? U | undefined
-      : S[K] extends RequiredValidatorSpec<infer U>
-      ? U
-      : never
-    } & CleanedEnvAccessors
-  >
-  : never
+    ? Readonly<
+        {
+          [K in keyof S]: S[K] extends OptionalValidatorSpec<infer U>
+            ? U | undefined
+            : S[K] extends RequiredValidatorSpec<infer U>
+              ? U
+              : never
+        } & CleanedEnvAccessors
+      >
+    : never
 
 export interface CleanedEnvAccessors {
   /** true if NODE_ENV === 'development' */

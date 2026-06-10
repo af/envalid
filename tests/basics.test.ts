@@ -1,5 +1,5 @@
 import { describe, test, expect, vi } from 'vitest'
-import { cleanEnv, str, num, testOnly, type ReporterOptions } from '../src'
+import { cleanEnv, str, num, type ReporterOptions } from '../src'
 import { assertPassthrough } from './utils'
 import { expectTypeOf } from 'expect-type'
 
@@ -296,50 +296,4 @@ describe('NODE_ENV built-in support', () => {
     expect(cleanEnv({}, customSpec).isDev).toEqual(false)
     expect(cleanEnv({}, customSpec).isDevelopment).toEqual(false)
   })
-})
-
-test('testOnly', () => {
-  const processEnv = process.env.NODE_ENV
-
-  const reporter = vi.fn(({ errors = {} }: ReporterOptions<any>) => {
-    if (Object.keys(errors).length) {
-      throw new Error()
-    }
-  })
-
-  // Create an env spec that has our testOnly value applied as the devDefault,
-  // and then restore the original NODE_ENV
-  process.env.NODE_ENV = 'test'
-  const env = cleanEnv(
-    { NODE_ENV: 'test' },
-    { FOO: str({ devDefault: testOnly('sup') }) },
-    { reporter },
-  )
-  expect(env).toEqual({ FOO: 'sup' })
-  expect(reporter).toHaveBeenCalledTimes(1)
-  vi.clearAllMocks()
-
-  process.env.NODE_ENV = 'production'
-  expect(() =>
-    cleanEnv(
-      { NODE_ENV: 'production' },
-      { FOO: str({ devDefault: testOnly('sup') }) },
-      { reporter },
-    ),
-  ).toThrow()
-  expect(reporter).toHaveBeenCalledTimes(1)
-  vi.clearAllMocks()
-
-  process.env.NODE_ENV = 'development'
-  expect(() =>
-    cleanEnv(
-      { NODE_ENV: 'development' },
-      { FOO: str({ devDefault: testOnly('sup') }) },
-      { reporter },
-    ),
-  ).toThrow()
-  expect(reporter).toHaveBeenCalledTimes(1)
-  vi.clearAllMocks()
-
-  process.env.NODE_ENV = processEnv
 })

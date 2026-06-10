@@ -1,5 +1,5 @@
 import type { CleanedEnv, CleanOptions } from './types'
-import { getSanitizedEnv, testOnlySymbol } from './core'
+import { getSanitizedEnv } from './core'
 import { applyDefaultMiddleware } from './middleware'
 
 /**
@@ -37,13 +37,4 @@ export function customCleanEnv<S, MW>(
 ): Readonly<MW> {
   const cleaned = getSanitizedEnv(environment, specs, options)
   return Object.freeze(applyMiddleware(cleaned as CleanedEnv<S>, environment))
-}
-
-/**
- * Utility function for providing default values only when NODE_ENV=test
- *
- * For more context, see https://github.com/af/envalid/issues/32
- */
-export const testOnly = <T>(defaultValueForTests: T) => {
-  return process.env.NODE_ENV === 'test' ? defaultValueForTests : (testOnlySymbol as unknown as T) // T is not strictly correct, but prevents type errors during usage
 }

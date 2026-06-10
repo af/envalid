@@ -221,32 +221,6 @@ argument required in the third position:
   middleware (see src/middleware.ts), which you can mix and match with your own
   custom logic to get the behavior you desire.
 
-## Utils
-
-### testOnly
-
-The `testOnly` helper function is available for setting a default value for an env var only when `NODE_ENV=test`. It is used by wrapping a `devDefault` value:
-
-```js
-const env = cleanEnv(process.env, {
-  SOME_VAR: envalid.str({ devDefault: testOnly('myTestValue') }),
-})
-```
-
-Because `testOnly` is applied via `devDefault`, you cannot use it to express both a development default _and_ a separate test default. For that, prefer the `testDefault` spec attribute, which can be combined freely with `default` and `devDefault`:
-
-```js
-const env = cleanEnv(process.env, {
-  SOME_VAR: envalid.str({
-    default: 'productionValue',
-    devDefault: 'devValue',
-    testDefault: 'myTestValue',
-  }),
-})
-```
-
-For more context see [this issue](https://github.com/af/envalid/issues/32).
-
 ## FAQ
 
 ### Can I call `structuredClone()` on Envalid's validated output?

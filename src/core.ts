@@ -2,8 +2,6 @@ import { EnvError, EnvMissingError } from './errors'
 import type { CleanOptions, SpecsOutput, Spec, ValidatorSpec } from './types'
 import { defaultReporter } from './reporter'
 
-export const testOnlySymbol = Symbol('envalid - test only')
-
 /**
  * Validate a single env var, given a spec object
  *
@@ -46,8 +44,6 @@ const readRawEnvValue = <T>(env: unknown, k: keyof T | 'NODE_ENV'): string | T[k
   return (env as any)[k]
 }
 
-const isTestOnlySymbol = (value: any): value is symbol => value === testOnlySymbol
-
 /**
  * Perform the central validation/sanitization logic on the full environment object
  */
@@ -82,11 +78,6 @@ export function getSanitizedEnv<S>(
 
         if (usingDevDefault) {
           cleanedEnv[k] = spec.devDefault
-
-          if (isTestOnlySymbol(spec.devDefault) && rawNodeEnv != 'test') {
-            throw new EnvMissingError(formatSpecDescription(spec))
-          }
-
           continue
         }
 
@@ -107,7 +98,7 @@ export function getSanitizedEnv<S>(
     }
   }
 
-  // This block is for supporting requiredWhen. If that field was provided for a var's spec and 
+  // This block is for supporting requiredWhen. If that field was provided for a var's spec and
   // its condition evaluates to a truthy value, ensure that env var is present.
   for (const k of varKeys) {
     if (errors[k] == undefined) {
