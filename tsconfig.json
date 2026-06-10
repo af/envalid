@@ -4,17 +4,14 @@
     "rootDir": "./src",
     "strict": true,
     "target": "es2022",
-    "module": "commonjs",
-    "moduleResolution": "node",
-    "esModuleInterop": true,
+    "module": "nodenext",
+    "moduleResolution": "nodenext",
     "declaration": true,
     "sourceMap": true,
     "noUnusedLocals": true,
     "noUnusedParameters": true,
     "noImplicitReturns": true,
-    "lib": [
-      "es2022"
-    ]
+    "types": ["node"]
   },
   "include": [
     "src"
