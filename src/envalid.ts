@@ -1,6 +1,6 @@
-import type { CleanedEnv, CleanOptions } from './types'
-import { getSanitizedEnv } from './core'
-import { applyDefaultMiddleware } from './middleware'
+import type { CleanedEnv, CleanOptions } from './types.ts'
+import { getSanitizedEnv } from './core.ts'
+import { applyDefaultMiddleware } from './middleware.ts'
 
 /**
  * Returns a sanitized, immutable environment object. _Only_ the env vars
