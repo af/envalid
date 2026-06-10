@@ -9,6 +9,9 @@
     "node": ">=18"
   },
   "engineStrict": true,
+  "publishConfig": {
+    "provenance": true
+  },
   "files": [
     "dist",
     "src"
