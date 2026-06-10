@@ -1,4 +1,4 @@
-import type { Spec, BaseValidator, StructuredValidator, ExactValidator } from './types'
+import type { Spec, BaseValidator, StructuredValidator, ExactValidator } from './types.ts'
 
 const internalMakeValidator = <T>(parseFn: (input: string) => T) => {
   return (spec?: Spec<unknown>) => ({ ...spec, _parse: parseFn })

@@ -1,6 +1,6 @@
-import { EnvError, EnvMissingError } from './errors'
-import type { CleanOptions, SpecsOutput, Spec, ValidatorSpec } from './types'
-import { defaultReporter } from './reporter'
+import { EnvError, EnvMissingError } from './errors.ts'
+import type { CleanOptions, SpecsOutput, Spec, ValidatorSpec } from './types.ts'
+import { defaultReporter } from './reporter.ts'
 
 /**
  * Validate a single env var, given a spec object
