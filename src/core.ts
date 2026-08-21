@@ -1,6 +1,6 @@
 import { EnvError, EnvMissingError } from './errors'
-import type { CleanOptions, SpecsOutput, Spec, ValidatorSpec } from './types'
 import { defaultReporter } from './reporter'
+import type { CleanOptions, Spec, SpecsOutput, ValidatorSpec } from './types'
 
 /**
  * Validate a single env var, given a spec object
@@ -40,8 +40,17 @@ export function formatSpecDescription<T>(spec: Spec<T>) {
   return `${spec.desc}${egText}${docsText}`
 }
 
-const readRawEnvValue = <T>(env: unknown, k: keyof T | 'NODE_ENV'): string | T[keyof T] => {
-  return (env as any)[k]
+const readRawEnvValue = <T>(
+  env: unknown,
+  k: keyof T | 'NODE_ENV',
+): string | undefined | T[keyof T] => {
+  const result = (env as any)[k]
+
+  if (typeof result == 'string' && !result.trim()) {
+    return undefined
+  }
+
+  return result
 }
 
 /**

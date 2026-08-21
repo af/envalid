@@ -39,8 +39,19 @@ test('bool() works with various formats', () => {
   const off = cleanEnv({ FOO: 'off' }, { FOO: bool() })
   expect(off).toEqual({ FOO: false })
 
+  expect(function withEmpty() {
+    return cleanEnv({ FOO: '' }, { FOO: bool() }, makeSilent)
+  }).toThrow()
+
   const defaultF = cleanEnv({}, { FOO: bool({ default: false }) })
   expect(defaultF).toEqual({ FOO: false })
+
+  const defaultTWithWhitespace = cleanEnv(
+    { FOO: ' ' },
+    { FOO: bool({ default: true }) },
+    makeSilent,
+  )
+  expect(defaultTWithWhitespace).toEqual({ FOO: true })
 })
 
 test('num()', () => {
@@ -132,8 +143,18 @@ test('url()', () => {
 })
 
 test('str()', () => {
-  const withEmpty = cleanEnv({ FOO: '' }, { FOO: str() })
-  expect(withEmpty).toEqual({ FOO: '' })
+  expect(cleanEnv({ FOO: 'asdf' }, { FOO: str() })).toEqual({ FOO: 'asdf' })
+
+  expect(function withWhitespace() {
+    return cleanEnv({ FOO: ' ' }, { FOO: str() }, makeSilent)
+  }).toThrow()
+
+  const defaultWithWhitespace = cleanEnv(
+    { FOO: ' ' },
+    { FOO: str({ default: 'asdf' }) },
+    makeSilent,
+  )
+  expect(defaultWithWhitespace).toEqual({ FOO: 'asdf' })
 
   expect(() => cleanEnv({ FOO: 42 }, { FOO: str() }, makeSilent)).toThrow()
 })
