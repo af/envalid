@@ -22,7 +22,8 @@
     "prepare": "tsc",
     "coverage": "vitest run --coverage",
     "ts": "tsc --noEmit",
-    "lint": "biome lint --diagnostic-level=error src",
+    "fmt": "biome format --write src tests",
+    "lint": "biome lint --diagnostic-level=error src tests",
     "test": "vitest",
     "test:ci": "vitest run"
   },

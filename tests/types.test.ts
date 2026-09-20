@@ -264,13 +264,27 @@ describe('validators types', () => {
     expectTypeOf(str({ default: undefined, devDefault: undefined })).toEqualTypeOf<Opt>()
     expectTypeOf(str({ default: undefined, testDefault: undefined })).toEqualTypeOf<Opt>()
     expectTypeOf(str({ devDefault: undefined, testDefault: undefined })).toEqualTypeOf<Opt>()
-    expectTypeOf(str({ default: undefined, devDefault: 'x', testDefault: 'x' })).toEqualTypeOf<Opt>()
-    expectTypeOf(str({ default: 'x', devDefault: undefined, testDefault: 'x' })).toEqualTypeOf<Opt>()
-    expectTypeOf(str({ default: 'x', devDefault: 'x', testDefault: undefined })).toEqualTypeOf<Opt>()
-    expectTypeOf(str({ default: undefined, devDefault: undefined, testDefault: 'x' })).toEqualTypeOf<Opt>()
-    expectTypeOf(str({ default: undefined, devDefault: 'x', testDefault: undefined })).toEqualTypeOf<Opt>()
-    expectTypeOf(str({ default: 'x', devDefault: undefined, testDefault: undefined })).toEqualTypeOf<Opt>()
-    expectTypeOf(str({ default: undefined, devDefault: undefined, testDefault: undefined })).toEqualTypeOf<Opt>()
+    expectTypeOf(
+      str({ default: undefined, devDefault: 'x', testDefault: 'x' }),
+    ).toEqualTypeOf<Opt>()
+    expectTypeOf(
+      str({ default: 'x', devDefault: undefined, testDefault: 'x' }),
+    ).toEqualTypeOf<Opt>()
+    expectTypeOf(
+      str({ default: 'x', devDefault: 'x', testDefault: undefined }),
+    ).toEqualTypeOf<Opt>()
+    expectTypeOf(
+      str({ default: undefined, devDefault: undefined, testDefault: 'x' }),
+    ).toEqualTypeOf<Opt>()
+    expectTypeOf(
+      str({ default: undefined, devDefault: 'x', testDefault: undefined }),
+    ).toEqualTypeOf<Opt>()
+    expectTypeOf(
+      str({ default: 'x', devDefault: undefined, testDefault: undefined }),
+    ).toEqualTypeOf<Opt>()
+    expectTypeOf(
+      str({ default: undefined, devDefault: undefined, testDefault: undefined }),
+    ).toEqualTypeOf<Opt>()
   })
 })
 

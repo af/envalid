@@ -12,7 +12,7 @@ describe('default reporter', () => {
 
   beforeEach(() => {
     logger = vi.fn()
-    exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => { }) as any)
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as any)
   })
 
   afterEach(() => {

@@ -139,26 +139,17 @@ test('testDefault takes priority over devDefault and default in test', () => {
 test('testDefault falls back to devDefault/default outside of test', () => {
   // testDefault alongside default: outside test, uses default
   expect(
-    cleanEnv(
-      { NODE_ENV: 'production' },
-      { FOO: str({ default: 'prod', testDefault: 'test' }) },
-    ),
+    cleanEnv({ NODE_ENV: 'production' }, { FOO: str({ default: 'prod', testDefault: 'test' }) }),
   ).toEqual({ FOO: 'prod' })
 
   // testDefault alongside devDefault: in development, uses devDefault
   expect(
-    cleanEnv(
-      { NODE_ENV: 'development' },
-      { FOO: str({ devDefault: 'dev', testDefault: 'test' }) },
-    ),
+    cleanEnv({ NODE_ENV: 'development' }, { FOO: str({ devDefault: 'dev', testDefault: 'test' }) }),
   ).toEqual({ FOO: 'dev' })
 })
 
 test('testDefault overrides default in test even when devDefault absent', () => {
-  const env = cleanEnv(
-    { NODE_ENV: 'test' },
-    { FOO: str({ default: 'prod', testDefault: 'test' }) },
-  )
+  const env = cleanEnv({ NODE_ENV: 'test' }, { FOO: str({ default: 'prod', testDefault: 'test' }) })
   expect(env).toEqual({ FOO: 'test' })
 })
 
