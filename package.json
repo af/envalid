@@ -62,7 +62,7 @@
   "license": "MIT",
   "husky": {
     "hooks": {
-      "pre-commit": "npm run lint && npm run tsc",
+      "pre-commit": "npm run lint && npm run ts",
       "pre-push": "npm run test"
     }
   }

@@ -34,7 +34,7 @@ jobs:
         run: bun install --frozen-lockfile
 
       - name: Typescript check
-        run: bun run tsc
+        run: bun run ts
 
       - name: Biome lint check
         run: bun run lint
@@ -44,5 +44,8 @@ jobs:
 
       # Publishes with provenance via OIDC trusted publishing (no token needed).
       # The "prepare" script builds dist/ before packing.
+      #
+      # A GitHub release marked as a pre-release publishes under the "next" dist-tag,
+      # so it is installable via `npm i envalid@next` (or by specifying the version) without becoming the default.
       - name: Publish to npm
-        run: npm publish
+        run: npm publish --tag ${{ github.event.release.prerelease && 'next' || 'latest' }}
