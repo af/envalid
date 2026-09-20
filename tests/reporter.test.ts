@@ -103,6 +103,21 @@ describe('default reporter', () => {
     expect(logger).toHaveBeenCalledTimes(0)
     expect(exitSpy).toHaveBeenCalledTimes(0)
   })
+
+  test('logs to console.error when no logger is provided', () => {
+    const consoleSpy = vi.spyOn(console, 'error').mockImplementation(() => {})
+
+    try {
+      defaultReporter({ errors: { FOO: new EnvMissingError() }, env: {} })
+
+      expect(consoleSpy).toHaveBeenCalledTimes(2)
+      expect(consoleSpy?.mock?.calls?.[0]?.[0]).toMatch(/Missing\S+ environment variables:/)
+      expect(consoleSpy?.mock?.calls?.[1]?.[0]).toMatch(/Exiting with error code 1/)
+      expect(exitSpy).toHaveBeenCalledWith(1)
+    } finally {
+      consoleSpy.mockRestore()
+    }
+  })
 })
 
 describe('envalidErrorFormatter', () => {
