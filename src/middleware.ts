@@ -1,4 +1,4 @@
-import type { CleanedEnvAccessors, StrictProxyMiddlewareOptions } from './types'
+import type { CleanedEnvAccessors, StrictProxyMiddlewareOptions } from './types.ts'
 
 export const strictProxyMiddleware = <T extends object>(
   envObj: T,

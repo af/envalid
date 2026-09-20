@@ -6,6 +6,8 @@
     "target": "es2022",
     "module": "nodenext",
     "moduleResolution": "nodenext",
+    "rewriteRelativeImportExtensions": true,
+    "erasableSyntaxOnly": true,
     "declaration": true,
     "sourceMap": true,
     "noUnusedLocals": true,

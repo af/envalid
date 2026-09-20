@@ -1,5 +1,5 @@
-import { EnvMissingError } from './errors'
-import type { ReporterOptions } from './types'
+import { EnvMissingError } from './errors.ts'
+import type { ReporterOptions } from './types.ts'
 
 type Errors<T> = Partial<Record<keyof T, Error>>
 type Logger = (data: any, ...args: any[]) => void

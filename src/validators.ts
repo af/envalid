@@ -1,5 +1,5 @@
-import { EnvError } from './errors'
-import { makeExactValidator, makeStructuredValidator, makeValidator } from './makers'
+import { EnvError } from './errors.ts'
+import { makeExactValidator, makeStructuredValidator, makeValidator } from './makers.ts'
 
 // Simplified adaptation of https://github.com/validatorjs/validator.js/blob/master/src/lib/isFQDN.js
 const isFQDN = (input: string) => {
