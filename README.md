@@ -8,8 +8,8 @@
 
 <p align="center">
   <strong>
-    Envalid is a small library for validating and accessing<br />
-    environment variables in Node.js programs
+    A small TypeScript library for validating and accessing<br />
+    environment variables in Node/Bun/etc programs
   </strong>
 </p>
 
@@ -19,8 +19,11 @@
   </a>
 </p>
 
-Envalid is a small library for validating and accessing environment variables in
-Node.js programs, aiming to:
+> [!NOTE]
+> envalid v9 is in beta! See the [release notes](https://github.com/af/envalid/releases/tag/v9.0.0-beta) to see what's new, and try it out with `npm install envalid@9.0.0-beta`
+
+Envalid is a small TypeScript library for validating and accessing environment variables in
+Node/Bun/etc programs, aiming to:
 
 - Ensure that your program only runs when all of its environment dependencies are met
 - Give you executable documentation about the environment your program expects to run in
@@ -226,17 +229,19 @@ argument required in the third position:
 
 Since by default Envalid's output is wrapped in a Proxy, structuredClone [will not work](https://bugzilla.mozilla.org/show_bug.cgi?id=1269327#c1) on it. See [#177](https://github.com/af/envalid/issues/177).
 
-### Can I use Envalid outside Node (e.g. QuickJS)?
+### Can I use Envalid outside of Node?
 
-Yes. [WinterTC](https://min-common-api.proposal.wintertc.org/)-compatible runtimes
-already provide `URL` and `console` (including `console.error`). Minimal hosts that
+Yes. Most JavaScript runtimes should work, and Bun has been tested extensively.
+
+All [WinterTC](https://min-common-api.proposal.wintertc.org/)-compatible runtimes
+already provide the `URL` and `console` APIs that envalid relies on. Minimal hosts like QuickJS that
 do not may need a small shim — see [docs/runtime-globals.md](docs/runtime-globals.md)
 and [#253](https://github.com/af/envalid/issues/253).
 
 ## Related projects
 
 - [dotenv](https://www.npmjs.com/package/dotenv) is a very handy tool for loading env vars from
-  `.env` files. It was previously used as a dependency of Envalid. To use them together, simply
+  `.env` files. It was previously a dependency of Envalid. To use them together, simply
   call `require('dotenv').config()` before you pass `process.env` to your `envalid.cleanEnv()`.
 
 - [react-native-config](https://www.npmjs.com/package/react-native-config) can be useful for React Native projects for reading env vars from a `.env` file
