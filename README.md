@@ -226,6 +226,13 @@ argument required in the third position:
 
 Since by default Envalid's output is wrapped in a Proxy, structuredClone [will not work](https://bugzilla.mozilla.org/show_bug.cgi?id=1269327#c1) on it. See [#177](https://github.com/af/envalid/issues/177).
 
+### Can I use Envalid outside Node (e.g. QuickJS)?
+
+Yes. [WinterTC](https://min-common-api.proposal.wintertc.org/)-compatible runtimes
+already provide `URL` and `console` (including `console.error`). Minimal hosts that
+do not may need a small shim — see [docs/runtime-globals.md](docs/runtime-globals.md)
+and [#253](https://github.com/af/envalid/issues/253).
+
 ## Related projects
 
 - [dotenv](https://www.npmjs.com/package/dotenv) is a very handy tool for loading env vars from
