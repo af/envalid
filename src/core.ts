@@ -64,6 +64,7 @@ export function getSanitizedEnv<S>(
   const cleanedEnv = {} as SpecsOutput<S>
   const castedSpecs = specs as unknown as Record<keyof S, ValidatorSpec<unknown>>
   const errors = {} as Record<keyof S, Error>
+  const warnings = {} as Record<keyof S, string>
   const varKeys = Object.keys(castedSpecs) as Array<keyof S>
   const rawNodeEnv = readRawEnvValue(environment, 'NODE_ENV')
 
@@ -78,26 +79,26 @@ export function getSanitizedEnv<S>(
         // Use testDefault only when NODE_ENV is 'test'. Takes priority over devDefault and default.
         if (rawNodeEnv === 'test' && Object.hasOwn(spec, 'testDefault')) {
           cleanedEnv[k] = spec.testDefault
-          continue
+        } else {
+          // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
+          const usingDevDefault =
+            rawNodeEnv && rawNodeEnv !== 'production' && Object.hasOwn(spec, 'devDefault')
+
+          if (usingDevDefault) {
+            cleanedEnv[k] = spec.devDefault
+          } else if ('default' in spec) {
+            cleanedEnv[k] = spec.default
+          } else {
+            // Throw error when no default value is provided
+            cleanedEnv[k] = undefined
+            throw new EnvMissingError(formatSpecDescription(spec))
+          }
         }
 
-        // Use devDefault values only if NODE_ENV was explicitly set, and isn't 'production'
-        const usingDevDefault =
-          rawNodeEnv && rawNodeEnv !== 'production' && Object.hasOwn(spec, 'devDefault')
-
-        if (usingDevDefault) {
-          cleanedEnv[k] = spec.devDefault
-          continue
-        }
-
-        if ('default' in spec) {
-          cleanedEnv[k] = spec.default
-          continue
-        }
-
-        // Throw error when no default value is provided
-        cleanedEnv[k] = undefined
-        throw new EnvMissingError(formatSpecDescription(spec))
+        // A `warning` message is surfaced (without failing) whenever the env var was
+        // not set and a fallback value was used
+        if (spec.warning) warnings[k] = spec.warning
+        continue
       }
 
       cleanedEnv[k] = validateVar({ name: k as string, spec, rawValue })
@@ -122,7 +123,11 @@ export function getSanitizedEnv<S>(
     }
   }
 
-  const reporter = options?.reporter || defaultReporter
-  reporter({ errors, env: cleanedEnv })
+  // With `reporter: null`, errors are thrown instead of reported; in that case the
+  // caller opts out of all reporting, including warnings
+  if (options?.reporter !== null) {
+    const reporter = options?.reporter || defaultReporter
+    reporter({ errors, warnings, env: cleanedEnv })
+  }
   return cleanedEnv
 }
