@@ -112,7 +112,8 @@ export const url = makeValidator<string>((x: string) => {
 export const json = makeStructuredValidator((x: string) => {
   try {
     return JSON.parse(x)
-  } catch (e) {
-    throw new EnvError(`Invalid json: "${x}"`)
+  } catch {
+    // Not logging the json value as it could contain sensitive data
+    throw new EnvError(`Invalid json`)
   }
 })

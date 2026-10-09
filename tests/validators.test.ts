@@ -123,6 +123,16 @@ test('json()', () => {
 
   expect(() => cleanEnv({ FOO: 'abc' }, { FOO: json() }, makeSilent)).toThrow()
 
+  // The error message should not include the raw value, as it could contain sensitive data
+  let thrownError: unknown
+  try {
+    cleanEnv({ FOO: '{"password": "hunter2"' }, { FOO: json() }, makeSilent)
+  } catch (e) {
+    thrownError = e
+  }
+  expect((thrownError as Error).message).toBe('Invalid json')
+  expect((thrownError as Error).message).not.toContain('hunter2')
+
   // default value should be passed through without running through JSON.parse()
   expect(
     cleanEnv(
