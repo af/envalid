@@ -89,13 +89,15 @@ export const port = makeValidator<number>((input: string) => {
 })
 
 export const url = makeValidator<string>((x: string) => {
+  // Not logging the url value as it could contain sensitive data
+  let parsed: URL
   try {
-    new URL(x)
-    return x
+    parsed = new URL(x)
   } catch {
-    // Not logging the url value as it could contain sensitive data
     throw new EnvError(`Invalid url`)
   }
+  if (!parsed.hostname) throw new EnvError(`Invalid url`)
+  return x
 })
 
 /**

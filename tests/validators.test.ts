@@ -140,6 +140,7 @@ test('url()', () => {
   assertPassthrough({ FOO: 'custom://foo.com/bar/baz?hi=1' }, { FOO: url() })
 
   expect(() => cleanEnv({ FOO: 'abc' }, { FOO: url() }, makeSilent)).toThrow()
+  expect(() => cleanEnv({ FOO: 'mailto:user@example.invalid' }, { FOO: url() }, makeSilent)).toThrow()
 })
 
 test('str()', () => {
