@@ -1,6 +1,6 @@
 {
   "name": "envalid",
-  "version": "9.0.0-beta",
+  "version": "9.0.0",
   "description": "Validation for your environment variables",
   "exports": {
     ".": {
