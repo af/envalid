@@ -20,7 +20,7 @@
 </p>
 
 > [!NOTE]
-> envalid v9 is in beta! See the [release notes](https://github.com/af/envalid/releases/tag/v9.0.0-beta) to see what's new, and try it out with `npm install envalid@9.0.0-beta`
+> envalid v9 is out! See the [release notes](https://github.com/af/envalid/releases/tag/v9.0.0) to see what's new
 
 Envalid is a small TypeScript library for validating and accessing environment variables in
 Node/Bun/etc programs, aiming to:
