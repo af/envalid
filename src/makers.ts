@@ -1,7 +1,25 @@
-import type { Spec, BaseValidator, StructuredValidator, ExactValidator } from './types.ts'
+import type { Mask, Spec, BaseValidator, StructuredValidator, ExactValidator } from './types.ts'
+import { redactError } from './mask.ts'
 
-const internalMakeValidator = <T>(parseFn: (input: string) => T) => {
-  return (spec?: Spec<unknown>) => ({ ...spec, _parse: parseFn })
+// Validators receive the spec's `mask` so they can render values safely. Custom
+// parse functions written against the old 1-arg signature still work (they just
+// ignore the extra arg), and the maker redacts any quoted raw value as a fallback.
+type ParseFn<T> = (input: string, mask?: Mask) => T
+
+const internalMakeValidator = <T>(parseFn: ParseFn<T>) => {
+  return (spec?: Spec<unknown>) => {
+    const { mask } = spec ?? {}
+    return {
+      ...spec,
+      _parse: (input: string) => {
+        try {
+          return parseFn(input, mask)
+        } catch (err) {
+          throw mask ? redactError(err, input, mask) : err
+        }
+      },
+    }
+  }
 }
 
 /**

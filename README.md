@@ -116,6 +116,9 @@ Each validation function accepts an (optional) object with the following attribu
 - `example` - An example value for the env var.
 - `docs` - A URL that leads to more detailed documentation about the env var.
 - `requiredWhen` - A function (env -> boolean) specifying when this env var is required. Use With default: undefined (optional value).
+- `mask` - Redacts this env var's value wherever the library prints it (validation error
+  messages, including `example`), so secrets don't leak into logs. Accepts `'all'`,
+  `'last4'`, or a custom `(value) => string` renderer. Without it, behavior is unchanged.
 
 ## Custom validators
 
@@ -136,6 +139,10 @@ const env = cleanEnv(process.env, {
   INITIALS: twochars(),
 })
 ```
+
+If a custom validator is used for a secret, pass `mask` to its spec. Any quoted occurrence
+of the value in the thrown error is redacted automatically, e.g. a validator that throws
+`` `Bad token: "${x}"` `` will log `Bad token: "****wxyz"`.
 
 ### TypeScript users
 
