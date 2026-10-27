@@ -1,3 +1,9 @@
+/**
+ * How a value is allowed to appear when its env var's value is included in validation
+ * error output. Either a preset or a function that renders the replacement string.
+ */
+export type Mask = 'all' | 'last4' | ((value: unknown) => string)
+
 export interface Spec<T> {
   /**
    * An Array that lists the admissable parsed values for the env var.
@@ -34,6 +40,22 @@ export interface Spec<T> {
    * conditions are met with the rest of the env object. Use With default: undefined.
    */
   requiredWhen?: (cleanedEnv: Record<string, unknown>) => boolean | undefined
+
+  /**
+   * If set, any occurrence of this env var's value in a validation error message is
+   * replaced with a masked form, so secrets don't leak into logs. Pass a preset
+   * ('all' | 'last4') or a custom `(value) => string` renderer. Also masks `example`.
+   *
+   * ```ts
+   * cleanEnv(process.env, { API_KEY: str({ mask: 'last4' }) })
+   * // error shows:  Not a string: "****wxyz"
+   * ```
+   *
+   * Note: this only redacts values the library itself prints (error messages). It
+   * cannot prevent a consumer from logging the resolved value, since primitives
+   * can't be intercepted.
+   */
+  mask?: Mask
 }
 
 // All the default-providing attributes, each independently optional and allowed

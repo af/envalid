@@ -1,5 +1,7 @@
 import { EnvError } from './errors.ts'
+import { displayMasked, displayValue } from './mask.ts'
 import { makeExactValidator, makeStructuredValidator, makeValidator } from './makers.ts'
+import type { Mask } from './types.ts'
 
 // Simplified adaptation of https://github.com/validatorjs/validator.js/blob/master/src/lib/isFQDN.js
 const isFQDN = (input: string) => {
@@ -30,7 +32,7 @@ const EMAIL_REGEX = /^[^@\s]+@[^@\s]+\.[^@\s]+$/ // intentionally non-exhaustive
 
 // We use exact validator here because narrowing down to either 'true' or 'false'
 // makes no sense.
-export const bool = makeExactValidator<boolean>((input: string | boolean) => {
+export const bool = makeExactValidator<boolean>((input: string | boolean, mask?: Mask) => {
   switch (input) {
     case true:
     case 'true':
@@ -47,34 +49,34 @@ export const bool = makeExactValidator<boolean>((input: string | boolean) => {
     case '0':
       return false
     default:
-      throw new EnvError(`Invalid bool input: "${input}"`)
+      throw new EnvError(`Invalid bool input${displayValue(input, mask)}`)
   }
 })
 
-export const num = makeValidator<number>((input: string) => {
+export const num = makeValidator<number>((input: string, mask?: Mask) => {
   const coerced = parseFloat(input)
-  if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
+  if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input${displayValue(input, mask)}`)
   return coerced
 })
 
-export const str = makeValidator<string>((input: string) => {
+export const str = makeValidator<string>((input: string, mask?: Mask) => {
   if (typeof input === 'string') return input
-  throw new EnvError(`Not a string: "${input}"`)
+  throw new EnvError(`Not a string${displayValue(input, mask)}`)
 })
 
-export const email = makeValidator<string>((x: string) => {
+export const email = makeValidator<string>((x: string, mask?: Mask) => {
   if (EMAIL_REGEX.test(x)) return x
-  throw new EnvError(`Invalid email address: "${x}"`)
+  throw new EnvError(`Invalid email address${displayValue(x, mask)}`)
 })
 
-export const host = makeValidator<string>((input: string) => {
+export const host = makeValidator<string>((input: string, mask?: Mask) => {
   if (!isFQDN(input) && !isIP(input)) {
-    throw new EnvError(`Invalid host (domain or ip): "${input}"`)
+    throw new EnvError(`Invalid host (domain or ip)${displayValue(input, mask)}`)
   }
   return input
 })
 
-export const port = makeValidator<number>((input: string) => {
+export const port = makeValidator<number>((input: string, mask?: Mask) => {
   const coerced = +input
   if (
     Number.isNaN(coerced) ||
@@ -83,18 +85,18 @@ export const port = makeValidator<number>((input: string) => {
     coerced < 1 ||
     coerced > 65535
   ) {
-    throw new EnvError(`Invalid port input: "${input}"`)
+    throw new EnvError(`Invalid port input${displayValue(input, mask)}`)
   }
   return coerced
 })
 
-export const url = makeValidator<string>((x: string) => {
+export const url = makeValidator<string>((x: string, mask?: Mask) => {
   try {
     new URL(x)
     return x
   } catch {
-    // Not logging the url value as it could contain sensitive data
-    throw new EnvError(`Invalid url`)
+    // Not logging the url value unless a mask was provided
+    throw new EnvError(`Invalid url${displayMasked(x, mask)}`)
   }
 })
 
@@ -109,10 +111,11 @@ export const url = makeValidator<string>((x: string) => {
  * })
  * ```
  */
-export const json = makeStructuredValidator((x: string) => {
+export const json = makeStructuredValidator((x: string, mask?: Mask) => {
   try {
     return JSON.parse(x)
-  } catch (e) {
-    throw new EnvError(`Invalid json: "${x}"`)
+  } catch {
+    // Not logging the json value unless a mask was provided
+    throw new EnvError(`Invalid json${displayMasked(x, mask)}`)
   }
 })

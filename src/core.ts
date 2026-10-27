@@ -1,4 +1,5 @@
 import { EnvError, EnvMissingError } from './errors.ts'
+import { applyMask } from './mask.ts'
 import { defaultReporter } from './reporter.ts'
 import type { CleanOptions, Spec, SpecsOutput, ValidatorSpec } from './types.ts'
 
@@ -26,7 +27,8 @@ function validateVar<T>({
     if (!Array.isArray(spec.choices)) {
       throw new TypeError(`"choices" must be an array (in spec for "${name}")`)
     } else if (!spec.choices.includes(value)) {
-      throw new EnvError(`Value "${value}" not in choices [${spec.choices}]`)
+      const shown = spec.mask ? applyMask(value, spec.mask) : value
+      throw new EnvError(`Value "${shown}" not in choices [${spec.choices}]`)
     }
   }
   if (value == null) throw new EnvError(`Invalid value for env var "${name}"`)
@@ -35,9 +37,11 @@ function validateVar<T>({
 
 // Format a string error message for when a required env var is missing
 export function formatSpecDescription<T>(spec: Spec<T>) {
-  const egText = spec.example ? ` (eg. "${spec.example}")` : ''
+  const example = spec.example
+    ? ` (eg. "${spec.mask ? applyMask(spec.example, spec.mask) : spec.example}")`
+    : ''
   const docsText = spec.docs ? `. See ${spec.docs}` : ''
-  return `${spec.desc}${egText}${docsText}`
+  return `${spec.desc}${example}${docsText}`
 }
 
 const readRawEnvValue = <T>(
