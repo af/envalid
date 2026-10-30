@@ -112,6 +112,10 @@ Each validation function accepts an (optional) object with the following attribu
   helper (which is wrapped around a `devDefault` and therefore can't coexist with a separate
   dev value), `testDefault` can be combined with `default` and `devDefault` to provide
   distinct values for production, development, and test.
+- `warning` - A message that is logged (without failing) when the env var is not set and a
+  fallback value (`default`, `devDefault`, or `testDefault`) is used. Combine with
+  `default: undefined` to allow the program to run without the env var while still
+  surfacing a warning.
 - `desc` - A string that describes the env var.
 - `example` - An example value for the env var.
 - `docs` - A URL that leads to more detailed documentation about the env var.

@@ -69,9 +69,19 @@ export const envalidErrorFormatter = <T = any>(
 }
 
 export const defaultReporter = <T = any>(
-  { errors = {} }: ReporterOptions<T>,
+  { errors = {}, warnings = {} }: ReporterOptions<T>,
   { onError, logger }: ExtraOptions<T> = { logger: defaultLogger },
 ) => {
+  // Warnings are informational, and never affect the exit behavior
+  const warningsOutput = Object.entries(warnings).map(
+    ([k, message]) => `    ${colors.blue(k)}: ${message}`,
+  )
+  if (warningsOutput.length) {
+    warningsOutput.sort()
+    warningsOutput.unshift(` ${colors.yellow('Warnings')}:`)
+    logger([RULE, warningsOutput.join('\n'), RULE].join('\n'))
+  }
+
   if (!Object.keys(errors).length) return
 
   envalidErrorFormatter(errors, logger)

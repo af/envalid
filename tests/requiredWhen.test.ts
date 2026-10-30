@@ -30,6 +30,7 @@ describe('requiredWhen', () => {
         id: undefined,
       },
       errors: {},
+      warnings: {},
     })
   })
 
@@ -51,6 +52,7 @@ describe('requiredWhen', () => {
         id: undefined,
       },
       errors: {},
+      warnings: {},
     })
 
     cleanEnv(
@@ -70,6 +72,7 @@ describe('requiredWhen', () => {
         autoExtractId: undefined,
       },
       errors: {},
+      warnings: {},
     })
   })
 
@@ -102,6 +105,7 @@ describe('requiredWhen', () => {
           ),
         ),
       },
+      warnings: {},
     })
   })
 
@@ -126,6 +130,7 @@ describe('requiredWhen', () => {
         id: 123,
       },
       errors: {},
+      warnings: {},
     })
   })
 
@@ -152,6 +157,7 @@ describe('requiredWhen', () => {
       errors: {
         id: new EnvError(`Invalid number input: "abc"`),
       },
+      warnings: {},
     })
   })
 })

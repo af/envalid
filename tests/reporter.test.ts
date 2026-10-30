@@ -120,6 +120,93 @@ describe('default reporter', () => {
   })
 })
 
+describe('default reporter with warnings', () => {
+  let logger: MockedFunction<any>
+  let exitSpy: any = null
+
+  beforeEach(() => {
+    logger = vi.fn()
+    exitSpy = vi.spyOn(process, 'exit').mockImplementation((() => {}) as any)
+  })
+
+  afterEach(() => {
+    exitSpy?.mockRestore()
+  })
+
+  test('prints warnings without exiting when there are no errors', () => {
+    defaultReporter(
+      {
+        errors: {},
+        warnings: { FOO: 'FOO is not set' },
+        env: {},
+      },
+      { logger },
+    )
+
+    expect(logger).toHaveBeenCalledTimes(1)
+    const output = logger?.mock?.calls?.[0]?.[0]
+    expect(output).toMatch(/Warnings\S*:/)
+    expect(output).toMatch(/FOO\S*: FOO is not set/)
+    expect(output).not.toMatch(/Exiting with error code 1/)
+    expect(exitSpy).toHaveBeenCalledTimes(0)
+  })
+
+  test('prints both warnings and errors, and still exits when errors exist', () => {
+    defaultReporter(
+      {
+        errors: { FOO: new EnvMissingError() },
+        warnings: { BAR: 'BAR is not set' },
+        env: {},
+      },
+      { logger },
+    )
+
+    expect(logger).toHaveBeenCalledTimes(3)
+
+    const warningsOutput = logger?.mock?.calls?.[0]?.[0]
+    expect(warningsOutput).toMatch(/Warnings\S*:/)
+    expect(warningsOutput).toMatch(/BAR\S*: BAR is not set/)
+
+    const errorsOutput = logger?.mock?.calls?.[1]?.[0]
+    expect(errorsOutput).toMatch(/Missing\S+ environment variables:/)
+    expect(errorsOutput).not.toMatch(/Warnings\S*:/)
+
+    const exitOutput = logger?.mock?.calls?.[2]?.[0]
+    expect(exitOutput).toMatch(/Exiting with error code 1/)
+
+    expect(exitSpy).toHaveBeenCalledTimes(1)
+    expect(exitSpy).toHaveBeenCalledWith(1)
+  })
+
+  test('sorts multiple warnings', () => {
+    defaultReporter(
+      {
+        errors: {},
+        warnings: { ZEBRA: 'z', ALPACA: 'a' },
+        env: {},
+      },
+      { logger },
+    )
+
+    const output = logger?.mock?.calls?.[0]?.[0]
+    expect(output.indexOf(': a')).toBeGreaterThan(-1)
+    expect(output.indexOf(': a')).toBeLessThan(output.indexOf(': z'))
+  })
+
+  test('does nothing when there are no errors or warnings', () => {
+    defaultReporter(
+      {
+        errors: {},
+        warnings: {},
+        env: { FOO: 'great success' },
+      },
+      { logger },
+    )
+    expect(logger).toHaveBeenCalledTimes(0)
+    expect(exitSpy).toHaveBeenCalledTimes(0)
+  })
+})
+
 describe('envalidErrorFormatter', () => {
   let logger: MockedFunction<any>
 

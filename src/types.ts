@@ -30,6 +30,14 @@ export interface Spec<T> {
   testDefault?: NonNullable<T> | undefined
 
   /**
+   * A message that is logged (without failing) when the env var is not set and a
+   * fallback value (`default`, `devDefault`, or `testDefault`) is used.
+   * Combine with `default: undefined` to allow the program to run without the env
+   * var while still surfacing a warning.
+   */
+  warning?: string
+
+  /**
    * A function (env -> boolean) that allows an env var to be required only when certain
    * conditions are met with the rest of the env object. Use With default: undefined.
    */
@@ -149,6 +157,12 @@ export interface CleanedEnvAccessors {
 
 export interface ReporterOptions<T> {
   errors: Partial<Record<keyof T, Error>>
+  /**
+   * Warning messages for env vars that were not set and had a fallback value
+   * (`default`, `devDefault`, or `testDefault`) used. Only populated for specs that
+   * include a `warning` message.
+   */
+  warnings?: Partial<Record<keyof T, string>>
   env: unknown
 }
 
