@@ -70,6 +70,16 @@ test('num()', () => {
   expect(() => cleanEnv({ FOO: 'asdf' }, { FOO: num() }, makeSilent)).toThrow()
 
   expect(() => cleanEnv({ FOO: '' }, { FOO: num() }, makeSilent)).toThrow()
+  expect(() => cleanEnv({ FOO: '   ' }, { FOO: num() }, makeSilent)).toThrow()
+
+  // Malformed values with trailing characters should be rejected, not truncated (#261)
+  // Note that the number variable explicitly DOES NOT support hex/binary/octal formats
+  for (const bad of ['10_000', '30s', '1.2.3', '0x10', '0b11', '0o7']) {
+    expect(() => cleanEnv({ FOO: bad }, { FOO: num() }, makeSilent)).toThrow()
+  }
+
+  const withNegative = cleanEnv({ FOO: '-1.5' }, { FOO: num() })
+  expect(withNegative).toEqual({ FOO: -1.5 })
 })
 
 test('email()', () => {
