@@ -52,8 +52,12 @@ export const bool = makeExactValidator<boolean>((input: string | boolean) => {
 })
 
 export const num = makeValidator<number>((input: string) => {
-  const coerced = parseFloat(input)
-  if (Number.isNaN(coerced)) throw new EnvError(`Invalid number input: "${input}"`)
+  // Number() rejects trailing garbage ("30s") but accepts hex/binary/octal ("0x10");
+  // parseFloat() rejects those prefixes and empty strings. Require both to agree.
+  const coerced = Number(input)
+  if (Number.isNaN(coerced) || coerced !== parseFloat(input)) {
+    throw new EnvError(`Invalid number input: "${input}"`)
+  }
   return coerced
 })
 
